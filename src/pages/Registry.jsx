@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import outlets from "../data/outlets.json";
+import { useState, useMemo, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 import {
   Search, Filter, Globe, Radio, Tv, Newspaper,
   ChevronDown, ChevronUp, ExternalLink, Eye, EyeOff,
@@ -7,33 +7,33 @@ import {
 } from "lucide-react";
 
 const LEAN_COLORS = {
-  "National":      { bg: "#1a2a1a", border: "#2d5a2d", text: "#6fcf6f" },
-  "Southwest":     { bg: "#1a1a2e", border: "#2d2d6b", text: "#7b7bf5" },
-  "Southeast":     { bg: "#2a1a1a", border: "#6b2d2d", text: "#f57b7b" },
-  "North":         { bg: "#2a2a1a", border: "#6b6b2d", text: "#f5f57b" },
+  "National": { bg: "#1a2a1a", border: "#2d5a2d", text: "#6fcf6f" },
+  "Southwest": { bg: "#1a1a2e", border: "#2d2d6b", text: "#7b7bf5" },
+  "Southeast": { bg: "#2a1a1a", border: "#6b2d2d", text: "#f57b7b" },
+  "North": { bg: "#2a2a1a", border: "#6b6b2d", text: "#f5f57b" },
   "North Central": { bg: "#1a2a2a", border: "#2d6b6b", text: "#7bf5f5" },
-  "Niger Delta":   { bg: "#2a1a2a", border: "#6b2d6b", text: "#f57bf5" },
+  "Niger Delta": { bg: "#2a1a2a", border: "#6b2d6b", text: "#f57bf5" },
 };
 
 const PARTY_COLORS = {
-  "APC":     "#00aa44",
-  "PDP":     "#e53e3e",
-  "LP":      "#d69e2e",
-  "NNPP":    "#805ad5",
-  "None":    "#4a5568",
+  "APC": "#00aa44",
+  "PDP": "#e53e3e",
+  "LP": "#d69e2e",
+  "NNPP": "#805ad5",
+  "None": "#4a5568",
   "Unknown": "#2d3748",
 };
 
 const MEDIUM_ICONS = {
-  online:    <Globe size={12} />,
-  print:     <Newspaper size={12} />,
+  online: <Globe size={12} />,
+  print: <Newspaper size={12} />,
   broadcast: <Tv size={12} />,
 };
 
 const TRANSPARENCY_ICONS = {
-  high:   <CheckCircle size={12} className="text-green-400" />,
+  high: <CheckCircle size={12} className="text-green-400" />,
   medium: <HelpCircle size={12} className="text-yellow-400" />,
-  low:    <AlertCircle size={12} className="text-red-400" />,
+  low: <AlertCircle size={12} className="text-red-400" />,
 };
 
 function Badge({ children, style, className = "" }) {
@@ -130,11 +130,11 @@ function OutletRow({ outlet, expanded, onToggle }) {
               <div className="detail-value">
                 {outlet.rss_feeds.length > 0
                   ? outlet.rss_feeds.map((feed, i) => (
-                      <a key={i} href={feed} target="_blank" rel="noreferrer"
-                        className="feed-link">
-                        {feed} <ExternalLink size={10} />
-                      </a>
-                    ))
+                    <a key={i} href={feed} target="_blank" rel="noreferrer"
+                      className="feed-link">
+                      {feed} <ExternalLink size={10} />
+                    </a>
+                  ))
                   : <span className="no-data">None configured</span>
                 }
               </div>
@@ -168,10 +168,23 @@ function OutletRow({ outlet, expanded, onToggle }) {
 }
 
 export default function Registry() {
+  const [outlets, setOutlets] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterLean, setFilterLean] = useState("All");
   const [filterMedium, setFilterMedium] = useState("All");
   const [filterOwnership, setFilterOwnership] = useState("All");
+  useEffect(() => {
+    async function fetchOutlets() {
+      const { data, error } = await supabase
+        .from("outlets")
+        .select("*")
+        .order("id");
+      if (!error) setOutlets(data);
+      setLoading(false);
+    }
+    fetchOutlets();
+  }, []);
   const [expandedId, setExpandedId] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -294,7 +307,7 @@ export default function Registry() {
       <div className="results-count">
         {filtered.length} outlet{filtered.length !== 1 ? "s" : ""} found
       </div>
-
+      {loading && <div className="empty-state">Loading outlets...</div>}
       <div className="outlet-list">
         {filtered.map(outlet => (
           <OutletRow
