@@ -42,17 +42,6 @@ function getDominantTier(dist) {
   return dominant;
 }
 
-export function generateSlug(title) {
-  if (!title) return 'story';
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .substring(0, 80)
-    .replace(/-+$/, '');
-}
-
 // --- REUSABLE COMPONENTS ---
 
 function CoverageTierBar({ coverageStats }) {
@@ -102,7 +91,7 @@ function MonitoringAlertCard({ cluster }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <Link to={`/story/${cluster.slug || generateSlug(cluster.representative_title)}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+    <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
       <div style={{
         border: `2px solid ${alertColor}`,
         borderRadius: '8px',
@@ -159,7 +148,7 @@ function HeroStoryCard({ cluster }) {
   const hasAlerts = cluster.monitoring_flags?.length > 0;
 
   return (
-    <Link to={`/story/${cluster.slug || generateSlug(cluster.representative_title)}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', marginBottom: '24px' }}>
+    <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', marginBottom: '24px' }}>
       <div style={{ width: '100%', height: '340px', position: 'relative', background: 'var(--bg-hover)', overflow: 'hidden', borderLeft: `4px solid ${borderColor}` }}>
         {cluster.image_url && !imgError && (
            <img src={cluster.image_url} onError={() => setImgError(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="hero" />
@@ -199,7 +188,7 @@ function StandardStoryItem({ cluster }) {
   const hasAlerts = cluster.monitoring_flags?.length > 0;
 
   return (
-    <Link to={`/story/${cluster.slug || generateSlug(cluster.representative_title)}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', borderBottom: '1px solid var(--border)', padding: '16px 0' }}>
+    <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', borderBottom: '1px solid var(--border)', padding: '16px 0' }}>
       <div style={{ display: 'flex', gap: '16px' }}>
         <div style={{ flexGrow: 1, position: 'relative' }}>
           <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -227,7 +216,7 @@ function CompactStoryItem({ cluster }) {
   const hasAlerts = cluster.monitoring_flags?.length > 0;
 
   return (
-    <Link to={`/story/${cluster.slug || generateSlug(cluster.representative_title)}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+    <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
       <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
         <div style={{ flexGrow: 1 }}>
           <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 8px 0', lineHeight: 1.3 }}>
