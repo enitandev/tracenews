@@ -54,6 +54,13 @@ function formatTimeAgo(dateStr) {
   return `${days}d ago`;
 }
 
+function decodeHtml(html) {
+  if (!html) return '';
+  const txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
+
 export default function Story() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
@@ -112,12 +119,20 @@ export default function Story() {
   const flags = cluster.monitoring_flags || [];
   
   // Tabs filtering
-  const filteredStories = activeTab === 'All' 
+  const getUniqueStories = (storiesList) => {
+    const map = new Map();
+    storiesList.forEach(s => {
+      map.set(s.outlet_slug, s);
+    });
+    return Array.from(map.values()).sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+  };
+
+  const filteredStories = getUniqueStories(activeTab === 'All' 
     ? stories 
     : stories.filter(s => {
         const tier = s.outlet_coverage_tier || 'unscored';
         return tier === TAB_TO_KEY[activeTab];
-      });
+      }));
 
   // Layer 1: Coverage Tier Bar (Primary)
   const renderLayer1 = () => {
@@ -239,16 +254,7 @@ export default function Story() {
           </h1>
 
 
-          {/* Full-width Monitoring Spirit Bar */}
-          {flags.length > 0 && (
-            <div style={{ background: SEVERITY_COLORS[flags[0].severity] || '#e5e5e5', borderRadius: '8px', padding: '20px', marginBottom: '32px', color: '#fff', display: 'flex', alignItems: 'flex-start', gap: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-              <AlertTriangle size={32} style={{ flexShrink: 0, marginTop: '4px' }} />
-              <div>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 8px 0', fontFamily: 'var(--font-body)' }}>Watchdog Alert: {flags[0].type.replace('_', ' ')}</h3>
-                <p style={{ fontSize: '15px', lineHeight: 1.5, margin: 0 }}>{flags[0].message}</p>
-              </div>
-            </div>
-          )}
+          {/* Top Monitoring Spirit Bar Removed */}
 
           {/* Filter Tabs */}
           <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-elevated)', padding: '4px', borderRadius: '8px', marginBottom: '24px', width: 'fit-content' }}>
@@ -285,7 +291,7 @@ export default function Story() {
             
             {activeTab === 'All' ? (
               <p style={{ fontSize: '15px', lineHeight: 1.6, color: '#ccc', margin: 0 }}>
-                {cluster.ai_summary || (stories[0]?.summary ? stories[0]?.summary?.replace(/<[^>]+>/g, '').substring(0, 300) + "..." : "No automated summary available for this story.")}
+                {decodeHtml(cluster.ai_summary || (stories[0]?.summary ? stories[0]?.summary?.replace(/<[^>]+>/g, '').substring(0, 300) + "..." : "No automated summary available for this story."))}
               </p>
             ) : loadingFraming ? (
               <div style={{ color: '#888', fontStyle: 'italic', fontSize: '14px' }}>Analyzing {activeTab.toLowerCase()}-aligned coverage...</div>
