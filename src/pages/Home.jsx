@@ -239,7 +239,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/clusters/landing?limit=80')
+    fetch('https://uvicorn-appmain-production-79c6.up.railway.app/clusters/landing?limit=80')
       .then(r => r.json())
       .then(data => {
         setClusters(data.clusters || []);

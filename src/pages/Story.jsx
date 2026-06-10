@@ -74,7 +74,7 @@ export default function Story() {
       setLoading(false);
       return;
     }
-    fetch(`http://localhost:8000/clusters/by-slug/${slug}`)
+    fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/by-slug/${slug}`)
       .then(res => res.json())
       .then(d => {
         if (d.error) {
@@ -97,7 +97,7 @@ export default function Story() {
 
     setLoadingFraming(true);
     const alignmentQuery = activeTab.toLowerCase();
-    fetch(`http://localhost:8000/clusters/${data.cluster.id}/framing?alignment=${alignmentQuery}`)
+    fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/${data.cluster.id}/framing?alignment=${alignmentQuery}`)
       .then(res => res.json())
       .then(d => {
         setFramingCache(prev => ({ ...prev, [activeTab]: d.bullets || [] }));
