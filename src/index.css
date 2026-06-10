@@ -2,21 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Montserrat', sans-serif;
-    color: #1a1a1a;
-    background-color: #ffffff;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+/* Global Variables for Theming */
+:root {
+  --bg-base: #F4F2EE;
+  --bg-surface: #ffffff;
+  --bg-elevated: #fafafa;
+  --bg-hover: #f0f0f0;
+  
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  
+  --border: #e5e5e5;
+  --border-bright: #cccccc;
+  
+  --accent: #000000;
+  --accent-dim: #e5e5e5;
+  --accent-border: #cccccc;
+  --danger: #ff4d6d;
+  --warning: #ffb347;
+  --font-body: 'Montserrat', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  
+  --header-promo: #D4C49A;
+  --header-util: #2a2a2a;
+  --header-util-text: #ffffff;
+  --header-main: #ffffff;
+  --header-ticker: #f9f9f9;
+}
 
-  /* Ensure no default shadows anywhere */
-  *, *::before, *::after {
-    box-shadow: none !important;
-  }
+body[data-theme='dark'] {
+  --bg-base: #121212;
+  --bg-surface: #1e1e1e;
+  --bg-elevated: #252525;
+  --bg-hover: #2a2a2a;
+  
+  --text-primary: #f0f0f0;
+  --text-secondary: #cccccc;
+  --text-muted: #888888;
+  
+  --border: #333333;
+  --border-bright: #444444;
+  
+  --accent: #ffffff;
+  --accent-dim: #333333;
+  --accent-border: #444444;
+  
+  --header-promo: #D4C49A; /* Keeps the tan pop */
+  --header-util: #0a0a0a;
+  --header-util-text: #cccccc;
+  --header-main: #1a1a1a;
+  --header-ticker: #222222;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 /* Custom scrollbar hiding utility */

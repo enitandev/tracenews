@@ -1,23 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap');
 
-:root {
-  --bg-base:       #0a0c0f;
-  --bg-surface:    #0f1318;
-  --bg-elevated:   #151a21;
-  --bg-hover:      #1a2028;
-  --border:        #1e2730;
-  --border-bright: #2a3540;
-  --text-primary:  #e8edf2;
-  --text-secondary:#8a9bb0;
-  --text-muted:    #4a5a6a;
-  --accent:        #00c896;
-  --accent-dim:    #00c89622;
-  --accent-border: #00c89644;
-  --danger:        #ff4d6d;
-  --warning:       #ffb347;
-  --font-body:     'Sora', sans-serif;
-  --font-mono:     'IBM Plex Mono', monospace;
-}
+/* Removed conflicting variables - now controlled by index.css */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
