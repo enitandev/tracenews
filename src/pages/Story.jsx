@@ -3,23 +3,23 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info } from 'lucide-react';
 
 const COVERAGE_TIER_COLORS = {
-  'independent': '#008751',
+  'independent': '#C0392B',
   'deferential': '#E67E22',
-  'captured': '#C0392B'
+  'captured': '#2980B9'
 };
 
 const TIER_LABELS = {
-  'independent': 'Opposition',
-  'deferential': 'Balanced',
-  'captured': 'Government',
+  'independent': 'Adversarial',
+  'deferential': 'Institutional',
+  'captured': 'Pro-Establishment',
   'unscored': 'Unscored'
 };
 
 const TAB_TO_KEY = {
   'All': 'all',
-  'Opposition': 'independent',
-  'Balanced': 'deferential',
-  'Government': 'captured'
+  'Adversarial': 'independent',
+  'Institutional': 'deferential',
+  'Pro-Establishment': 'captured'
 };
 
 const GOVERNMENT_COLORS = {
@@ -258,7 +258,7 @@ export default function Story() {
 
           {/* Filter Tabs */}
           <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-elevated)', padding: '4px', borderRadius: '8px', marginBottom: '24px', width: 'fit-content' }}>
-            {['All', 'Opposition', 'Balanced', 'Government'].map(tab => (
+            {['All', 'Adversarial', 'Institutional', 'Pro-Establishment'].map(tab => (
               <button 
                 key={tab}
                 onClick={() => setActiveTab(tab)}

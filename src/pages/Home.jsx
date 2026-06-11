@@ -20,15 +20,15 @@ const SEVERITY_COLORS = {
 };
 
 const COVERAGE_TIER_COLORS = {
-  'independent': '#008751',
+  'independent': '#C0392B',
   'deferential': '#E67E22',
-  'captured': '#C0392B'
+  'captured': '#2980B9'
 };
 
 const TIER_LABELS = {
-  'independent': 'Opposition',
-  'deferential': 'Balanced',
-  'captured': 'Government',
+  'independent': 'Adversarial',
+  'deferential': 'Institutional',
+  'captured': 'Pro-Establishment',
   'unscored': 'Unscored'
 };
 
