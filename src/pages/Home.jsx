@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
+import CoverageBar from '../components/CoverageBar';
 
 const REGION_COLORS = {
   'North': '#2471A3',

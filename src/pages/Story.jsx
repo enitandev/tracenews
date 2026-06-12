@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info } from 'lucide-react';
+import CoverageBar from '../components/CoverageBar';
 
 const COVERAGE_TIER_COLORS = {
   'pro_establishment': '#2980B9',
