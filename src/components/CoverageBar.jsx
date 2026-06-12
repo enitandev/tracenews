@@ -14,7 +14,7 @@ const TIER_LABELS = {
   'unscored': 'Unscored'
 };
 
-function getDominantTier(dist) {
+export function getDominantTier(dist) {
   let max = -1;
   let dominant = 'unscored';
   for (const [k, v] of Object.entries(dist || {})) {
