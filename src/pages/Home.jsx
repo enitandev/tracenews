@@ -33,21 +33,9 @@ const TIER_LABELS = {
   'unscored': 'Unscored'
 };
 
-function getDominantTier(dist) {
-  if (!dist) return 'unscored';
-  let dominant = 'unscored';
-  let max = 0;
-  for (const [k, v] of Object.entries(dist)) {
-    if (v > max) { max = v; dominant = k; }
-  }
-  return dominant;
-}
-
 // --- REUSABLE COMPONENTS ---
 
-function CoverageTierBar({ coverageStats }) {
-  if (!coverageStats || !coverageStats.coverage_tier_distribution) {
-    return <div style={{width:'100%', height:'4px', background:'#333', borderRadius:'2px', marginTop:'0'}}/>;
+}/>;
   }
   
   const dist = coverageStats.coverage_tier_distribution;
@@ -167,7 +155,7 @@ function HeroStoryCard({ cluster }) {
         </h2>
         
         <div style={{ position: 'absolute', bottom: '12px', left: '20px', right: '20px' }}>
-          <CoverageTierBar coverageStats={stats} />
+          <CoverageBar coverageStats={stats} />
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
@@ -200,7 +188,7 @@ function StandardStoryItem({ cluster }) {
             {cluster.representative_title}
           </h3>
           <div style={{ marginTop: '0px' }}>
-            <CoverageTierBar coverageStats={cluster.coverage_stats} />
+            <CoverageBar coverageStats={cluster.coverage_stats} />
           </div>
         </div>
         {cluster.image_url && !imgError && (
@@ -224,7 +212,7 @@ function CompactStoryItem({ cluster }) {
             {cluster.representative_title}
           </h4>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '12px' }}>
-            <div style={{ flexGrow: 1 }}><CoverageTierBar coverageStats={cluster.coverage_stats} /></div>
+            <div style={{ flexGrow: 1 }}><CoverageBar coverageStats={cluster.coverage_stats} /></div>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', color: 'var(--text-muted)' }}>{cluster.outlet_count} sources</span>
           </div>
         </div>

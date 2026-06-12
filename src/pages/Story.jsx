@@ -257,6 +257,11 @@ export default function Story() {
 
           {/* Top Monitoring Spirit Bar Removed */}
 
+          {/* Coverage Bar */}
+          <div style={{ marginBottom: '16px' }}>
+            <CoverageBar coverageStats={stats} />
+          </div>
+
           {/* Filter Tabs */}
           <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-elevated)', padding: '4px', borderRadius: '8px', marginBottom: '24px', width: 'fit-content' }}>
             {['All', 'Adversarial', 'Institutional', 'Pro-Establishment'].map(tab => (
