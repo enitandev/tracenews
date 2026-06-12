@@ -3,15 +3,16 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info } from 'lucide-react';
 
 const COVERAGE_TIER_COLORS = {
-  'independent': '#C0392B',
-  'deferential': '#E67E22',
-  'captured': '#2980B9'
+  'pro_establishment': '#2980B9',
+  'institutional': '#E67E22',
+  'adversarial': '#C0392B',
+  'unscored': '#999999'
 };
 
 const TIER_LABELS = {
-  'independent': 'Adversarial',
-  'deferential': 'Institutional',
-  'captured': 'Pro-Establishment',
+  'pro_establishment': 'Pro-Establishment',
+  'institutional': 'Institutional',
+  'adversarial': 'Adversarial',
   'unscored': 'Unscored'
 };
 
@@ -139,7 +140,7 @@ export default function Story() {
     const dist = stats.coverage_tier_distribution || {};
     // Calculate total explicitly for coverage tier, excluding 'unscored'
     const totalScored = Object.values(dist).reduce((sum, val) => sum + val, 0) || 1;
-    const tiers = ['independent', 'deferential', 'captured'];
+    const tiers = ['adversarial', 'institutional', 'pro_establishment'];
     
     return (
       <div style={{ marginBottom: '32px' }}>
@@ -151,9 +152,9 @@ export default function Story() {
           {(!dist['independent'] && !dist['deferential'] && !dist['captured']) && <div style={{width:'100%', background:'#333'}}></div>}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-          <span style={{ color: COVERAGE_TIER_COLORS['independent'] }}>{TIER_LABELS['independent']}: {Math.round(((dist['independent']||0)/totalScored)*100)}%</span>
-          <span style={{ color: COVERAGE_TIER_COLORS['deferential'] }}>{TIER_LABELS['deferential']}: {Math.round(((dist['deferential']||0)/totalScored)*100)}%</span>
-          <span style={{ color: COVERAGE_TIER_COLORS['captured'] }}>{TIER_LABELS['captured']}: {Math.round(((dist['captured']||0)/totalScored)*100)}%</span>
+          <span style={{ color: COVERAGE_TIER_COLORS['adversarial'] }}>{TIER_LABELS['adversarial']}: {Math.round(((dist['adversarial']||0)/totalScored)*100)}%</span>
+          <span style={{ color: COVERAGE_TIER_COLORS['institutional'] }}>{TIER_LABELS['institutional']}: {Math.round(((dist['institutional']||0)/totalScored)*100)}%</span>
+          <span style={{ color: COVERAGE_TIER_COLORS['pro_establishment'] }}>{TIER_LABELS['pro_establishment']}: {Math.round(((dist['pro_establishment']||0)/totalScored)*100)}%</span>
         </div>
       </div>
     );
@@ -394,7 +395,7 @@ export default function Story() {
           <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', marginBottom: '32px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 20px 0' }}>Who's covering this?</h3>
             
-            {['independent', 'deferential', 'captured'].map(tier => outletGroups[tier] && outletGroups[tier].length > 0 && (
+            {['adversarial', 'institutional', 'pro_establishment'].map(tier => outletGroups[tier] && outletGroups[tier].length > 0 && (
               <div key={tier} style={{ marginBottom: '20px' }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: COVERAGE_TIER_COLORS[tier], marginBottom: '12px', textTransform: 'uppercase' }}>
                   {TIER_LABELS[tier]} ({outletGroups[tier].length})

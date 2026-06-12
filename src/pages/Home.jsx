@@ -20,15 +20,16 @@ const SEVERITY_COLORS = {
 };
 
 const COVERAGE_TIER_COLORS = {
-  'independent': '#C0392B',
-  'deferential': '#E67E22',
-  'captured': '#2980B9'
+  'pro_establishment': '#2980B9',
+  'institutional': '#E67E22',
+  'adversarial': '#C0392B',
+  'unscored': '#999999'
 };
 
 const TIER_LABELS = {
-  'independent': 'Adversarial',
-  'deferential': 'Institutional',
-  'captured': 'Pro-Establishment',
+  'pro_establishment': 'Pro-Establishment',
+  'institutional': 'Institutional',
+  'adversarial': 'Adversarial',
   'unscored': 'Unscored'
 };
 
@@ -51,10 +52,10 @@ function CoverageTierBar({ coverageStats }) {
   
   const dist = coverageStats.coverage_tier_distribution;
   const total = coverageStats.total_coverage || 1;
-  const tiers = ['independent', 'deferential', 'captured'];
+  const tiers = ['adversarial', 'institutional', 'pro_establishment'];
   
   let dominant = getDominantTier(dist);
-  if (dominant === 'unscored') dominant = 'independent'; // Fallback for color mapping if needed
+  if (dominant === 'unscored') dominant = 'adversarial'; // Fallback for color mapping if needed
   
   return (
     <div style={{ marginTop: '8px', width: '100%' }}>
