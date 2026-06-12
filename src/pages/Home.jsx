@@ -35,43 +35,6 @@ const TIER_LABELS = {
 
 // --- REUSABLE COMPONENTS ---
 
-}/>;
-  }
-  
-  const dist = coverageStats.coverage_tier_distribution;
-  const total = coverageStats.total_coverage || 1;
-  const tiers = ['adversarial', 'institutional', 'pro_establishment'];
-  
-  let dominant = getDominantTier(dist);
-  if (dominant === 'unscored') dominant = 'adversarial'; // Fallback for color mapping if needed
-  
-  return (
-    <div style={{ marginTop: '8px', width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Coverage Intelligence</span>
-        <span style={{ fontSize: '10px', fontWeight: 800, color: COVERAGE_TIER_COLORS[dominant] || '#888', textTransform: 'uppercase' }}>
-          {TIER_LABELS[dominant] || dominant}
-        </span>
-      </div>
-      <div style={{
-        width: '100%',
-        height: '4px',
-        display: 'flex',
-        borderRadius: '2px',
-        overflow: 'hidden'
-      }}>
-        {tiers.map(tier => {
-          const count = dist[tier] || 0;
-          if (count === 0) return null;
-          return (
-            <div key={tier} style={{ width: `${(count/total)*100}%`, height: '100%', background: COVERAGE_TIER_COLORS[tier] }} title={`${tier}: ${Math.round((count/total)*100)}%`} />
-          );
-        })}
-        {(!dist['independent'] && !dist['deferential'] && !dist['captured']) && <div style={{width:'100%', background:'#333'}}></div>}
-      </div>
-    </div>
-  );
-}
 
 function MonitoringAlertCard({ cluster }) {
   const flags = cluster.monitoring_flags || [];
