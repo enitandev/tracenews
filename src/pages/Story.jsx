@@ -260,7 +260,7 @@ export default function Story() {
 
           {/* Coverage Bar */}
           <div style={{ marginBottom: '16px' }}>
-            <CoverageBar coverageStats={stats} />
+            <CoverageBar variant="compact" coverageStats={stats} />
           </div>
 
           {/* Filter Tabs */}

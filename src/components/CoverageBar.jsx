@@ -1,16 +1,22 @@
 import React from 'react';
 
 const COVERAGE_TIER_COLORS = {
-  'adversarial': '#C0392B',
-  'institutional': '#E67E22',
   'pro_establishment': '#2980B9',
+  'institutional': '#E67E22',
+  'adversarial': '#C0392B',
   'unscored': '#999999'
 };
 
+const LEGACY_MAP = {
+  'captured': 'pro_establishment',
+  'deferential': 'institutional',
+  'independent': 'adversarial'
+};
+
 const TIER_LABELS = {
-  'adversarial': 'Adversarial',
-  'institutional': 'Institutional',
   'pro_establishment': 'Pro-Establishment',
+  'institutional': 'Institutional',
+  'adversarial': 'Adversarial',
   'unscored': 'Unscored'
 };
 
@@ -18,55 +24,88 @@ export function getDominantTier(dist) {
   let max = -1;
   let dominant = 'unscored';
   for (const [k, v] of Object.entries(dist || {})) {
-    if (v > max) { max = v; dominant = k; }
+    const mappedK = LEGACY_MAP[k] || k;
+    if (v > max) { max = v; dominant = mappedK; }
   }
   return dominant;
 }
 
-export default function CoverageBar({ coverageStats }) {
+export default function CoverageBar({ coverageStats, variant = 'compact' }) {
+  const isHero = variant === 'hero';
+  const height = isHero ? '28px' : '16px';
+  const fontSize = isHero ? '12px' : '10px';
+
   if (!coverageStats || !coverageStats.coverage_tier_distribution) {
     return (
-      <div style={{ marginTop: '12px', marginBottom: '12px', width: '100%' }}>
-        <div style={{ width: '100%', height: '4px', background: '#333', borderRadius: '2px' }} />
-        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px', fontWeight: 600 }}>Unscored</div>
+      <div style={{ width: '100%', height, background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize, fontWeight: 700, color: 'rgba(255,255,255,0.7)' }}>Unscored</span>
       </div>
     );
   }
   
-  const dist = coverageStats.coverage_tier_distribution;
+  const rawDist = coverageStats.coverage_tier_distribution;
   const total = coverageStats.total_coverage || 1;
   const tiers = ['pro_establishment', 'institutional', 'adversarial', 'unscored'];
   
-  const dominant = getDominantTier(dist);
-  const dominantPercentage = Math.round(((dist[dominant] || 0) / total) * 100);
+  // Map legacy keys to new keys safely
+  const dist = {};
+  for (const [k, v] of Object.entries(rawDist)) {
+    const mappedKey = LEGACY_MAP[k] || k;
+    dist[mappedKey] = (dist[mappedKey] || 0) + v;
+  }
   
+  const dominant = getDominantTier(dist);
+
   return (
-    <div style={{ marginTop: '12px', marginBottom: '12px', width: '100%' }}>
-      {/* The Bar */}
-      <div style={{
-        width: '100%',
-        height: '4px',
-        display: 'flex',
-        borderRadius: '2px',
-        overflow: 'hidden',
-        background: '#333'
-      }}>
-        {tiers.map(tier => {
-          const count = dist[tier] || 0;
-          if (count === 0) return null;
-          return (
-            <div key={tier} style={{ width: `${(count/total)*100}%`, height: '100%', background: COVERAGE_TIER_COLORS[tier] }} title={`${TIER_LABELS[tier]}: ${Math.round((count/total)*100)}%`} />
-          );
-        })}
-      </div>
-      
-      {/* The Text Summary */}
-      <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginTop: '6px' }}>
-        <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
-          {total} sources
-          {dominant !== 'unscored' && ` · ${dominantPercentage}% ${TIER_LABELS[dominant]}`}
-        </span>
-      </div>
+    <div style={{
+      width: '100%',
+      height,
+      display: 'flex',
+      overflow: 'hidden',
+      background: '#333'
+    }}>
+      {tiers.map(tier => {
+        const count = dist[tier] || 0;
+        if (count === 0) return null;
+        
+        const percentage = (count / total) * 100;
+        const showLabel = percentage >= 15;
+        
+        let labelText = `${TIER_LABELS[tier]} ${Math.round(percentage)}%`;
+        if (isHero && tier === dominant) {
+          labelText += ` · ${total} sources`;
+        }
+
+        return (
+          <div 
+            key={tier} 
+            style={{ 
+              width: `${percentage}%`, 
+              height: '100%', 
+              background: COVERAGE_TIER_COLORS[tier],
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }} 
+            title={`${TIER_LABELS[tier]}: ${Math.round(percentage)}%`}
+          >
+            {showLabel && (
+              <span style={{ 
+                fontSize, 
+                fontWeight: 700, 
+                color: '#fff', 
+                whiteSpace: 'nowrap',
+                textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                padding: '0 4px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}>
+                {labelText}
+              </span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -102,7 +102,7 @@ function HeroStoryCard({ cluster }) {
 
   return (
     <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', marginBottom: '24px' }}>
-      <div style={{ width: '100%', height: '340px', position: 'relative', background: 'var(--bg-hover)', overflow: 'hidden', borderLeft: `4px solid ${borderColor}` }}>
+      <div style={{ width: '100%', height: '340px', position: 'relative', background: 'var(--bg-hover)', overflow: 'hidden' }}>
         {cluster.image_url && !imgError && (
            <img src={cluster.image_url} onError={() => setImgError(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="hero" />
         )}
@@ -114,12 +114,12 @@ function HeroStoryCard({ cluster }) {
           </div>
         )}
 
-        <h2 style={{ position: 'absolute', bottom: '24px', left: '20px', right: '20px', color: '#fff', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '28px', lineHeight: 1.2, margin: 0, paddingBottom: '16px' }}>
+        <h2 style={{ position: 'absolute', bottom: '36px', left: '20px', right: '20px', color: '#fff', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '28px', lineHeight: 1.2, margin: 0, paddingBottom: '16px' }}>
           {cluster.representative_title}
         </h2>
         
-        <div style={{ position: 'absolute', bottom: '12px', left: '20px', right: '20px' }}>
-          <CoverageBar coverageStats={stats} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+          <CoverageBar variant="hero" coverageStats={stats} />
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
@@ -152,7 +152,7 @@ function StandardStoryItem({ cluster }) {
             {cluster.representative_title}
           </h3>
           <div style={{ marginTop: '0px' }}>
-            <CoverageBar coverageStats={cluster.coverage_stats} />
+            <CoverageBar variant="compact" coverageStats={cluster.coverage_stats} />
           </div>
         </div>
         {cluster.image_url && !imgError && (
@@ -176,7 +176,7 @@ function CompactStoryItem({ cluster }) {
             {cluster.representative_title}
           </h4>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '12px' }}>
-            <div style={{ flexGrow: 1 }}><CoverageBar coverageStats={cluster.coverage_stats} /></div>
+            <div style={{ flexGrow: 1 }}><CoverageBar variant="compact" coverageStats={cluster.coverage_stats} /></div>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', color: 'var(--text-muted)' }}>{cluster.outlet_count} sources</span>
           </div>
         </div>
