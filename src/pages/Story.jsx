@@ -339,11 +339,7 @@ export default function Story() {
                           {TIER_LABELS[story.outlet_coverage_tier] || story.outlet_coverage_tier}
                         </span>
                       )}
-                      {story.outlet_tier && (
-                        <span style={{ background: 'var(--bg-hover)', color: 'var(--text-secondary)', fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Shield size={10} /> {story.outlet_tier}
-                        </span>
-                      )}
+
                     </div>
 
                   </div>
