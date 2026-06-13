@@ -85,3 +85,22 @@ body {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+
+/* Mobile overrides for inline flex layouts */
+@media (max-width: 768px) {
+  .mobile-stack {
+    flex-direction: column !important;
+    gap: 32px !important;
+  }
+  .mobile-stack > div {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    border-right: none !important;
+  }
+  /* Convert the vertical divider into a horizontal divider */
+  .mobile-stack-divider > div:not(:last-child) {
+    border-bottom: 1px solid var(--border) !important;
+    padding-bottom: 32px !important;
+  }
+}

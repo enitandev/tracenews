@@ -237,7 +237,7 @@ export default function Story() {
         </Link>
       </div>
 
-      <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
+      <div className="mobile-stack" style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
         
         {/* LEFT COLUMN: Main Story Content */}
         <div style={{ width: '65%', flexShrink: 0 }}>

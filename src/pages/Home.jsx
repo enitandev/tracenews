@@ -286,7 +286,7 @@ export default function Home() {
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>
       
       {/* PHASE 1: THE TOP FOLD */}
-      <div style={{ display: 'flex', marginBottom: '60px', alignItems: 'flex-start' }}>
+      <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', marginBottom: '60px', alignItems: 'flex-start' }}>
         
         {/* LEFT COLUMN: Daily Briefing & Top News */}
         <div style={{ width: '28%', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
@@ -384,7 +384,7 @@ export default function Home() {
                 </div>
               </div>
               
-              <div style={{ display: 'flex' }}>
+              <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex' }}>
                 {/* Left 60%: Latest Category News */}
                 <div style={{ width: '60%', paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>Latest {cat} News</h3>
