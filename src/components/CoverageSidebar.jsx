@@ -101,7 +101,8 @@ export default function CoverageSidebar({ cluster, stories }) {
           alignItems: 'center',
           gap: '8px',
           width: '56px',
-          minHeight: '80px',
+          height: '280px',
+          overflow: 'hidden',
           border: `1px solid ${color}33`
         }}>
           {displayOutlets.map((s, idx) => {

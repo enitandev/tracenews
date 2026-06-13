@@ -22,7 +22,8 @@ const TAB_TO_KEY = {
   'All': 'all',
   'Adversarial': 'adversarial',
   'Institutional': 'institutional',
-  'Pro-Establishment': 'pro_establishment'
+  'Pro-Establishment': 'pro_establishment',
+  'Bias Comparison': 'comparison'
 };
 
 const GOVERNMENT_COLORS = {
@@ -59,20 +60,21 @@ function formatTimeAgo(dateStr) {
 
 function decodeHtml(html) {
   if (!html) return '';
-  const txt = document.createElement("textarea");
-  txt.innerHTML = html;
-  return txt.value;
+  try {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent || "";
+  } catch (e) {
+    return html.replace(/<[^>]+>/g, '');
+  }
 }
 
 export default function Story() {
-  const { slug } = useParams();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('All');
+  const [activeSummaryTab, setActiveSummaryTab] = useState('Bias Comparison');
+  const [activeFilterTab, setActiveFilterTab] = useState('all');
   const [framingCache, setFramingCache] = useState({});
   const [loadingFraming, setLoadingFraming] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [feedbackTier, setFeedbackTier] = useState('All');
+  const [feedbackTier, setFeedbackTier] = useState('Bias Comparison');
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackStatus, setFeedbackStatus] = useState('');
 
@@ -98,23 +100,23 @@ export default function Story() {
   }, [slug]);
 
   useEffect(() => {
-    if (framingCache[activeTab]) return;
+    if (framingCache[activeSummaryTab]) return;
     if (!data || !data.cluster) return;
 
     setLoadingFraming(true);
-    const alignmentQuery = TAB_TO_KEY[activeTab];
+    const alignmentQuery = TAB_TO_KEY[activeSummaryTab] || 'all'; // Fallback if somehow not mapped
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/${data.cluster.id}/framing?alignment=${alignmentQuery}`)
       .then(res => res.json())
       .then(d => {
-        setFramingCache(prev => ({ ...prev, [activeTab]: d.bullets || [] }));
+        setFramingCache(prev => ({ ...prev, [activeSummaryTab]: d.bullets || [] }));
         setLoadingFraming(false);
       })
       .catch(e => {
         console.error(e);
-        setFramingCache(prev => ({ ...prev, [activeTab]: [] }));
+        setFramingCache(prev => ({ ...prev, [activeSummaryTab]: [] }));
         setLoadingFraming(false);
       });
-  }, [activeTab, data?.cluster?.id]); // Intentionally omitted framingCache
+  }, [activeSummaryTab, data?.cluster?.id]); // Intentionally omitted framingCache
 
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center', fontFamily: 'var(--font-body)', color: 'var(--text-primary)' }}>Loading Story...</div>;
@@ -133,11 +135,11 @@ export default function Story() {
     return Array.from(map.values()).sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
   };
 
-  const filteredStories = getUniqueStories(activeTab === 'All' 
+  const filteredStories = getUniqueStories(activeFilterTab === 'all' 
     ? stories 
     : stories.filter(s => {
         const tier = s.outlet_coverage_tier || 'unscored';
-        return tier === TAB_TO_KEY[activeTab];
+        return tier === activeFilterTab;
       }));
 
   // Layer 1: Coverage Tier Bar (Primary)
@@ -267,28 +269,39 @@ export default function Story() {
             <CoverageBar variant="compact" coverageStats={stats} />
           </div>
 
-          {/* Filter Tabs */}
-          <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-elevated)', padding: '4px', borderRadius: '8px', marginBottom: '24px', width: 'fit-content' }}>
-            {['All', 'Adversarial', 'Institutional', 'Pro-Establishment'].map(tab => (
-              <button 
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  padding: '8px 24px',
-                  background: activeTab === tab ? 'var(--bg-surface)' : 'transparent',
-                  color: activeTab === tab ? 'var(--text-primary)' : 'var(--text-muted)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  boxShadow: activeTab === tab ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {tab}
-              </button>
-            ))}
+          {/* BAR 1: AI Insight Bar */}
+          <div style={{ display: 'flex', gap: '8px', background: 'transparent', marginBottom: '16px', flexWrap: 'wrap' }}>
+            {['Pro-Establishment', 'Institutional', 'Adversarial', 'Bias Comparison'].map(tab => {
+              const isActive = activeSummaryTab === tab;
+              let bg = 'transparent';
+              let color = 'var(--text-muted)';
+              if (isActive) {
+                if (tab === 'Pro-Establishment') { bg = '#2980B9'; color = '#fff'; }
+                else if (tab === 'Institutional') { bg = '#E67E22'; color = '#fff'; }
+                else if (tab === 'Adversarial') { bg = '#C0392B'; color = '#fff'; }
+                else { bg = 'var(--bg-elevated)'; color = 'var(--text-primary)'; }
+              }
+              return (
+                <button 
+                  key={tab}
+                  onClick={() => setActiveSummaryTab(tab)}
+                  style={{
+                    padding: '6px 16px',
+                    background: bg,
+                    color: color,
+                    border: isActive && tab === 'Bias Comparison' ? '1px solid var(--border)' : '1px solid transparent',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    boxShadow: isActive && tab !== 'Bias Comparison' ? '0 2px 4px rgba(0,0,0,0.2)' : 'none'
+                  }}
+                >
+                  {tab}
+                </button>
+              );
+            })}
           </div>
 
           {/* Dynamic AI Framing Box */}
@@ -296,15 +309,15 @@ export default function Story() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
               <span style={{ fontSize: '20px' }}>✨</span>
               <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>
-                {activeTab === 'All' ? 'AI Event Briefing' : `${activeTab} Framing Analysis`}
+                {activeSummaryTab === 'Bias Comparison' ? 'Bias Comparison' : `${activeSummaryTab} Framing Analysis`}
               </h3>
             </div>
             
             {loadingFraming ? (
-              <div style={{ color: '#888', fontStyle: 'italic', fontSize: '14px' }}>Analyzing {activeTab === 'All' ? 'all' : activeTab.toLowerCase()}-aligned coverage...</div>
-            ) : framingCache[activeTab] && framingCache[activeTab].length > 0 ? (
+              <div style={{ color: '#888', fontStyle: 'italic', fontSize: '14px' }}>Analyzing {activeSummaryTab.toLowerCase()}-aligned coverage...</div>
+            ) : framingCache[activeSummaryTab] && framingCache[activeSummaryTab].length > 0 ? (
               <ul style={{ fontSize: '15px', lineHeight: 1.6, color: '#ccc', margin: 0, paddingLeft: '20px' }}>
-                {framingCache[activeTab].map((bullet, i) => (
+                {framingCache[activeSummaryTab].map((bullet, i) => (
                   <li key={i} style={{ marginBottom: '12px' }}>{bullet}</li>
                 ))}
               </ul>
@@ -314,13 +327,13 @@ export default function Story() {
               </p>
             )}
 
-            {!loadingFraming && framingCache[activeTab]?.length > 0 && (
+            {!loadingFraming && framingCache[activeSummaryTab]?.length > 0 && (
               <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #333', textAlign: 'right' }}>
                 <a 
                   href="#" 
                   onClick={(e) => {
                     e.preventDefault();
-                    setFeedbackTier(activeTab);
+                    setFeedbackTier(activeSummaryTab);
                     setFeedbackComment('');
                     setFeedbackStatus('');
                     setIsFeedbackModalOpen(true);
@@ -331,6 +344,48 @@ export default function Story() {
                 </a>
               </div>
             )}
+          </div>
+
+          {/* BAR 2: Article Filter Bar */}
+          <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #333', marginBottom: '24px', paddingBottom: '0' }}>
+            {[
+              { id: 'all', label: 'All', count: null },
+              { id: 'pro_establishment', label: 'Pro-Establishment', count: outletGroups['pro_establishment']?.length || 0 },
+              { id: 'institutional', label: 'Institutional', count: outletGroups['institutional']?.length || 0 },
+              { id: 'adversarial', label: 'Adversarial', count: outletGroups['adversarial']?.length || 0 }
+            ].map(tab => {
+              const isActive = activeFilterTab === tab.id;
+              let borderColor = 'transparent';
+              if (isActive) {
+                if (tab.id === 'pro_establishment') borderColor = '#2980B9';
+                else if (tab.id === 'institutional') borderColor = '#E67E22';
+                else if (tab.id === 'adversarial') borderColor = '#C0392B';
+                else borderColor = 'var(--text-primary)';
+              }
+              
+              const displayText = tab.count !== null ? `${tab.label} ${tab.count}` : tab.label;
+
+              return (
+                <button 
+                  key={tab.id}
+                  onClick={() => setActiveFilterTab(tab.id)}
+                  style={{
+                    padding: '8px 4px',
+                    background: 'transparent',
+                    color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                    border: 'none',
+                    borderBottom: `3px solid ${borderColor}`,
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    marginBottom: '-1px'
+                  }}
+                >
+                  {displayText}
+                </button>
+              );
+            })}
           </div>
 
           {/* Articles List */}
@@ -367,8 +422,8 @@ export default function Story() {
                   {story.summary && (
                     <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 12px 0', lineHeight: 1.5 }}>
                       {(() => {
-                        const clean = decodeHtml(story.summary).replace(/<[^>]+>/g, '').trim();
-                        return clean.length > 180 ? clean.substring(0, 180).trim() + '...' : clean;
+                        const clean = decodeHtml(story.summary).trim();
+                        return clean.length > 150 ? clean.substring(0, 150).trim() + '...' : clean;
                       })()}
                     </p>
                   )}
