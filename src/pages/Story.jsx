@@ -20,9 +20,9 @@ const TIER_LABELS = {
 
 const TAB_TO_KEY = {
   'All': 'all',
-  'Adversarial': 'independent',
-  'Institutional': 'deferential',
-  'Pro-Establishment': 'captured'
+  'Adversarial': 'adversarial',
+  'Institutional': 'institutional',
+  'Pro-Establishment': 'pro_establishment'
 };
 
 const GOVERNMENT_COLORS = {
@@ -99,7 +99,7 @@ export default function Story() {
     if (!data || !data.cluster) return;
 
     setLoadingFraming(true);
-    const alignmentQuery = activeTab.toLowerCase();
+    const alignmentQuery = TAB_TO_KEY[activeTab];
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/${data.cluster.id}/framing?alignment=${alignmentQuery}`)
       .then(res => res.json())
       .then(d => {
