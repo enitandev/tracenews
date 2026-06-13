@@ -170,9 +170,8 @@ function CompactStoryItem({ cluster }) {
           <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 8px 0', lineHeight: 1.3 }}>
             {cluster.representative_title}
           </h4>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '12px' }}>
-            <div style={{ flexGrow: 1 }}><CoverageBar variant="compact" coverageStats={cluster.coverage_stats} /></div>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', color: 'var(--text-muted)' }}>{cluster.outlet_count} sources</span>
+          <div style={{ marginTop: '12px' }}>
+            <CoverageBar variant="compact" coverageStats={cluster.coverage_stats} />
           </div>
         </div>
         {hasAlerts && <AlertTriangle size={14} color="#c0392b" style={{ flexShrink: 0, marginTop: '2px' }} />}
