@@ -286,10 +286,10 @@ export default function Home() {
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>
       
       {/* PHASE 1: THE TOP FOLD */}
-      <div style={{ display: 'flex', gap: '32px', marginBottom: '60px', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', marginBottom: '60px', alignItems: 'flex-start' }}>
         
         {/* LEFT COLUMN: Daily Briefing & Top News */}
-        <div style={{ width: '28%', flexShrink: 0 }}>
+        <div style={{ width: '28%', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
           <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '24px', marginBottom: '16px', color: 'var(--text-primary)' }}>Daily Briefing</h2>
           {loadingTop ? (
             <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', marginBottom: '32px', height: '350px' }}>
@@ -320,7 +320,7 @@ export default function Home() {
         </div>
 
         {/* CENTER COLUMN: Hero & Standard Feed */}
-        <div style={{ width: '47%', flexShrink: 0 }}>
+        <div style={{ width: '47%', flexShrink: 0, paddingLeft: '32px', paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
           {heroCluster ? <HeroStoryCard cluster={heroCluster} /> : <SkeletonHeroStoryCard />}
           <div style={{ marginTop: '24px' }}>
             {standardFeed.map((c, i) => c ? <StandardStoryItem key={c.id} cluster={c} /> : <SkeletonStandardStoryItem key={i} />)}
@@ -328,7 +328,7 @@ export default function Home() {
         </div>
 
         {/* RIGHT COLUMN: Monitoring Spirit */}
-        <div style={{ width: '25%', flexShrink: 0 }}>
+        <div style={{ width: '25%', flexShrink: 0, paddingLeft: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <AlertTriangle size={20} color="#e67e22" />
             <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '20px', color: 'var(--text-primary)', margin: 0 }}>Monitoring Spirit</h2>
@@ -375,7 +375,7 @@ export default function Home() {
         return (
           <React.Fragment key={cat}>
             {/* CATEGORY BLOCK */}
-            <div style={{ marginBottom: '60px', borderTop: '2px solid var(--border-bright)', paddingTop: '32px' }}>
+            <div style={{ marginBottom: '60px', borderTop: '1px solid var(--border)', paddingTop: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '28px', margin: 0, color: 'var(--text-primary)' }}>{cat} News</h2>
                 <div style={{ display: 'flex', gap: '12px' }}>
@@ -384,9 +384,9 @@ export default function Home() {
                 </div>
               </div>
               
-              <div style={{ display: 'flex', gap: '32px' }}>
+              <div style={{ display: 'flex' }}>
                 {/* Left 60%: Latest Category News */}
-                <div style={{ width: '60%' }}>
+                <div style={{ width: '60%', paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>Latest {cat} News</h3>
                   {catHero && <HeroStoryCard cluster={catHero} />}
                   
@@ -396,7 +396,7 @@ export default function Home() {
                 </div>
                 
                 {/* Right 40%: Category Alerts */}
-                <div style={{ width: '40%' }}>
+                <div style={{ width: '40%', paddingLeft: '32px' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>{cat} Spirit Alerts</h3>
                   <div style={{ display: 'flex', gap: '16px' }}>
                     {catWidgets.map(c => (
