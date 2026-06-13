@@ -246,7 +246,7 @@ export default function Story() {
         </Link>
       </div>
 
-      <div className="mobile-stack" style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
+      <div className="mobile-stack" style={{ display: 'flex', gap: '48px', alignItems: 'stretch' }}>
         
         {/* LEFT COLUMN: Main Story Content */}
         <div style={{ width: '65%', flexShrink: 0 }}>
@@ -453,7 +453,7 @@ export default function Story() {
         </div>
 
         {/* RIGHT COLUMN: Sidebar */}
-        <div style={{ width: '35%', flexShrink: 0, borderLeft: '1px solid var(--border)', paddingLeft: '32px' }}>
+        <div style={{ width: '35%', flexShrink: 0, alignSelf: 'stretch', borderLeft: '1px solid var(--border)', paddingLeft: '32px' }}>
           
           <CoverageSidebar cluster={cluster} stories={stories} />
 
