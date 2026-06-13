@@ -186,37 +186,102 @@ function CompactStoryItem({ cluster }) {
   );
 }
 
+// --- SKELETON COMPONENTS ---
+
+function SkeletonHeroStoryCard() {
+  return (
+    <div style={{ marginBottom: '24px' }}>
+      <div style={{ width: '100%', height: '340px', background: 'var(--bg-hover)', borderRadius: '4px', position: 'relative' }}>
+        <div style={{ position: 'absolute', bottom: '36px', left: '20px', right: '20px' }}>
+          <div style={{ width: '80%', height: '28px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
+          <div style={{ width: '60%', height: '28px', background: 'var(--border)', borderRadius: '4px' }}></div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
+        <div style={{ width: '20%', height: '14px', background: 'var(--bg-hover)', borderRadius: '4px' }}></div>
+      </div>
+    </div>
+  );
+}
+
+function SkeletonStandardStoryItem() {
+  return (
+    <div style={{ borderBottom: '1px solid var(--border)', padding: '16px 0', display: 'flex', gap: '16px' }}>
+      <div style={{ flexGrow: 1 }}>
+        <div style={{ width: '25%', height: '12px', background: 'var(--bg-hover)', borderRadius: '4px', marginBottom: '12px' }}></div>
+        <div style={{ width: '90%', height: '20px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
+        <div style={{ width: '75%', height: '20px', background: 'var(--border)', borderRadius: '4px', marginBottom: '16px' }}></div>
+      </div>
+      <div style={{ width: '120px', height: '90px', flexShrink: 0, background: 'var(--bg-hover)', borderRadius: '4px' }}></div>
+    </div>
+  );
+}
+
+function SkeletonCompactStoryItem() {
+  return (
+    <div style={{ padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ width: '85%', height: '16px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
+      <div style={{ width: '60%', height: '16px', background: 'var(--border)', borderRadius: '4px', marginBottom: '16px' }}></div>
+    </div>
+  );
+}
+
+function SkeletonMonitoringAlertCard() {
+  return (
+    <div style={{ borderRadius: '8px', overflow: 'hidden', background: 'var(--bg-elevated)', marginBottom: '16px', border: '2px solid var(--border)', height: '300px' }}>
+      <div style={{ width: '100%', height: '180px', background: 'var(--bg-hover)' }}></div>
+      <div style={{ padding: '12px 14px 16px' }}>
+        <div style={{ width: '40%', height: '18px', background: 'var(--border)', borderRadius: '4px', marginBottom: '12px' }}></div>
+        <div style={{ width: '80%', height: '16px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
+        <div style={{ width: '60%', height: '16px', background: 'var(--border)', borderRadius: '4px' }}></div>
+      </div>
+    </div>
+  );
+}
+
 
 export default function Home() {
   const [clusters, setClusters] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingTop, setLoadingTop] = useState(true);
 
   useEffect(() => {
-    fetch('https://uvicorn-appmain-production-79c6.up.railway.app/clusters/landing?limit=80')
+    // 1. Fetch immediate top fold
+    fetch('https://uvicorn-appmain-production-79c6.up.railway.app/clusters/landing?limit=15')
       .then(r => r.json())
       .then(data => {
-        setClusters(data.clusters || []);
-        setLoading(false);
+        const topClusters = data.clusters || [];
+        setClusters(topClusters);
+        setLoadingTop(false);
+        
+        // 2. Stream in the rest of the content seamlessly
+        fetch('https://uvicorn-appmain-production-79c6.up.railway.app/clusters/feed?offset=15&limit=65')
+          .then(r => r.json())
+          .then(feedData => {
+            const feedClusters = feedData.clusters || [];
+            setClusters(prev => {
+              const ids = new Set(prev.map(c => c.id));
+              const newFeed = feedClusters.filter(c => !ids.has(c.id));
+              return [...prev, ...newFeed];
+            });
+          })
+          .catch(e => console.error("Secondary fetch failed", e));
       })
-      .catch(() => setLoading(false));
+      .catch(() => setLoadingTop(false));
   }, []);
 
-  if (loading) {
-    return <div style={{ padding: '60px', textAlign: 'center', fontFamily: 'var(--font-body)', color: 'var(--text-primary)' }}>Loading TraceNews...</div>;
-  }
-
-  const heroCluster = clusters[0];
-  const briefingCluster = clusters[1];
-  const topNews = clusters.slice(2, 7);
-  const standardFeed = clusters.slice(7, 12);
+  const heroCluster = loadingTop ? null : clusters[0];
+  const briefingCluster = loadingTop ? null : clusters[1];
+  const topNews = loadingTop ? Array(5).fill(null) : clusters.slice(2, 7);
+  const standardFeed = loadingTop ? Array(5).fill(null) : clusters.slice(7, 12);
   
   // Monitoring Spirit Widget
-  const alertClusters = clusters.filter(c => c.monitoring_flags && c.monitoring_flags.length > 0).slice(0, 2);
-  const fallbackAlerts = clusters.slice(12, 14);
-  const rightWidgets = alertClusters.length > 0 ? alertClusters : fallbackAlerts;
+  const alertClusters = loadingTop ? [] : clusters.filter(c => c.monitoring_flags && c.monitoring_flags.length > 0).slice(0, 2);
+  const fallbackAlerts = loadingTop ? Array(2).fill(null) : clusters.slice(12, 14);
+  const rightWidgets = loadingTop ? Array(2).fill(null) : (alertClusters.length > 0 ? alertClusters : fallbackAlerts);
 
   const categories = {};
   clusters.slice(14).forEach(c => {
+    if (!c) return;
     const catName = c.category || 'General';
     if (!categories[catName]) categories[catName] = [];
     categories[catName].push(c);
@@ -232,7 +297,18 @@ export default function Home() {
         {/* LEFT COLUMN: Daily Briefing & Top News */}
         <div style={{ width: '28%', flexShrink: 0 }}>
           <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '24px', marginBottom: '16px', color: 'var(--text-primary)' }}>Daily Briefing</h2>
-          {briefingCluster && (
+          {loadingTop ? (
+            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', marginBottom: '32px', height: '350px' }}>
+              <div style={{ width: '100%', height: '160px', background: 'var(--bg-hover)' }}></div>
+              <div style={{ padding: '16px' }}>
+                <div style={{ width: '40%', height: '12px', background: 'var(--bg-hover)', borderRadius: '4px', marginBottom: '16px' }}></div>
+                <div style={{ width: '90%', height: '18px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
+                <div style={{ width: '70%', height: '18px', background: 'var(--border)', borderRadius: '4px', marginBottom: '16px' }}></div>
+                <div style={{ width: '100%', height: '14px', background: 'var(--bg-hover)', borderRadius: '4px', marginBottom: '6px' }}></div>
+                <div style={{ width: '90%', height: '14px', background: 'var(--bg-hover)', borderRadius: '4px' }}></div>
+              </div>
+            </div>
+          ) : briefingCluster ? (
             <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', marginBottom: '32px' }}>
               <div style={{ width: '100%', height: '160px', background: 'var(--bg-hover)' }}>
                 {briefingCluster.image_url && <img src={briefingCluster.image_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="briefing" />}
@@ -243,30 +319,31 @@ export default function Home() {
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>A major development today regarding {(briefingCluster.category || 'General').toLowerCase()} that is dominating the news cycle across {briefingCluster.outlet_count} different outlets.</p>
               </div>
             </div>
-          )}
+          ) : null}
           
           <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '24px', marginBottom: '16px', color: 'var(--text-primary)' }}>Top News Stories</h2>
-          {topNews.map(c => <CompactStoryItem key={c.id} cluster={c} />)}
+          {topNews.map((c, i) => c ? <CompactStoryItem key={c.id} cluster={c} /> : <SkeletonCompactStoryItem key={i} />)}
         </div>
 
         {/* CENTER COLUMN: Hero & Standard Feed */}
-        <div style={{ width: '44%', flexShrink: 0 }}>
-          {heroCluster && <HeroStoryCard cluster={heroCluster} />}
+        <div style={{ width: '47%', flexShrink: 0 }}>
+          {heroCluster ? <HeroStoryCard cluster={heroCluster} /> : <SkeletonHeroStoryCard />}
           <div style={{ marginTop: '24px' }}>
-            {standardFeed.map(c => <StandardStoryItem key={c.id} cluster={c} />)}
+            {standardFeed.map((c, i) => c ? <StandardStoryItem key={c.id} cluster={c} /> : <SkeletonStandardStoryItem key={i} />)}
           </div>
         </div>
 
         {/* RIGHT COLUMN: Monitoring Spirit */}
-        <div style={{ width: '28%', flexShrink: 0 }}>
+        <div style={{ width: '25%', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '20px', margin: 0, color: 'var(--text-primary)' }}>MONITORING SPIRIT™</h2>
+            <AlertTriangle size={20} color="#e67e22" />
+            <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '20px', color: 'var(--text-primary)', margin: 0 }}>Monitoring Spirit</h2>
           </div>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.4 }}>
-            Algorithmic watchdog detecting brown envelopes, PR coordination, and coverage gaps.
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '24px' }}>
+            Our AI continuously monitors the Nigerian media ecosystem for unusual patterns, PR saturation, and verified coverage gaps.
           </p>
-          {rightWidgets.map(c => <MonitoringAlertCard key={c.id} cluster={c} />)}
+          
+          {rightWidgets.map((c, i) => c ? <MonitoringAlertCard key={c.id} cluster={c} /> : <SkeletonMonitoringAlertCard key={i} />)}
           
           <div style={{ marginTop: '40px' }}>
             <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '22px', marginBottom: '16px', color: 'var(--text-primary)' }}>My News Diet</h2>
