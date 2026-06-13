@@ -69,6 +69,9 @@ function decodeHtml(html) {
 }
 
 export default function Story() {
+  const { slug } = useParams();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeSummaryTab, setActiveSummaryTab] = useState('Bias Comparison');
   const [activeFilterTab, setActiveFilterTab] = useState('all');
   const [framingCache, setFramingCache] = useState({});
