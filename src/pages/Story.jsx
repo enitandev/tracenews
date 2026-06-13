@@ -71,6 +71,10 @@ export default function Story() {
   const [activeTab, setActiveTab] = useState('All');
   const [framingCache, setFramingCache] = useState({});
   const [loadingFraming, setLoadingFraming] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [feedbackTier, setFeedbackTier] = useState('All');
+  const [feedbackComment, setFeedbackComment] = useState('');
+  const [feedbackStatus, setFeedbackStatus] = useState('');
 
   useEffect(() => {
     if (!slug) {
