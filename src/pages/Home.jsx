@@ -126,11 +126,6 @@ function HeroStoryCard({ cluster }) {
         <div style={{ fontFamily: 'var(--font-body)', fontSize: '12px', color: 'var(--text-muted)' }}>
           {cluster.category || 'General'} • {cluster.outlet_count} sources
         </div>
-        {stats.average_independence_score && (
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)', background: 'var(--bg-elevated)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border)' }}>
-            Ind. Score: {stats.average_independence_score}/100
-          </div>
-        )}
       </div>
     </Link>
   );
