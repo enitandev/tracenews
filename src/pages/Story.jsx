@@ -360,6 +360,15 @@ export default function Story() {
                     {story.title}
                   </h4>
                   
+                  {story.summary && (
+                    <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 12px 0', lineHeight: 1.5 }}>
+                      {(() => {
+                        const clean = decodeHtml(story.summary).replace(/<[^>]+>/g, '').trim();
+                        return clean.length > 180 ? clean.substring(0, 180).trim() + '...' : clean;
+                      })()}
+                    </p>
+                  )}
+
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px' }}>
                     <span style={{ color: 'var(--text-muted)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Clock size={12} /> {formatTimeAgo(story.published_at)}
