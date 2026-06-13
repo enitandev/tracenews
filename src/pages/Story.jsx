@@ -94,7 +94,6 @@ export default function Story() {
   }, [slug]);
 
   useEffect(() => {
-    if (activeTab === 'All') return;
     if (framingCache[activeTab]) return;
     if (!data || !data.cluster) return;
 
@@ -297,12 +296,8 @@ export default function Story() {
               </h3>
             </div>
             
-            {activeTab === 'All' ? (
-              <p style={{ fontSize: '15px', lineHeight: 1.6, color: '#ccc', margin: 0 }}>
-                {decodeHtml(cluster.ai_summary || (stories[0]?.summary ? stories[0]?.summary?.replace(/<[^>]+>/g, '').substring(0, 300) + "..." : "No automated summary available for this story."))}
-              </p>
-            ) : loadingFraming ? (
-              <div style={{ color: '#888', fontStyle: 'italic', fontSize: '14px' }}>Analyzing {activeTab.toLowerCase()}-aligned coverage...</div>
+            {loadingFraming ? (
+              <div style={{ color: '#888', fontStyle: 'italic', fontSize: '14px' }}>Analyzing {activeTab === 'All' ? 'all' : activeTab.toLowerCase()}-aligned coverage...</div>
             ) : framingCache[activeTab] && framingCache[activeTab].length > 0 ? (
               <ul style={{ fontSize: '15px', lineHeight: 1.6, color: '#ccc', margin: 0, paddingLeft: '20px' }}>
                 {framingCache[activeTab].map((bullet, i) => (
@@ -311,14 +306,24 @@ export default function Story() {
               </ul>
             ) : (
               <p style={{ fontSize: '14px', color: '#888', margin: 0, fontStyle: 'italic' }}>
-                No sufficient coverage from {activeTab} outlets to analyze framing.
+                No sufficient coverage to analyze framing.
               </p>
             )}
 
-            {activeTab !== 'All' && !loadingFraming && framingCache[activeTab]?.length > 0 && (
+            {!loadingFraming && framingCache[activeTab]?.length > 0 && (
               <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #333', textAlign: 'right' }}>
-                <a href="#" style={{ color: '#888', fontSize: '12px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <Info size={12} /> Does this comparison seem wrong?
+                <a 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setFeedbackTier(activeTab);
+                    setFeedbackComment('');
+                    setFeedbackStatus('');
+                    setIsFeedbackModalOpen(true);
+                  }}
+                  style={{ color: '#888', fontSize: '12px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                >
+                  <Info size={12} /> Does this summary seem wrong?
                 </a>
               </div>
             )}
@@ -396,6 +401,81 @@ export default function Story() {
 
         </div>
       </div>
+      {/* Feedback Modal */}
+      {isFeedbackModalOpen && (
+        <div 
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
+          onClick={() => setIsFeedbackModalOpen(false)}
+        >
+          <div 
+            style={{ background: 'var(--bg-elevated)', borderRadius: '12px', padding: '24px', width: '90%', maxWidth: '400px', border: '1px solid var(--border)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)' }}>Report an issue</h3>
+              <button onClick={() => setIsFeedbackModalOpen(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>✕</button>
+            </div>
+            
+            {feedbackStatus === 'sent' ? (
+              <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--accent-primary)' }}>
+                <p>Thanks - report sent!</p>
+              </div>
+            ) : (
+              <>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: 0, marginBottom: '20px' }}>
+                  See something that seems off? Let us know, and we'll take care of the rest.
+                </p>
+                
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-primary)' }}>Which summary has an issue?</label>
+                <select 
+                  value={feedbackTier} 
+                  onChange={(e) => setFeedbackTier(e.target.value)}
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-primary)', marginBottom: '16px' }}
+                >
+                  <option value="All">All / Event Briefing</option>
+                  <option value="Adversarial">Adversarial</option>
+                  <option value="Institutional">Institutional</option>
+                  <option value="Pro-Establishment">Pro-Establishment</option>
+                </select>
+
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-primary)' }}>Additional Comments</label>
+                <textarea 
+                  maxLength={500}
+                  value={feedbackComment}
+                  onChange={(e) => setFeedbackComment(e.target.value)}
+                  placeholder="Tell us what's wrong..."
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-primary)', minHeight: '100px', resize: 'vertical', boxSizing: 'border-box' }}
+                />
+                <div style={{ textAlign: 'right', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px', marginTop: '4px' }}>
+                  {feedbackComment.length}/500
+                </div>
+
+                <button 
+                  disabled={feedbackStatus === 'sending'}
+                  onClick={() => {
+                    setFeedbackStatus('sending');
+                    fetch('https://uvicorn-appmain-production-79c6.up.railway.app/framing/feedback', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ cluster_id: cluster.id, tier: TAB_TO_KEY[feedbackTier] || feedbackTier, comment: feedbackComment })
+                    }).then(() => {
+                      setFeedbackStatus('sent');
+                      setTimeout(() => setIsFeedbackModalOpen(false), 2000);
+                    }).catch(err => {
+                      console.error(err);
+                      setFeedbackStatus('sent'); // Close anyway
+                      setTimeout(() => setIsFeedbackModalOpen(false), 2000);
+                    });
+                  }}
+                  style={{ width: '100%', padding: '12px', background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: feedbackStatus === 'sending' ? 'not-allowed' : 'pointer' }}
+                >
+                  {feedbackStatus === 'sending' ? 'Sending...' : 'Send report'}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
