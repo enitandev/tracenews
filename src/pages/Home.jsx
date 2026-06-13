@@ -275,7 +275,7 @@ export default function Home() {
 
   const categories = {};
   clusters.slice(14).forEach(c => {
-    if (!c) return;
+    if (!c || !c.image_url) return;
     const catName = c.category || 'General';
     if (!categories[catName]) categories[catName] = [];
     categories[catName].push(c);
