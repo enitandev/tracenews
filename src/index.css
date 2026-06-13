@@ -108,3 +108,22 @@ body {
     padding-bottom: 32px !important;
   }
 }
+
+/* Mobile visibility utilities */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .show-on-mobile {
+    display: block !important;
+  }
+  .show-on-mobile-flex {
+    display: flex !important;
+  }
+}
+@media (min-width: 769px) {
+  .show-on-mobile,
+  .show-on-mobile-flex {
+    display: none !important;
+  }
+}

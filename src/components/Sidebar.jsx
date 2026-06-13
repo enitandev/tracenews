@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 
 const LINKS = [
   'Login', 'About TraceNews', 'Subscribe', 'Website Settings', 'Contact us', 
@@ -9,7 +10,13 @@ const LINKS = [
   'Discover more topics', 'Product'
 ];
 
-export default function Sidebar({ isOpen, onClose }) {
+export default function Sidebar({ 
+  isOpen, onClose, 
+  searchQuery, setSearchQuery, 
+  searchResults, setIsSearchOpen, isSearchOpen 
+}) {
+  const { theme, toggleTheme } = useTheme();
+
   // Prevent scrolling when sidebar is open
   useEffect(() => {
     if (isOpen) {
@@ -73,6 +80,49 @@ export default function Sidebar({ isOpen, onClose }) {
           >
             <X size={20} />
           </button>
+        </div>
+
+        {/* Mobile-only Search and Theme controls */}
+        <div className="show-on-mobile" style={{ padding: '20px', borderBottom: '1px solid #444' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '16px', fontSize: '14px' }}>
+            <span style={{ opacity: 0.7 }}>Theme:</span>
+            <button onClick={() => toggleTheme('light')} style={{ background: 'none', border: 'none', color: theme === 'light' ? '#fff' : '#e0e0e0', opacity: theme === 'light' ? 1 : 0.6, cursor: 'pointer', fontWeight: theme === 'light' ? 600 : 400 }}>Light</button>
+            <button onClick={() => toggleTheme('dark')} style={{ background: 'none', border: 'none', color: theme === 'dark' ? '#fff' : '#e0e0e0', opacity: theme === 'dark' ? 1 : 0.6, cursor: 'pointer', fontWeight: theme === 'dark' ? 600 : 400 }}>Dark</button>
+            <button style={{ background: 'none', border: 'none', color: '#e0e0e0', opacity: 0.6, cursor: 'pointer' }}>Auto</button>
+          </div>
+          
+          <div style={{ position: 'relative', width: '100%' }}>
+            <Search size={18} color="#888" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+            <input 
+              type="text" 
+              placeholder="Search TraceNews..." 
+              value={searchQuery || ''}
+              onChange={(e) => {
+                if (setSearchQuery) setSearchQuery(e.target.value);
+                if (setIsSearchOpen) setIsSearchOpen(true);
+              }}
+              onFocus={() => { if (setIsSearchOpen) setIsSearchOpen(true); }}
+              style={{ width: '100%', padding: '10px 10px 10px 38px', borderRadius: '4px', border: '1px solid #444', background: '#333', color: '#fff', outline: 'none', fontSize: '14px' }} 
+            />
+            {isSearchOpen && searchResults && searchResults.length > 0 && searchQuery && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', background: '#222', border: '1px solid #444', borderRadius: '6px', zIndex: 100, maxHeight: '300px', overflowY: 'auto', boxShadow: '0 10px 20px rgba(0,0,0,0.5)' }}>
+                {searchResults.map(c => (
+                  <Link 
+                    key={c.id} 
+                    to={`/story/${c.slug}`} 
+                    onClick={() => {
+                      if (setIsSearchOpen) setIsSearchOpen(false);
+                      onClose();
+                    }}
+                    style={{ display: 'block', padding: '12px 16px', borderBottom: '1px solid #333', textDecoration: 'none', color: '#fff', textAlign: 'left' }}
+                  >
+                    <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '4px', lineHeight: 1.3 }}>{c.representative_title}</div>
+                    <div style={{ fontSize: '11px', color: '#aaa' }}>{c.outlet_count} sources • {c.category || 'General'}</div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <nav style={{ padding: '12px 0', display: 'flex', flexDirection: 'column' }}>

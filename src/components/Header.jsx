@@ -49,7 +49,7 @@ export default function Header() {
       </div>
 
       {/* TIER 2: Utility Bar */}
-      <div style={{ background: 'var(--header-util)', padding: '8px 20px', borderBottom: '1px solid var(--border)' }}>
+      <div className="hide-on-mobile" style={{ background: 'var(--header-util)', padding: '8px 20px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'var(--header-util-text)', fontSize: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             <span style={{ cursor: 'pointer' }}>Browser Extension</span>
@@ -85,7 +85,7 @@ export default function Header() {
               </span>
             </div>
             
-            <nav style={{ display: 'flex', gap: '20px', fontWeight: 600, fontSize: '15px' }}>
+            <nav className="hide-on-mobile" style={{ display: 'flex', gap: '20px', fontWeight: 600, fontSize: '15px' }}>
               <a href="/" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: '2px solid var(--text-primary)', paddingBottom: '4px' }}>Home</a>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>For You</a>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Local</a>
@@ -94,7 +94,7 @@ export default function Header() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, justifyContent: 'flex-end' }}>
-            <div ref={searchRef} style={{ position: 'relative', width: '300px' }}>
+            <div ref={searchRef} className="hide-on-mobile" style={{ position: 'relative', width: '300px' }}>
               <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
               <input 
                 type="text" 
@@ -124,8 +124,8 @@ export default function Header() {
                 </div>
               )}
             </div>
-            <button style={{ background: 'var(--text-primary)', color: 'var(--bg-base)', border: 'none', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Subscribe</button>
-            <button style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border)', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Login</button>
+            <button className="hide-on-mobile" style={{ background: 'var(--text-primary)', color: 'var(--bg-base)', border: 'none', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Subscribe</button>
+            <button className="hide-on-mobile" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border)', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Login</button>
           </div>
 
         </div>
@@ -145,7 +145,15 @@ export default function Header() {
         </div>
       </div>
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        searchResults={searchResults}
+        setIsSearchOpen={setIsSearchOpen}
+        isSearchOpen={isSearchOpen}
+      />
     </header>
   );
 }
