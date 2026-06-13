@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
+import CoverageSidebar from '../components/CoverageSidebar';
 
 const COVERAGE_TIER_COLORS = {
   'pro_establishment': '#2980B9',
@@ -372,46 +373,7 @@ export default function Story() {
         {/* RIGHT COLUMN: Sidebar */}
         <div style={{ width: '35%', flexShrink: 0 }}>
           
-          {/* Coverage Overview Card */}
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', marginBottom: '32px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 24px 0' }}>Coverage Intelligence</h3>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', paddingBottom: '24px', borderBottom: '1px solid var(--border)' }}>
-              <div>
-                <div style={{ fontSize: '32px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{cluster.outlet_count}</div>
-                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 600 }}>Total Sources</div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '32px', fontWeight: 800, color: '#27AE60', lineHeight: 1 }}>{stats.average_independence_score}</div>
-                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 600 }}>Avg Independence Score</div>
-              </div>
-            </div>
-
-            {renderLayer1()}
-            {renderLayer2()}
-            {renderLayer3()}
-
-          </div>
-
-          {/* Media Outlets Visual Breakdown */}
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', marginBottom: '32px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 20px 0' }}>Who's covering this?</h3>
-            
-            {['adversarial', 'institutional', 'pro_establishment'].map(tier => outletGroups[tier] && outletGroups[tier].length > 0 && (
-              <div key={tier} style={{ marginBottom: '20px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: COVERAGE_TIER_COLORS[tier], marginBottom: '12px', textTransform: 'uppercase' }}>
-                  {TIER_LABELS[tier]} ({outletGroups[tier].length})
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {outletGroups[tier].map(name => (
-                    <span key={name} style={{ background: 'var(--bg-hover)', color: 'var(--text-secondary)', padding: '6px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: 600, border: '1px solid var(--border)' }}>
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <CoverageSidebar cluster={cluster} stories={stories} />
 
           {/* Monitoring Spirit Details Panel */}
           <div style={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: '8px', padding: '24px', color: '#fff' }}>
