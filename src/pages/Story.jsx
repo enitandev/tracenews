@@ -225,7 +225,7 @@ export default function Story() {
 
   // Outlet Logos grouping (By Coverage Tier)
   const groupOutlets = () => {
-    const groups = { 'independent': [], 'deferential': [], 'captured': [], 'unscored': [] };
+    const groups = { 'pro_establishment': [], 'institutional': [], 'adversarial': [], 'unscored': [] };
     stories.forEach(s => {
       const tier = s.outlet_coverage_tier || 'unscored';
       if (groups[tier] && !groups[tier].includes(s.outlet_name)) {
