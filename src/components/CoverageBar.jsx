@@ -96,7 +96,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact' }) {
   if (isUnscored) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
-        <div style={{ width: '56px', height: '6px', background: '#999999', borderRadius: '3px' }}></div>
+        <div style={{ width: '80px', height: '8px', background: '#999999', borderRadius: '3px' }}></div>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>
           Unscored
         </span>
@@ -110,7 +110,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact' }) {
   
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
-      <div style={{ width: '56px', height: '6px', display: 'flex', overflow: 'hidden', borderRadius: '3px', background: '#333' }}>
+      <div style={{ width: '80px', height: '8px', display: 'flex', overflow: 'hidden', borderRadius: '3px', background: '#333' }}>
         {tiers.map(tier => {
           const count = dist[tier] || 0;
           if (count === 0) return null;
