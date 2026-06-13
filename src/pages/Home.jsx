@@ -420,7 +420,7 @@ export default function Home() {
             {/* INTERSTITIAL BLOCK */}
             {interstitialStories.length > 0 && (
               <div style={{ marginBottom: '60px', borderTop: '2px solid var(--border-bright)', paddingTop: '32px' }}>
-                <div style={{ display: 'flex', gap: '48px' }}>
+                <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', gap: '48px' }}>
                   
                   {/* Left Column: Feed */}
                   <div style={{ width: isFirstInterstitial ? '65%' : '100%' }}>
