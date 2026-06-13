@@ -308,7 +308,7 @@ export default function Story() {
           </div>
 
           {/* Dynamic AI Framing Box */}
-          <div style={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: '8px', padding: '24px', marginBottom: '40px', color: '#fff' }}>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', marginBottom: '40px', color: 'var(--text-primary)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
               <span style={{ fontSize: '20px' }}>✨</span>
               <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>
@@ -319,7 +319,7 @@ export default function Story() {
             {loadingFraming ? (
               <div style={{ color: '#888', fontStyle: 'italic', fontSize: '14px' }}>Analyzing {activeSummaryTab.toLowerCase()}-aligned coverage...</div>
             ) : framingCache[activeSummaryTab] && framingCache[activeSummaryTab].length > 0 ? (
-              <ul style={{ fontSize: '15px', lineHeight: 1.6, color: '#ccc', margin: 0, paddingLeft: '20px' }}>
+              <ul style={{ fontSize: '15px', lineHeight: 1.6, color: 'var(--text-secondary)', margin: 0, paddingLeft: '20px' }}>
                 {framingCache[activeSummaryTab].map((bullet, i) => (
                   <li key={i} style={{ marginBottom: '12px' }}>{bullet}</li>
                 ))}
@@ -331,7 +331,7 @@ export default function Story() {
             )}
 
             {!loadingFraming && framingCache[activeSummaryTab]?.length > 0 && (
-              <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #333', textAlign: 'right' }}>
+              <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border)', textAlign: 'right' }}>
                 <a 
                   href="#" 
                   onClick={(e) => {
@@ -398,22 +398,28 @@ export default function Story() {
             {filteredStories.map(story => (
               <a key={story.id} href={story.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'block' }}>
                 <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-2px)' } }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>{story.outlet_name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-elevated)', borderRadius: '20px', border: '1px solid var(--border)', padding: '4px 12px 4px 4px' }}>
+                      {story.outlet_logo_url ? (
+                        <img src={story.outlet_logo_url} alt={story.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
+                      ) : (
+                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: story.outlet_coverage_tier && story.outlet_coverage_tier !== 'unscored' ? COVERAGE_TIER_COLORS[story.outlet_coverage_tier] : '#888', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800 }}>
+                          {story.outlet_name ? story.outlet_name.charAt(0).toUpperCase() : '?'}
+                        </div>
+                      )}
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{story.outlet_name}</span>
                       {story.broke_story_first && (
-                        <span style={{ background: '#F39C12', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>First to break</span>
+                        <span style={{ background: '#F39C12', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', marginLeft: '4px' }}>First to break</span>
                       )}
                     </div>
                     
                     <div style={{ display: 'flex', gap: '8px' }}>
                       {story.outlet_coverage_tier && story.outlet_coverage_tier !== 'unscored' && (
-                        <span style={{ border: `1px solid ${COVERAGE_TIER_COLORS[story.outlet_coverage_tier]}`, color: COVERAGE_TIER_COLORS[story.outlet_coverage_tier], fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '12px', textTransform: 'uppercase' }}>
+                        <span style={{ border: `1px solid ${COVERAGE_TIER_COLORS[story.outlet_coverage_tier]}`, background: COVERAGE_TIER_COLORS[story.outlet_coverage_tier], color: '#fff', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '12px', textTransform: 'uppercase' }}>
                           {TIER_LABELS[story.outlet_coverage_tier] || story.outlet_coverage_tier}
                         </span>
                       )}
-
                     </div>
 
                   </div>
@@ -447,12 +453,12 @@ export default function Story() {
         </div>
 
         {/* RIGHT COLUMN: Sidebar */}
-        <div style={{ width: '35%', flexShrink: 0 }}>
+        <div style={{ width: '35%', flexShrink: 0, borderLeft: '1px solid var(--border)', paddingLeft: '32px' }}>
           
           <CoverageSidebar cluster={cluster} stories={stories} />
 
-          {/* Monitoring Spirit Details Panel */}
-          <div style={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: '8px', padding: '24px', color: '#fff' }}>
+          {/* Monitoring Spirit Layer */}
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', color: 'var(--text-primary)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: flags.length > 0 ? '20px' : '0' }}>
               <Info size={20} color="#e67e22" />
               <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0 }}>Monitoring Spirit</h3>
@@ -462,9 +468,9 @@ export default function Story() {
               <p style={{ fontSize: '13px', color: '#888', margin: '16px 0 0 0', fontStyle: 'italic' }}>No alerts detected for this story.</p>
             ) : (
               flags.map((flag, idx) => (
-                <div key={idx} style={{ marginBottom: idx === flags.length - 1 ? 0 : '16px', borderBottom: idx === flags.length - 1 ? 'none' : '1px solid #333', paddingBottom: idx === flags.length - 1 ? 0 : '16px' }}>
+                <div key={idx} style={{ marginBottom: idx === flags.length - 1 ? 0 : '16px', borderBottom: idx === flags.length - 1 ? 'none' : '1px solid var(--border)', paddingBottom: idx === flags.length - 1 ? 0 : '16px' }}>
                   <h4 style={{ color: SEVERITY_COLORS[flag.severity] || '#fff', fontSize: '14px', fontWeight: 700, margin: '0 0 8px 0', textTransform: 'uppercase' }}>{flag.type.replace('_', ' ')}</h4>
-                  <p style={{ fontSize: '13px', lineHeight: 1.5, color: '#ccc', margin: 0 }}>{flag.message}</p>
+                  <p style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>{flag.message}</p>
                 </div>
               ))
             )}
