@@ -261,8 +261,9 @@ export default function Story() {
     const seenOutlets = new Set();
     stories.forEach(s => {
       const tier = s.outlet_coverage_tier || 'unscored';
-      if (groups[tier] && !seenOutlets.has(s.outlet_name)) {
-        seenOutlets.add(s.outlet_name);
+      const outletId = (s.outlets && s.outlets.slug) || s.outlet_slug || s.outlet_name;
+      if (groups[tier] && !seenOutlets.has(outletId)) {
+        seenOutlets.add(outletId);
         groups[tier].push(s);
       }
     });
@@ -579,8 +580,22 @@ export default function Story() {
                   {story.summary && (
                     <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: 1.5 }}>
                       {(() => {
+                        if (!story.summary) return null;
                         let clean = decodeHtml(story.summary);
                         clean = clean.replace(/https?:\/\/\S+/g, '').trim();
+                        
+                        const dateRegex = /^(?:(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s*)?(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s*\d{4})?\s*/i;
+                        
+                        for (let i = 0; i < 2; i++) {
+                          if (story.outlet_name) {
+                            const nameRegex = new RegExp(`^${story.outlet_name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'i');
+                            clean = clean.replace(nameRegex, '');
+                          }
+                          clean = clean.replace(dateRegex, '');
+                          clean = clean.replace(/^[\s|\-:,.]+/, '').trim();
+                        }
+                        
+                        if (clean.length < 20) return null;
                         return clean.length > 160 ? clean.substring(0, 160).trim() + '...' : clean;
                       })()}
                     </p>
