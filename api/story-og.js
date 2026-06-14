@@ -24,7 +24,12 @@ export default async function handler(req, res) {
   const isCrawler = crawlers.some(bot => ua.includes(bot))
   
   if (!isCrawler) {
-    res.redirect(302, `https://tracenews.ng/story/${slug}`)
+    // Fetch the SPA index.html directly from the Vercel CDN
+    const response = await fetch('https://tracenews.ng/')
+    const html = await response.text()
+    
+    res.setHeader('Content-Type', 'text/html')
+    res.status(200).send(html)
     return
   }
   

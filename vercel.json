@@ -2,13 +2,6 @@
   "rewrites": [
     {
       "source": "/story/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|googlebot).*"
-        }
-      ],
       "destination": "/api/story-og?slug=:slug"
     },
     {
