@@ -35,10 +35,10 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
   // If outletGroups isn't passed for some reason, fallback to basic grouping
   const groups = outletGroups || { 'pro_establishment': [], 'institutional': [], 'adversarial': [] };
   
-  // Total Sources explicitly from outletGroups (excluding unscored)
   const total = (groups['pro_establishment']?.length || 0) + 
                 (groups['institutional']?.length || 0) + 
-                (groups['adversarial']?.length || 0) || 1;
+                (groups['adversarial']?.length || 0) +
+                (groups['blog']?.length || 0) || 1;
 
   const renderLogoPill = (tier, label) => {
     const outlets = groups[tier] || [];
@@ -142,6 +142,10 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
           <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['adversarial'] }}>Adversarial</span>
           <span style={{ fontWeight: 800 }}>{groups['adversarial']?.length || 0}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>Blogs & Forums</span>
+          <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{groups['blog']?.length || 0}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
           <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14}/> Last Updated</span>

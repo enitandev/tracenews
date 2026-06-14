@@ -363,7 +363,8 @@ export default function Story() {
               { id: 'all', label: 'All', count: null },
               { id: 'pro_establishment', label: 'Pro-Establishment', count: outletGroups['pro_establishment']?.length || 0 },
               { id: 'institutional', label: 'Institutional', count: outletGroups['institutional']?.length || 0 },
-              { id: 'adversarial', label: 'Adversarial', count: outletGroups['adversarial']?.length || 0 }
+              { id: 'adversarial', label: 'Adversarial', count: outletGroups['adversarial']?.length || 0 },
+              ...(outletGroups['blog']?.length > 0 ? [{ id: 'blog', label: 'Blog', count: outletGroups['blog'].length }] : [])
             ].map(tab => {
               const isActive = activeFilterTab === tab.id;
               let borderColor = 'transparent';
@@ -371,6 +372,7 @@ export default function Story() {
                 if (tab.id === 'pro_establishment') borderColor = '#2980B9';
                 else if (tab.id === 'institutional') borderColor = '#E67E22';
                 else if (tab.id === 'adversarial') borderColor = '#C0392B';
+                else if (tab.id === 'blog') borderColor = '#888888';
                 else borderColor = 'var(--text-primary)';
               }
               
@@ -381,9 +383,10 @@ export default function Story() {
                   key={tab.id}
                   onClick={() => setActiveFilterTab(tab.id)}
                   style={{
-                    padding: '8px 4px',
-                    background: 'transparent',
-                    color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                    padding: '8px 12px',
+                    borderRadius: (isActive && tab.id === 'blog') ? '6px 6px 0 0' : '0',
+                    background: (isActive && tab.id === 'blog') ? '#888888' : 'transparent',
+                    color: (isActive && tab.id === 'blog') ? '#ffffff' : (isActive ? 'var(--text-primary)' : 'var(--text-muted)'),
                     border: 'none',
                     borderBottom: `3px solid ${borderColor}`,
                     fontWeight: 600,
@@ -403,8 +406,10 @@ export default function Story() {
                       padding: '1px 7px',
                       background: tab.id === 'pro_establishment' ? 'rgba(41,128,185,0.2)' :
                                   tab.id === 'institutional' ? 'rgba(230,126,34,0.2)' :
-                                  tab.id === 'adversarial' ? 'rgba(192,57,43,0.2)' : 'var(--bg-elevated)',
-                      color: tab.id === 'all' ? 'var(--text-primary)' : COVERAGE_TIER_COLORS[tab.id],
+                                  tab.id === 'adversarial' ? 'rgba(192,57,43,0.2)' : 
+                                  tab.id === 'blog' ? 'rgba(136,136,136,0.2)' : 'var(--bg-elevated)',
+                      color: tab.id === 'all' ? 'var(--text-primary)' : 
+                             tab.id === 'blog' ? '#888888' : COVERAGE_TIER_COLORS[tab.id],
                       fontSize: '11px',
                       fontWeight: 700
                     }}>
@@ -441,8 +446,13 @@ export default function Story() {
                     
                     <div style={{ display: 'flex', gap: '8px' }}>
                       {story.outlet_coverage_tier && story.outlet_coverage_tier !== 'unscored' && (
-                        <span style={{ border: `1px solid ${COVERAGE_TIER_COLORS[story.outlet_coverage_tier]}`, background: COVERAGE_TIER_COLORS[story.outlet_coverage_tier], color: '#fff', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '12px', textTransform: 'uppercase' }}>
-                          {TIER_LABELS[story.outlet_coverage_tier] || story.outlet_coverage_tier}
+                        <span style={{
+                          border: story.outlet_coverage_tier === 'blog' ? '1px solid #888888' : `1px solid ${COVERAGE_TIER_COLORS[story.outlet_coverage_tier]}`,
+                          background: story.outlet_coverage_tier === 'blog' ? 'rgba(136,136,136,0.15)' : COVERAGE_TIER_COLORS[story.outlet_coverage_tier],
+                          color: story.outlet_coverage_tier === 'blog' ? '#888888' : '#fff',
+                          fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '12px', textTransform: 'uppercase'
+                        }}>
+                          {story.outlet_coverage_tier === 'blog' ? 'Blog' : (TIER_LABELS[story.outlet_coverage_tier] || story.outlet_coverage_tier)}
                         </span>
                       )}
                     </div>
