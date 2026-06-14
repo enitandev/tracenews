@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info } from 'lucide-react';
+import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info, MapPin } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
 
@@ -356,7 +356,64 @@ export default function Story() {
     );
   };
 
+  // ADDITION 1: "Who broke the story?"
+  const sortedStories = [...stories].sort((a, b) => {
+    const tA = new Date(a.published_at || a.created_at).getTime();
+    const tB = new Date(b.published_at || b.created_at).getTime();
+    return tA - tB;
+  });
+  
+  let firstOutlets = [];
+  if (sortedStories.length > 0) {
+    const earliestTime = new Date(sortedStories[0].published_at || sortedStories[0].created_at).getTime();
+    const within30Mins = sortedStories.filter(s => {
+      const t = new Date(s.published_at || s.created_at).getTime();
+      return t - earliestTime <= 30 * 60 * 1000;
+    });
+    
+    const seenOutlets = new Set();
+    within30Mins.forEach(s => {
+      if (s.outlet_name && !seenOutlets.has(s.outlet_name)) {
+        seenOutlets.add(s.outlet_name);
+        firstOutlets.push(s);
+      }
+    });
+  }
 
+  // ADDITION 2: "Geographic Coverage"
+  const geoStats = { national: 0, regions: {} };
+  const seenOutletsGeo = new Set();
+  stories.forEach(s => {
+    if (s.outlets_full && s.outlets_full.geopolitical_lean && s.outlet_name) {
+      if (!seenOutletsGeo.has(s.outlet_name)) {
+        seenOutletsGeo.add(s.outlet_name);
+        const lean = s.outlets_full.geopolitical_lean;
+        if (lean.toLowerCase() === 'national' || lean.toLowerCase() === 'federal') {
+          geoStats.national++;
+        } else {
+          geoStats.regions[lean] = (geoStats.regions[lean] || 0) + 1;
+        }
+      }
+    }
+  });
+  
+  const totalRegional = Object.values(geoStats.regions).reduce((a, b) => a + b, 0);
+  const totalGeo = geoStats.national + totalRegional;
+  
+  let geoSummary = "Sources are mostly National";
+  if (totalRegional > geoStats.national) {
+    geoSummary = "Sources are mostly Regional";
+  }
+  
+  let skewedRegion = null;
+  if (totalRegional > 0) {
+    for (const [region, count] of Object.entries(geoStats.regions)) {
+      if (count > totalRegional / 2) {
+        skewedRegion = region;
+        break;
+      }
+    }
+  }
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
@@ -660,6 +717,8 @@ export default function Story() {
                         let clean = decodeHtml(story.summary);
                         clean = clean.replace(/https?:\/\/\S+/g, '').trim();
                         
+                        clean = clean.replace(/^(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s*\d{0,4}\s*[\(\[\{]?[a-z\s\.]+[\)\]\}]?\s*[—\-–:]\s*/i, '').trim();
+                        
                         if (story.title) {
                           const normalize = str => str.replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
                           const tWords = normalize(story.title).toLowerCase().split(' ').filter(w => w.length > 0);
@@ -738,6 +797,54 @@ export default function Story() {
               ))
             )}
           </div>
+
+          {/* ADDITION 1: Who broke the story? */}
+          {firstOutlets.length > 0 && (
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', color: 'var(--text-primary)', marginTop: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <Clock size={16} color="var(--text-muted)" />
+                <h3 style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>Who broke the story?</h3>
+              </div>
+              
+              {firstOutlets.length === 1 ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {firstOutlets[0].outlet_logo_url && (
+                    <img src={firstOutlets[0].outlet_logo_url} alt="" style={{ width: '20px', height: '20px', borderRadius: '4px', objectFit: 'contain' }} />
+                  )}
+                  <span style={{ fontSize: '13px' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{firstOutlets[0].outlet_name}</span> broke this story <span style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(firstOutlets[0].published_at || firstOutlets[0].created_at)}</span>
+                  </span>
+                </div>
+              ) : (
+                <div style={{ fontSize: '13px' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{firstOutlets[0].outlet_name}</span> and <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{firstOutlets[1].outlet_name}</span> were first to cover this story
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ADDITION 2: Geographic Coverage */}
+          {totalGeo > 0 && (
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', color: 'var(--text-primary)', marginTop: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <MapPin size={16} color="var(--text-muted)" />
+                <h3 style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>Geographic Coverage</h3>
+              </div>
+              <div style={{ fontSize: '13px', marginBottom: totalRegional > 0 ? '8px' : '0' }}>
+                {geoSummary}
+              </div>
+              {totalRegional > 0 && (
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  {geoStats.national} national · {totalRegional} regional outlets
+                  {skewedRegion && (
+                    <div style={{ marginTop: '4px' }}>
+                      Coverage skewed toward {skewedRegion} outlets
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </div>
