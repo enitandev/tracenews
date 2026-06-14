@@ -145,9 +145,28 @@ export default function Story() {
         return tier === activeFilterTab;
       }));
 
+  // Outlet Logos grouping (By Coverage Tier)
+  const groupOutlets = () => {
+    const groups = { 'pro_establishment': [], 'institutional': [], 'adversarial': [], 'unscored': [] };
+    const seenOutlets = new Set();
+    stories.forEach(s => {
+      const tier = s.outlet_coverage_tier || 'unscored';
+      if (groups[tier] && !seenOutlets.has(s.outlet_name)) {
+        seenOutlets.add(s.outlet_name);
+        groups[tier].push(s);
+      }
+    });
+    return groups;
+  };
+  const outletGroups = groupOutlets();
+
   // Layer 1: Coverage Tier Bar (Primary)
   const renderLayer1 = () => {
-    const dist = stats.coverage_tier_distribution || {};
+    const dist = {
+      adversarial: outletGroups['adversarial'].length,
+      institutional: outletGroups['institutional'].length,
+      pro_establishment: outletGroups['pro_establishment'].length
+    };
     // Calculate total explicitly for coverage tier, excluding 'unscored'
     const totalScored = Object.values(dist).reduce((sum, val) => sum + val, 0) || 1;
     const tiers = ['adversarial', 'institutional', 'pro_establishment'];
@@ -159,7 +178,7 @@ export default function Story() {
           {tiers.map(t => dist[t] > 0 && (
             <div key={t} style={{ width: `${(dist[t]/totalScored)*100}%`, background: COVERAGE_TIER_COLORS[t] }} title={`${t}: ${Math.round((dist[t]/totalScored)*100)}%`} />
           ))}
-          {(!dist['independent'] && !dist['deferential'] && !dist['captured']) && <div style={{width:'100%', background:'#333'}}></div>}
+          {(!dist['adversarial'] && !dist['institutional'] && !dist['pro_establishment']) && <div style={{width:'100%', background:'#333'}}></div>}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
           <span style={{ color: COVERAGE_TIER_COLORS['adversarial'] }}>{TIER_LABELS['adversarial']}: {Math.round(((dist['adversarial']||0)/totalScored)*100)}%</span>
@@ -223,18 +242,7 @@ export default function Story() {
     );
   };
 
-  // Outlet Logos grouping (By Coverage Tier)
-  const groupOutlets = () => {
-    const groups = { 'pro_establishment': [], 'institutional': [], 'adversarial': [], 'unscored': [] };
-    stories.forEach(s => {
-      const tier = s.outlet_coverage_tier || 'unscored';
-      if (groups[tier] && !groups[tier].includes(s.outlet_name)) {
-        groups[tier].push(s.outlet_name);
-      }
-    });
-    return groups;
-  };
-  const outletGroups = groupOutlets();
+
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
@@ -366,7 +374,7 @@ export default function Story() {
                 else borderColor = 'var(--text-primary)';
               }
               
-              const displayText = tab.count !== null ? `${tab.label} ${tab.count}` : tab.label;
+              // Using inline label + pill rendering instead of string merging
 
               return (
                 <button 
@@ -382,10 +390,27 @@ export default function Story() {
                     fontSize: '14px',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    marginBottom: '-1px'
+                    marginBottom: '-1px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
                   }}
                 >
-                  {displayText}
+                  {tab.label}
+                  {tab.count !== null && (
+                    <span style={{
+                      borderRadius: '10px',
+                      padding: '1px 7px',
+                      background: tab.id === 'pro_establishment' ? 'rgba(41,128,185,0.2)' :
+                                  tab.id === 'institutional' ? 'rgba(230,126,34,0.2)' :
+                                  tab.id === 'adversarial' ? 'rgba(192,57,43,0.2)' : 'var(--bg-elevated)',
+                      color: tab.id === 'all' ? 'var(--text-primary)' : COVERAGE_TIER_COLORS[tab.id],
+                      fontSize: '11px',
+                      fontWeight: 700
+                    }}>
+                      {tab.count}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -431,7 +456,8 @@ export default function Story() {
                   {story.summary && (
                     <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 12px 0', lineHeight: 1.5 }}>
                       {(() => {
-                        const clean = decodeHtml(story.summary).trim();
+                        let clean = decodeHtml(story.summary);
+                        clean = clean.replace(/https?:\/\/\S+/g, '').trim();
                         return clean.length > 150 ? clean.substring(0, 150).trim() + '...' : clean;
                       })()}
                     </p>
@@ -455,7 +481,7 @@ export default function Story() {
         {/* RIGHT COLUMN: Sidebar */}
         <div style={{ width: '35%', flexShrink: 0, alignSelf: 'stretch', borderLeft: '1px solid var(--border)', paddingLeft: '32px' }}>
           
-          <CoverageSidebar cluster={cluster} stories={stories} />
+          <CoverageSidebar cluster={cluster} stories={stories} outletGroups={outletGroups} />
 
           {/* Monitoring Spirit Layer */}
           <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', color: 'var(--text-primary)' }}>

@@ -31,48 +31,14 @@ function formatTimeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-export default function CoverageSidebar({ cluster, stories }) {
-  const stats = cluster.coverage_stats || {};
-  const dist = stats.coverage_tier_distribution || {};
+export default function CoverageSidebar({ cluster, stories, outletGroups = null }) {
+  // If outletGroups isn't passed for some reason, fallback to basic grouping
+  const groups = outletGroups || { 'pro_establishment': [], 'institutional': [], 'adversarial': [] };
   
-  // Map legacy keys
-  const mappedDist = {
-    'pro_establishment': 0,
-    'institutional': 0,
-    'adversarial': 0
-  };
-  for (const [k, v] of Object.entries(dist)) {
-    const mk = LEGACY_MAP[k] || k;
-    if (mappedDist[mk] !== undefined) {
-      mappedDist[mk] += v;
-    }
-  }
-
-  let total = stats.total_coverage || 0;
-  if (total === 0) {
-    total = Object.values(mappedDist).reduce((a, b) => a + b, 0) || 1;
-  }
-
-  // Group stories by tier to get logos
-  const groups = { 'pro_establishment': [], 'institutional': [], 'adversarial': [] };
-  
-  // Dedup stories by outlet
-  const outletSet = new Set();
-  const uniqueStories = [];
-  stories.forEach(s => {
-    if (!outletSet.has(s.outlet_name)) {
-      outletSet.add(s.outlet_name);
-      uniqueStories.push(s);
-    }
-  });
-
-  uniqueStories.forEach(s => {
-    const rawTier = s.outlet_coverage_tier || 'unscored';
-    const tier = LEGACY_MAP[rawTier] || rawTier;
-    if (groups[tier]) {
-      groups[tier].push(s);
-    }
-  });
+  // Total Sources explicitly from outletGroups (excluding unscored)
+  const total = (groups['pro_establishment']?.length || 0) + 
+                (groups['institutional']?.length || 0) + 
+                (groups['adversarial']?.length || 0) || 1;
 
   const renderLogoPill = (tier, label) => {
     const outlets = groups[tier] || [];
@@ -167,15 +133,15 @@ export default function CoverageSidebar({ cluster, stories }) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
           <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['pro_establishment'] }}>Pro-Establishment</span>
-          <span style={{ fontWeight: 800 }}>{mappedDist['pro_establishment'] || 0}</span>
+          <span style={{ fontWeight: 800 }}>{groups['pro_establishment']?.length || 0}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
           <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['institutional'] }}>Institutional</span>
-          <span style={{ fontWeight: 800 }}>{mappedDist['institutional'] || 0}</span>
+          <span style={{ fontWeight: 800 }}>{groups['institutional']?.length || 0}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
           <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['adversarial'] }}>Adversarial</span>
-          <span style={{ fontWeight: 800 }}>{mappedDist['adversarial'] || 0}</span>
+          <span style={{ fontWeight: 800 }}>{groups['adversarial']?.length || 0}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
           <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14}/> Last Updated</span>
