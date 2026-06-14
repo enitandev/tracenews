@@ -30,11 +30,11 @@ export function getDominantTier(dist) {
   return dominant;
 }
 
-export default function CoverageBar({ coverageStats, variant = 'compact' }) {
+export default function CoverageBar({ coverageStats, variant = 'compact', liveTotal }) {
   const isHero = variant === 'hero';
 
   const rawDist = coverageStats?.coverage_tier_distribution || {};
-  let total = coverageStats?.total_coverage || 0;
+  let total = liveTotal !== undefined ? liveTotal : (coverageStats?.total_coverage || 0);
   
   // Map legacy keys to new keys safely
   const dist = {};
@@ -43,7 +43,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact' }) {
     dist[mappedKey] = (dist[mappedKey] || 0) + v;
   }
   
-  if (total === 0) {
+  if (!liveTotal && total === 0) {
       total = Object.values(dist).reduce((a, b) => a + b, 0) || 1;
   }
   

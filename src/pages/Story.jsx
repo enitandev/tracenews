@@ -388,7 +388,7 @@ export default function Story() {
 
           {/* Coverage Bar */}
           <div style={{ marginBottom: '16px' }}>
-            <CoverageBar variant="compact" coverageStats={stats} />
+            <CoverageBar variant="compact" coverageStats={stats} liveTotal={Object.values(stats?.coverage_tier_distribution || {}).reduce((a, b) => a + b, 0) || cluster.outlet_count} />
           </div>
 
           {/* BAR 1: AI Insight Bar */}
@@ -584,16 +584,27 @@ export default function Story() {
                         let clean = decodeHtml(story.summary);
                         clean = clean.replace(/https?:\/\/\S+/g, '').trim();
                         
-                        const dateRegex = /^(?:(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s*)?(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s*\d{4})?\s*/i;
-                        
-                        for (let i = 0; i < 2; i++) {
-                          if (story.outlet_name) {
-                            const nameRegex = new RegExp(`^${story.outlet_name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'i');
-                            clean = clean.replace(nameRegex, '');
-                          }
-                          clean = clean.replace(dateRegex, '');
-                          clean = clean.replace(/^[\s|\-:,.]+/, '').trim();
+                        let sentences = clean.split(/(?<=\.)\s+|\.\n/);
+                        if (story.title) {
+                           const headlineWords = story.title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+                           sentences = sentences.filter(s => {
+                             if (!s.trim()) return false;
+                             const sWords = s.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+                             if (headlineWords.length === 0 || sWords.length === 0) return true;
+                             let matchCount = 0;
+                             for (const w of sWords) {
+                               if (headlineWords.includes(w)) matchCount++;
+                             }
+                             const overlap = matchCount / Math.max(sWords.length, headlineWords.length);
+                             return overlap < 0.8;
+                           });
                         }
+                        
+                        while (sentences.length > 0 && sentences[0].trim().length < 30) {
+                           sentences.shift();
+                        }
+                        
+                        clean = sentences.join(' ').trim();
                         
                         if (clean.length < 20) return null;
                         return clean.length > 160 ? clean.substring(0, 160).trim() + '...' : clean;
