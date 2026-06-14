@@ -40,6 +40,17 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                 (groups['adversarial']?.length || 0) +
                 (groups['blog']?.length || 0) || 1;
 
+  const tierDistribution = {
+    'pro_establishment': groups['pro_establishment']?.length || 0,
+    'institutional': groups['institutional']?.length || 0,
+    'adversarial': groups['adversarial']?.length || 0
+  };
+  
+  const liveStats = {
+    coverage_tier_distribution: tierDistribution,
+    total_coverage: tierDistribution.pro_establishment + tierDistribution.institutional + tierDistribution.adversarial
+  };
+
   const renderLogoPill = (tier, label) => {
     const outlets = groups[tier] || [];
     const color = COVERAGE_TIER_COLORS[tier];
@@ -159,7 +170,7 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
           Tier Distribution
         </h4>
         <div style={{ borderRadius: '6px', overflow: 'hidden' }}>
-          <CoverageBar variant="hero" coverageStats={stats} />
+          <CoverageBar variant="hero" coverageStats={liveStats} />
         </div>
       </div>
 
