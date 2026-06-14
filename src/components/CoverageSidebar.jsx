@@ -51,82 +51,73 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
     total_coverage: tierDistribution.pro_establishment + tierDistribution.institutional + tierDistribution.adversarial
   };
 
-  const renderLogoPill = (tier, label) => {
+  const renderLogoPill = (tier) => {
     const outlets = groups[tier] || [];
     const color = COVERAGE_TIER_COLORS[tier];
     const bgColor = outlets.length > 0 ? COVERAGE_TIER_BG_COLORS[tier] : 'var(--bg-elevated)';
     
-    const showLimit = 5;
+    const showLimit = 4;
     const hasMore = outlets.length > showLimit;
     const displayOutlets = hasMore ? outlets.slice(0, showLimit) : outlets;
     const remaining = hasMore ? outlets.length - showLimit : 0;
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {/* Top Label */}
-        <div style={{ fontSize: '10px', fontWeight: 700, color, textTransform: 'uppercase', marginBottom: '4px', textAlign: 'center' }}>
-          {label}
-        </div>
-        
-        {/* Pill Container */}
-        <div style={{ 
-          background: bgColor, 
-          borderRadius: '28px', 
-          paddingTop: '8px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '8px',
-          width: '56px',
-          height: '280px',
-          overflow: 'hidden',
-          border: '1px solid var(--border)',
-          position: 'relative'
-        }}>
-          {displayOutlets.map((s, idx) => {
-            const initial = s.outlet_name ? s.outlet_name.charAt(0).toUpperCase() : '?';
-            // Use logo_url from outlets join if available
-            const logoUrl = s.outlets?.logo_url;
-            
-            return (
-              <div 
-                key={idx} 
-                title={s.outlet_name}
-                style={{
-                  width: '40px', height: '40px', borderRadius: '50%',
-                  background: logoUrl ? '#fff' : color,
-                  color: '#fff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontWeight: 800, fontSize: '18px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                  overflow: 'hidden',
-                  flexShrink: 0
-                }}
-              >
-                {logoUrl ? (
-                  <img src={logoUrl} alt={s.outlet_name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                ) : (
-                  initial
-                )}
-              </div>
-            );
-          })}
+      <div style={{ 
+        flex: 1,
+        background: bgColor, 
+        borderRadius: '28px', 
+        paddingTop: '8px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '8px',
+        height: '220px',
+        overflow: 'hidden',
+        border: '1px solid var(--border)',
+        position: 'relative'
+      }}>
+        {displayOutlets.map((s, idx) => {
+          const initial = s.outlet_name ? s.outlet_name.charAt(0).toUpperCase() : '?';
+          const logoUrl = s.outlets?.logo_url;
           
-          {hasMore && (
-            <div style={{
-              width: '40px', height: '40px', borderRadius: '50%',
-              background: '#333', color: '#fff',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 700, fontSize: '14px',
-              border: `1px solid ${color}`,
-              flexShrink: 0,
-              position: 'absolute',
-              bottom: '8px'
-            }}>
-              +{remaining}
+          return (
+            <div 
+              key={idx} 
+              title={s.outlet_name}
+              style={{
+                width: '40px', height: '40px', borderRadius: '50%',
+                background: logoUrl ? '#fff' : color,
+                color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 800, fontSize: '18px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                overflow: 'hidden',
+                flexShrink: 0
+              }}
+            >
+              {logoUrl ? (
+                <img src={logoUrl} alt={s.outlet_name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              ) : (
+                initial
+              )}
             </div>
-          )}
-        </div>
+          );
+        })}
+        
+        {hasMore && (
+          <div style={{
+            width: '40px', height: '40px', borderRadius: '50%',
+            background: '#333', color: '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 700, fontSize: '14px',
+            border: `1px solid ${color}`,
+            flexShrink: 0,
+            position: 'absolute',
+            bottom: '8px'
+          }}>
+            +{remaining}
+          </div>
+        )}
       </div>
     );
   };
@@ -178,10 +169,10 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
         <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           Sources By Tier
         </h4>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
-          {renderLogoPill('pro_establishment', 'PRO-ESTAB')}
-          {renderLogoPill('institutional', 'INSTITUTION')}
-          {renderLogoPill('adversarial', 'ADVERSARIAL')}
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {renderLogoPill('pro_establishment')}
+          {renderLogoPill('institutional')}
+          {renderLogoPill('adversarial')}
         </div>
       </div>
 
