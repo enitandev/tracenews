@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info } from 'lucide-react';
+import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info, Link2, Mail, MessageCircle, Bookmark, Flag } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
 
@@ -10,6 +10,26 @@ const COVERAGE_TIER_COLORS = {
   'adversarial': '#C0392B',
   'unscored': '#999999'
 };
+
+const FacebookIcon = ({ size = 24, ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
+const TwitterIcon = ({ size = 24, ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+  </svg>
+);
+
+const LinkedinIcon = ({ size = 24, ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
 
 const TIER_LABELS = {
   'pro_establishment': 'Pro-Establishment',
@@ -186,6 +206,8 @@ export default function Story() {
   const [activeFilterTab, setActiveFilterTab] = useState('all');
   const [framingCache, setFramingCache] = useState({});
   const [loadingFraming, setLoadingFraming] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [copyTooltip, setCopyTooltip] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [feedbackTier, setFeedbackTier] = useState('Bias Comparison');
   const [feedbackComment, setFeedbackComment] = useState('');
@@ -375,9 +397,54 @@ export default function Story() {
             <span style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
               {cluster.category || 'General'}
             </span>
-            <span style={{ color: 'var(--text-muted)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Clock size={14} /> {formatTimeAgo(cluster.first_seen_at)}
-            </span>
+          </div>
+
+          {/* Share Toolbar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
+            {/* LEFT: Timestamps (Hidden on mobile) */}
+            <div className="hide-on-mobile" style={{ color: 'var(--text-muted)', fontSize: '12px' }}>
+              Published {formatTimeAgo(cluster.first_seen_at)}
+              {cluster.last_updated_at && cluster.last_updated_at !== cluster.first_seen_at && ` · Updated ${formatTimeAgo(cluster.last_updated_at)}`}
+            </div>
+            
+            {/* RIGHT: Icon Groups */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, justifyContent: 'flex-end', minWidth: 'max-content' }}>
+              {/* GROUP 1: Social Share */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#1877F2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', textDecoration: 'none' }}>
+                  <FacebookIcon size={14} fill="currentColor" strokeWidth={0} />
+                </a>
+                <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(cluster.representative_title)}`} target="_blank" rel="noopener noreferrer" style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', textDecoration: 'none' }}>
+                  <TwitterIcon size={14} fill="currentColor" strokeWidth={0} />
+                </a>
+                <a href={`https://wa.me/?text=${encodeURIComponent(cluster.representative_title)}%20${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', textDecoration: 'none' }}>
+                  <MessageCircle size={14} fill="currentColor" strokeWidth={0} />
+                </a>
+                <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#0A66C2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', textDecoration: 'none' }}>
+                  <LinkedinIcon size={14} fill="currentColor" strokeWidth={0} />
+                </a>
+                <a href={`mailto:?subject=${encodeURIComponent(cluster.representative_title)}&body=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-primary)', textDecoration: 'none' }}>
+                  <Mail size={14} />
+                </a>
+                <button onClick={() => { navigator.clipboard.writeText(window.location.href); setCopyTooltip(true); setTimeout(() => setCopyTooltip(false), 2000); }} style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--bg-elevated)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)', cursor: 'pointer', padding: 0, position: 'relative' }}>
+                  {copyTooltip ? <span style={{ position: 'absolute', top: '-28px', left: '50%', transform: 'translateX(-50%)', background: 'var(--text-primary)', color: 'var(--bg-primary)', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', whiteSpace: 'nowrap' }}>Copied!</span> : null}
+                  <Link2 size={14} />
+                </button>
+              </div>
+              
+              {/* Divider */}
+              <div style={{ width: '1px', height: '16px', background: 'var(--border)' }} />
+              
+              {/* GROUP 2: Utilities */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button onClick={() => setIsBookmarked(!isBookmarked)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Bookmark size={18} fill={isBookmarked ? 'currentColor' : 'none'} />
+                </button>
+                <button onClick={() => setIsFeedbackModalOpen(true)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Flag size={18} />
+                </button>
+              </div>
+            </div>
           </div>
 
           <h1 style={{ fontFamily: '"Merriweather", serif', fontSize: '38px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, margin: '0 0 24px 0' }}>
