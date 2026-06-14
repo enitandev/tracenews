@@ -221,12 +221,13 @@ export default function Story() {
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/${data.cluster.id}/framing?alignment=${alignmentQuery}`)
       .then(res => res.json())
       .then(d => {
-        setFramingCache(prev => ({ ...prev, [activeSummaryTab]: d.bullets || [] }));
+        if (d.bullets && d.bullets.length > 0) {
+          setFramingCache(prev => ({ ...prev, [activeSummaryTab]: d.bullets }));
+        }
         setLoadingFraming(false);
       })
       .catch(e => {
         console.error(e);
-        setFramingCache(prev => ({ ...prev, [activeSummaryTab]: [] }));
         setLoadingFraming(false);
       });
   }, [activeSummaryTab, data?.cluster?.id]); // Intentionally omitted framingCache
@@ -584,27 +585,39 @@ export default function Story() {
                         let clean = decodeHtml(story.summary);
                         clean = clean.replace(/https?:\/\/\S+/g, '').trim();
                         
-                        let sentences = clean.split(/(?<=\.)\s+|\.\n/);
                         if (story.title) {
-                           const headlineWords = story.title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-                           sentences = sentences.filter(s => {
-                             if (!s.trim()) return false;
-                             const sWords = s.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-                             if (headlineWords.length === 0 || sWords.length === 0) return true;
-                             let matchCount = 0;
-                             for (const w of sWords) {
-                               if (headlineWords.includes(w)) matchCount++;
-                             }
-                             const overlap = matchCount / Math.max(sWords.length, headlineWords.length);
-                             return overlap < 0.8;
-                           });
+                          const normalize = str => str.replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
+                          const tWords = normalize(story.title).toLowerCase().split(' ').filter(w => w.length > 0);
+                          const numWordsToMatch = Math.min(tWords.length, 15);
+                          
+                          let strippedByHeadline = false;
+                          if (numWordsToMatch >= 2) {
+                            const regexPattern = tWords.slice(0, numWordsToMatch).join('[\\s\\W]+');
+                            try {
+                              const regex = new RegExp(regexPattern, 'gi');
+                              let match;
+                              let lastMatchEnd = -1;
+                              while ((match = regex.exec(clean)) !== null) {
+                                lastMatchEnd = match.index + match[0].length;
+                              }
+                              
+                              if (lastMatchEnd !== -1) {
+                                clean = clean.substring(lastMatchEnd);
+                                strippedByHeadline = true;
+                              }
+                            } catch (e) {}
+                          }
+                          
+                          if (!strippedByHeadline) {
+                            const fallbackRegex = /^[\s\S]{0,40}?(?:[\n\|\-\:]|\s{2,})\s*([A-Z])/;
+                            const fallbackMatch = clean.match(fallbackRegex);
+                            if (fallbackMatch) {
+                              clean = clean.substring(fallbackMatch[0].length - 1);
+                            }
+                          }
                         }
                         
-                        while (sentences.length > 0 && sentences[0].trim().length < 30) {
-                           sentences.shift();
-                        }
-                        
-                        clean = sentences.join(' ').trim();
+                        clean = clean.trim();
                         
                         if (clean.length < 20) return null;
                         return clean.length > 160 ? clean.substring(0, 160).trim() + '...' : clean;
