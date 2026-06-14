@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CoverageBar from './CoverageBar';
 import { Clock } from 'lucide-react';
 
@@ -51,14 +51,21 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
     total_coverage: tierDistribution.pro_establishment + tierDistribution.institutional + tierDistribution.adversarial
   };
 
+  const [expandedTiers, setExpandedTiers] = useState({});
+
+  const toggleExpanded = (tier) => {
+    setExpandedTiers(prev => ({ ...prev, [tier]: !prev[tier] }));
+  };
+
   const renderLogoPill = (tier) => {
     const outlets = groups[tier] || [];
     const color = COVERAGE_TIER_COLORS[tier];
     const bgColor = outlets.length > 0 ? COVERAGE_TIER_BG_COLORS[tier] : 'var(--bg-elevated)';
     
-    const showLimit = 4;
+    const isExpanded = expandedTiers[tier];
+    const showLimit = 8; // 4 rows * 2 columns
     const hasMore = outlets.length > showLimit;
-    const displayOutlets = hasMore ? outlets.slice(0, showLimit) : outlets;
+    const displayOutlets = isExpanded ? outlets : (hasMore ? outlets.slice(0, showLimit) : outlets);
     const remaining = hasMore ? outlets.length - showLimit : 0;
 
     return (
@@ -66,15 +73,19 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
         flex: 1,
         background: bgColor, 
         borderRadius: '28px', 
-        paddingTop: '8px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '8px',
-        height: '220px',
+        padding: '8px 4px',
+        paddingBottom: isExpanded ? '56px' : '8px',
+        display: 'grid',
+        gridTemplateColumns: outlets.length <= 4 ? '1fr' : '1fr 1fr',
+        gridAutoRows: '40px',
+        justifyItems: 'center',
+        gap: '6px',
+        height: isExpanded ? 'auto' : '220px',
+        minHeight: '220px',
         overflow: 'hidden',
         border: '1px solid var(--border)',
-        position: 'relative'
+        position: 'relative',
+        transition: 'all 0.3s ease'
       }}>
         {displayOutlets.map((s, idx) => {
           const initial = s.outlet_name ? s.outlet_name.charAt(0).toUpperCase() : '?';
@@ -105,17 +116,24 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
         })}
         
         {hasMore && (
-          <div style={{
-            width: '40px', height: '40px', borderRadius: '50%',
-            background: '#333', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 700, fontSize: '14px',
-            border: `1px solid ${color}`,
-            flexShrink: 0,
-            position: 'absolute',
-            bottom: '8px'
-          }}>
-            +{remaining}
+          <div 
+            onClick={() => toggleExpanded(tier)}
+            style={{
+              width: '40px', height: '40px', borderRadius: '50%',
+              background: '#333', color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 700, fontSize: '14px',
+              border: `1px solid ${color}`,
+              flexShrink: 0,
+              position: 'absolute',
+              bottom: '8px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              cursor: 'pointer',
+              zIndex: 2,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
+            }}>
+            {isExpanded ? 'x' : `+${remaining}`}
           </div>
         )}
       </div>
