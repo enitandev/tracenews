@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CoverageBar from './CoverageBar';
-import { Clock } from 'lucide-react';
+import { Clock, ChevronDown } from 'lucide-react';
 
 const COVERAGE_TIER_COLORS = {
   'pro_establishment': '#2980B9',
@@ -31,6 +31,22 @@ function formatTimeAgo(dateStr) {
   return `${days}d ago`;
 }
 
+const SidebarCard = ({ title, children, defaultCollapsed = false }) => {
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  return (
+    <div style={{ background: 'var(--bg-elevated)', borderRadius: '8px', border: '1px solid var(--border)', padding: '16px' }}>
+      <div 
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: isCollapsed ? '0' : '16px' }}
+      >
+        <h3 style={{ margin: 0, fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{title}</h3>
+        <ChevronDown size={16} style={{ color: 'var(--text-muted)', transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+      </div>
+      {!isCollapsed && <div>{children}</div>}
+    </div>
+  );
+};
+
 export default function CoverageSidebar({ cluster, stories, outletGroups = null }) {
   // If outletGroups isn't passed for some reason, fallback to basic grouping
   const groups = outletGroups || { 'pro_establishment': [], 'institutional': [], 'adversarial': [] };
@@ -43,16 +59,50 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
   const allUniqueStories = Object.values(groups).flat();
   let trackRecordStats = { 'Clean': 0, 'Flagged': 0, 'Problematic': 0 };
   let totalBrownEnvelopes = 0;
+  let opaqueOwnershipCount = 0;
+  let politicallyLinkedCount = 0;
+  let highStructuralRiskCount = 0;
+  let brownEnvelopeOutlets = [];
+  
+  let integrityScore = 100;
   
   allUniqueStories.forEach(s => {
     const out = s.outlets || {};
+    
     if (out.track_record_status && trackRecordStats[out.track_record_status] !== undefined) {
       trackRecordStats[out.track_record_status]++;
     }
     if (out.brown_envelope_count) {
       totalBrownEnvelopes += out.brown_envelope_count;
+      brownEnvelopeOutlets.push(s.outlet_name);
     }
+    if (out.ownership_transparency === 'Low' || out.ownership_transparency === 'low') {
+      opaqueOwnershipCount++;
+    }
+    if (out.party_proximity && out.party_proximity !== 'None') {
+      politicallyLinkedCount++;
+    }
+    if (out.structural_risk === 'High') {
+      highStructuralRiskCount++;
+    }
+    
+    if (out.track_record_status === 'Problematic') integrityScore -= 15;
+    else if (out.track_record_status === 'Flagged') integrityScore -= 7;
+    
+    if (out.brown_envelope_count > 2) integrityScore -= 10;
+    else if (out.brown_envelope_count >= 1) integrityScore -= 5;
+    
+    if (out.structural_risk === 'High') integrityScore -= 8;
+    if (out.ownership_transparency === 'Low' || out.ownership_transparency === 'low') integrityScore -= 5;
+    if (out.party_proximity && out.party_proximity !== 'None') integrityScore -= 5;
   });
+
+  let verdict = { text: 'Compromised', color: '#E74C3C', icon: '🔴', desc: 'Significant integrity risks detected across sources covering this story.' };
+  if (integrityScore >= 80) {
+    verdict = { text: 'Strong', color: '#2ECC71', icon: '🟢', desc: 'Coverage of this story comes primarily from sources with clean track records.' };
+  } else if (integrityScore >= 60) {
+    verdict = { text: 'Mixed', color: '#E67E22', icon: '🟡', desc: 'Coverage includes sources with notable reliability concerns. Read critically.' };
+  }
 
   const tierDistribution = {
     'pro_establishment': groups['pro_establishment']?.length || 0,
@@ -155,66 +205,53 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
   };
 
   return (
-    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', marginBottom: '32px' }}>
-      <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 24px 0' }}>Coverage Analysis</h3>
-      
-      {/* Component 1: Coverage Details box */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px', fontSize: '14px', color: 'var(--text-primary)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-          <span style={{ fontWeight: 600 }}>Total News Sources</span>
-          <span style={{ fontWeight: 800 }}>{total}</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+      {/* CARD 1: Coverage Analysis */}
+      <SidebarCard title="Coverage Analysis">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'var(--text-primary)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600 }}>Total News Sources</span>
+            <span style={{ fontWeight: 800 }}>{total}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['pro_establishment'] }}>Pro-Establishment</span>
+            <span style={{ fontWeight: 800 }}>{groups['pro_establishment']?.length || 0}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['institutional'] }}>Institutional</span>
+            <span style={{ fontWeight: 800 }}>{groups['institutional']?.length || 0}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['adversarial'] }}>Adversarial</span>
+            <span style={{ fontWeight: 800 }}>{groups['adversarial']?.length || 0}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>Blogs & Forums</span>
+            <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{groups['blog']?.length || 0}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
+            <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14}/> Last Updated</span>
+            <span style={{ fontWeight: 600 }}>{formatTimeAgo(cluster.last_updated_at || cluster.first_seen_at)}</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-          <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['pro_establishment'] }}>Pro-Establishment</span>
-          <span style={{ fontWeight: 800 }}>{groups['pro_establishment']?.length || 0}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-          <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['institutional'] }}>Institutional</span>
-          <span style={{ fontWeight: 800 }}>{groups['institutional']?.length || 0}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-          <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['adversarial'] }}>Adversarial</span>
-          <span style={{ fontWeight: 800 }}>{groups['adversarial']?.length || 0}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>Blogs & Forums</span>
-          <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{groups['blog']?.length || 0}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
-          <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14}/> Last Updated</span>
-          <span style={{ fontWeight: 600 }}>{formatTimeAgo(cluster.last_updated_at || cluster.first_seen_at)}</span>
-        </div>
-      </div>
+      </SidebarCard>
 
-      {/* Component 2: Tier Distribution Bar */}
-      <div style={{ marginBottom: '32px' }}>
-        <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Tier Distribution
-        </h4>
-        <div style={{ borderRadius: '6px', overflow: 'hidden' }}>
+      {/* CARD 2: Tier Distribution */}
+      <SidebarCard title="Tier Distribution">
+        <div style={{ borderRadius: '6px', overflow: 'hidden', marginBottom: '16px' }}>
           <CoverageBar variant="hero" coverageStats={liveStats} />
         </div>
-      </div>
-
-      {/* Component 3: Outlet Logo Tubes */}
-      <div style={{ marginBottom: '32px' }}>
-        <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Sources By Tier
-        </h4>
         <div style={{ display: 'flex', gap: '12px' }}>
           {renderLogoPill('pro_establishment')}
           {renderLogoPill('institutional')}
           {renderLogoPill('adversarial')}
         </div>
-      </div>
+      </SidebarCard>
 
-      {/* Component 4: Ownership */}
-      <div style={{ marginBottom: '32px' }}>
-        <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Ownership
-        </h4>
+      {/* CARD 3: Ownership */}
+      <SidebarCard title="Ownership">
         <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: 1.4 }}>
-          Unlike other platforms, TraceNews publishes ownership data freely.
+          Unlike other platforms, TraceNews publishes this data freely.
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {allUniqueStories.map((s, idx) => {
@@ -260,37 +297,78 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                     </span>
                   </div>
                 )}
+                {idx < allUniqueStories.length - 1 && <div style={{ height: '1px', background: 'var(--border)', marginTop: '12px' }} />}
               </div>
             );
           })}
         </div>
-      </div>
+      </SidebarCard>
 
-      {/* Component 5: Track Record */}
-      <div>
-        <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Track Record
-        </h4>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'var(--text-primary)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: '#2ECC71', display: 'flex', alignItems: 'center', gap: '6px' }}>✓ Clean</span>
-            <span style={{ fontWeight: 800 }}>{trackRecordStats['Clean']}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: '#E67E22', display: 'flex', alignItems: 'center', gap: '6px' }}>⚠ Flagged</span>
-            <span style={{ fontWeight: 800 }}>{trackRecordStats['Flagged']}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: '#E74C3C', display: 'flex', alignItems: 'center', gap: '6px' }}>✗ Problematic</span>
-            <span style={{ fontWeight: 800 }}>{trackRecordStats['Problematic']}</span>
-          </div>
-          {totalBrownEnvelopes > 0 && (
-            <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, marginTop: '4px', padding: '8px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px' }}>
-              ⚠ {totalBrownEnvelopes} brown envelope incident(s) recorded across covering outlets
+      {/* CARD 4: Track Record */}
+      <SidebarCard title="Track Record">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          
+          {/* ZONE A: Coverage Integrity verdict */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '16px', background: 'var(--bg-surface)', border: `1px solid ${verdict.color}40`, borderRadius: '8px', position: 'relative' }}>
+            <div style={{ fontSize: '32px', marginBottom: '8px' }}>{verdict.icon}</div>
+            <div style={{ fontSize: '16px', fontWeight: 800, color: verdict.color, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              {verdict.text}
             </div>
-          )}
+            <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              {verdict.desc}
+            </div>
+          </div>
+          
+          {/* ZONE B: Source breakdown */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--text-primary)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
+              <span style={{ fontWeight: 600, color: '#2ECC71', display: 'flex', alignItems: 'center', gap: '6px' }}>✓ Clean sources</span>
+              <span style={{ fontWeight: 800 }}>{trackRecordStats['Clean']}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
+              <span style={{ fontWeight: 600, color: '#E67E22', display: 'flex', alignItems: 'center', gap: '6px' }}>⚠ Flagged sources</span>
+              <span style={{ fontWeight: 800 }}>{trackRecordStats['Flagged']}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
+              <span style={{ fontWeight: 600, color: '#E74C3C', display: 'flex', alignItems: 'center', gap: '6px' }}>✗ Problematic sources</span>
+              <span style={{ fontWeight: 800 }}>{trackRecordStats['Problematic']}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
+              <span style={{ fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>🔒 Opaque ownership</span>
+              <span style={{ fontWeight: 800 }}>{opaqueOwnershipCount}</span>
+            </div>
+          </div>
+
+          {/* ZONE C: Specific alerts */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {politicallyLinkedCount > 0 && (
+              <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, padding: '10px 12px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                ⚠ {politicallyLinkedCount} politically-linked outlet(s) in coverage pool
+              </div>
+            )}
+            
+            {totalBrownEnvelopes > 0 && (
+              <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, padding: '10px 12px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  ⚠ {totalBrownEnvelopes} brown envelope incident(s) recorded
+                </div>
+                {brownEnvelopeOutlets.length > 0 && (
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Linked to: {Array.from(new Set(brownEnvelopeOutlets)).join(', ')}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {highStructuralRiskCount > 0 && (
+              <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, padding: '10px 12px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                ⚠ {highStructuralRiskCount} high structural-risk outlet(s)
+              </div>
+            )}
+          </div>
+          
         </div>
-      </div>
+      </SidebarCard>
 
     </div>
   );
