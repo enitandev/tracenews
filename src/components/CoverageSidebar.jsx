@@ -86,22 +86,26 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
       highStructuralRiskCount++;
     }
     
-    if (out.track_record_status === 'Problematic') integrityScore -= 15;
-    else if (out.track_record_status === 'Flagged') integrityScore -= 7;
+    if (out.track_record_status === 'Problematic') integrityScore -= 20;
     
-    if (out.brown_envelope_count > 2) integrityScore -= 10;
-    else if (out.brown_envelope_count >= 1) integrityScore -= 5;
+    if (out.brown_envelope_count > 2) integrityScore -= 15;
+    else if (out.brown_envelope_count >= 1) integrityScore -= 8;
     
-    if (out.structural_risk === 'High') integrityScore -= 8;
-    if (out.ownership_transparency === 'Low' || out.ownership_transparency === 'low') integrityScore -= 5;
-    if (out.party_proximity && out.party_proximity !== 'None') integrityScore -= 5;
+    if (out.structural_risk === 'High') integrityScore -= 5;
+    
+    const isLowTransparency = out.ownership_transparency === 'Low' || out.ownership_transparency === 'low';
+    const hasPartyProximity = out.party_proximity && out.party_proximity !== 'None';
+    
+    if (hasPartyProximity && isLowTransparency) {
+      integrityScore -= 12;
+    }
   });
 
-  let verdict = { text: 'Compromised', color: '#E74C3C', icon: '🔴', desc: 'Significant integrity risks detected across sources covering this story.' };
-  if (integrityScore >= 80) {
-    verdict = { text: 'Strong', color: '#2ECC71', icon: '🟢', desc: 'Coverage of this story comes primarily from sources with clean track records.' };
-  } else if (integrityScore >= 60) {
-    verdict = { text: 'Mixed', color: '#E67E22', icon: '🟡', desc: 'Coverage includes sources with notable reliability concerns. Read critically.' };
+  let verdict = { text: 'Concerning', icon: '🔴', desc: 'Multiple sources covering this story have documented integrity issues.' };
+  if (integrityScore >= 75) {
+    verdict = { text: 'Reliable', icon: '🟢', desc: 'Coverage comes primarily from sources with clean or acceptable track records.' };
+  } else if (integrityScore >= 50) {
+    verdict = { text: 'Mixed', icon: '🟡', desc: 'Some sources in this coverage pool have reliability concerns worth noting.' };
   }
 
   const tierDistribution = {
@@ -271,18 +275,16 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                   
                   {out.ownership_type && (
                     <span style={{
-                      background: out.ownership_type === 'Government' ? '#E74C3C' : out.ownership_type === 'Corporate' ? '#E67E22' : '#2ECC71',
-                      color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: 800
+                      color: 'var(--text-muted)', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border)'
                     }}>
                       {out.ownership_type}
                     </span>
                   )}
 
                   {out.ownership_transparency && (
-                    <div style={{
-                      width: '8px', height: '8px', borderRadius: '50%',
-                      background: out.ownership_transparency === 'High' ? '#2ECC71' : out.ownership_transparency === 'Medium' ? '#E67E22' : '#E74C3C'
-                    }} title={`Transparency: ${out.ownership_transparency}`} />
+                    <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                      • Transp: {out.ownership_transparency}
+                    </span>
                   )}
                 </div>
                 
@@ -292,8 +294,8 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                 
                 {out.party_proximity && out.party_proximity !== 'None' && (
                   <div style={{ paddingLeft: '32px', marginTop: '2px' }}>
-                    <span style={{ color: '#E74C3C', fontSize: '10px', fontWeight: 700, border: '1px solid #E74C3C', borderRadius: '4px', padding: '2px 6px' }}>
-                      {out.party_proximity}
+                    <span style={{ color: 'var(--text-primary)', background: 'var(--bg-hover)', fontSize: '10px', border: '1px solid var(--border)', borderRadius: '4px', padding: '2px 6px' }}>
+                      Party Proximity: <span style={{ color: 'var(--text-muted)' }}>{out.party_proximity}</span>
                     </span>
                   </div>
                 )}
@@ -309,9 +311,9 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           
           {/* ZONE A: Coverage Integrity verdict */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '16px', background: 'var(--bg-surface)', border: `1px solid ${verdict.color}40`, borderRadius: '8px', position: 'relative' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '16px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', position: 'relative' }}>
             <div style={{ fontSize: '32px', marginBottom: '8px' }}>{verdict.icon}</div>
-            <div style={{ fontSize: '16px', fontWeight: 800, color: verdict.color, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               {verdict.text}
             </div>
             <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
@@ -321,39 +323,39 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
           
           {/* ZONE B: Source breakdown */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--text-primary)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
-              <span style={{ fontWeight: 600, color: '#2ECC71', display: 'flex', alignItems: 'center', gap: '6px' }}>✓ Clean sources</span>
-              <span style={{ fontWeight: 800 }}>{trackRecordStats['Clean']}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>✓ Clean sources</span>
+              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{trackRecordStats['Clean']}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
-              <span style={{ fontWeight: 600, color: '#E67E22', display: 'flex', alignItems: 'center', gap: '6px' }}>⚠ Flagged sources</span>
-              <span style={{ fontWeight: 800 }}>{trackRecordStats['Flagged']}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>⚠ Flagged sources</span>
+              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{trackRecordStats['Flagged']}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
-              <span style={{ fontWeight: 600, color: '#E74C3C', display: 'flex', alignItems: 'center', gap: '6px' }}>✗ Problematic sources</span>
-              <span style={{ fontWeight: 800 }}>{trackRecordStats['Problematic']}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>✗ Problematic sources</span>
+              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{trackRecordStats['Problematic']}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: '4px' }}>
-              <span style={{ fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>🔒 Opaque ownership</span>
-              <span style={{ fontWeight: 800 }}>{opaqueOwnershipCount}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px' }}>
+              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>🔒 Opaque ownership</span>
+              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{opaqueOwnershipCount}</span>
             </div>
           </div>
 
           {/* ZONE C: Specific alerts */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {politicallyLinkedCount > 0 && (
-              <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, padding: '10px 12px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                ⚠ {politicallyLinkedCount} politically-linked outlet(s) in coverage pool
+              <div style={{ color: 'var(--text-primary)', fontSize: '12px', padding: '10px 12px', background: 'var(--bg-hover)', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                ⚠ <span style={{ color: 'var(--text-muted)' }}>{politicallyLinkedCount} politically-linked outlet(s) in coverage pool</span>
               </div>
             )}
             
             {totalBrownEnvelopes > 0 && (
-              <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, padding: '10px 12px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ color: 'var(--text-primary)', fontSize: '12px', padding: '10px 12px', background: 'var(--bg-hover)', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  ⚠ {totalBrownEnvelopes} brown envelope incident(s) recorded
+                  ⚠ <span style={{ color: 'var(--text-muted)' }}>{totalBrownEnvelopes} brown envelope incident(s) recorded</span>
                 </div>
                 {brownEnvelopeOutlets.length > 0 && (
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', marginTop: '4px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     Linked to: {Array.from(new Set(brownEnvelopeOutlets)).join(', ')}
                   </div>
                 )}
@@ -361,8 +363,8 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
             )}
 
             {highStructuralRiskCount > 0 && (
-              <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, padding: '10px 12px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                ⚠ {highStructuralRiskCount} high structural-risk outlet(s)
+              <div style={{ color: 'var(--text-primary)', fontSize: '12px', padding: '10px 12px', background: 'var(--bg-hover)', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                ⚠ <span style={{ color: 'var(--text-muted)' }}>{highStructuralRiskCount} high structural-risk outlet(s)</span>
               </div>
             )}
           </div>
