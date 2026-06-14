@@ -28,9 +28,119 @@ const TAB_TO_KEY = {
 
 const GOVERNMENT_COLORS = {
   'pro_government': '#008751',
-  'neutral': '#cccccc',
-  'opposition': '#C0392B'
+  'critical': '#E74C3C',
+  'neutral': '#7F8C8D',
+  'unscored': '#999999'
 };
+
+function BadgeWithTooltip({ label, warning, children }) {
+  const [isHovered, setIsHovered] = useState(false);
+  return (
+    <div 
+      style={{ position: 'relative', display: 'inline-block' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div style={{
+        background: 'var(--bg-hover)',
+        border: `1px solid ${warning ? '#E74C3C' : 'var(--border)'}`,
+        color: 'var(--text-muted)',
+        fontSize: '11px',
+        padding: '4px 10px',
+        borderRadius: '12px',
+        cursor: 'help',
+        fontWeight: 600
+      }}>
+        {label}
+      </div>
+      {isHovered && (
+        <div style={{
+          position: 'absolute',
+          bottom: '100%',
+          right: '50%',
+          transform: 'translateX(50%)',
+          marginBottom: '8px',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border)',
+          borderRadius: '8px',
+          padding: '12px',
+          width: '240px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+          zIndex: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          cursor: 'default',
+          textAlign: 'left'
+        }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FactualityBadge({ outlet }) {
+  if (!outlet || !outlet.track_record_status) return null;
+  return (
+    <BadgeWithTooltip label="Factuality">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>Factuality</span>
+      </div>
+      {outlet.track_record_status && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: outlet.track_record_status === 'Clean' ? '#2ECC71' : outlet.track_record_status === 'Flagged' ? '#E67E22' : '#E74C3C' }}>
+          {outlet.track_record_status === 'Clean' ? '✓' : outlet.track_record_status === 'Flagged' ? '⚠' : '✗'} {outlet.track_record_status}
+        </div>
+      )}
+      {outlet.brown_envelope_count > 0 && (
+        <div style={{ color: '#E67E22', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          ⚠ {outlet.brown_envelope_count} brown envelope incident(s) recorded
+        </div>
+      )}
+      {outlet.credibility_tier && (
+        <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '4px', textTransform: 'uppercase', fontWeight: 600 }}>
+          Tier: {outlet.credibility_tier}
+        </div>
+      )}
+    </BadgeWithTooltip>
+  );
+}
+
+function OwnershipBadge({ outlet }) {
+  if (!outlet || !outlet.ownership_type) return null;
+  const isWarning = outlet.party_proximity && outlet.party_proximity !== 'None';
+  return (
+    <BadgeWithTooltip label="Ownership" warning={isWarning}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>Ownership</span>
+        {outlet.ownership_type && (
+          <span style={{
+            background: outlet.ownership_type === 'Government' ? '#E74C3C' : outlet.ownership_type === 'Corporate' ? '#E67E22' : '#2ECC71',
+            color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: 800
+          }}>
+            {outlet.ownership_type}
+          </span>
+        )}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        {outlet.ownership_transparency && (
+          <div style={{
+            width: '8px', height: '8px', borderRadius: '50%',
+            background: outlet.ownership_transparency === 'High' ? '#2ECC71' : outlet.ownership_transparency === 'Medium' ? '#E67E22' : '#E74C3C'
+          }} />
+        )}
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          {outlet.ownership_name || 'Unknown ownership'}
+        </span>
+      </div>
+      {isWarning && (
+        <div style={{ color: '#E74C3C', fontSize: '12px', fontWeight: 700, marginTop: '4px' }}>
+          {outlet.party_proximity}
+        </div>
+      )}
+    </BadgeWithTooltip>
+  );
+}
 
 const SEVERITY_COLORS = {
   'high': '#e67e22',
@@ -430,7 +540,7 @@ export default function Story() {
                 <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-2px)' } }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-elevated)', borderRadius: '20px', border: '1px solid var(--border)', padding: '4px 12px 4px 4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {story.outlet_logo_url ? (
                         <img src={story.outlet_logo_url} alt={story.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
                       ) : (
@@ -438,13 +548,15 @@ export default function Story() {
                           {story.outlet_name ? story.outlet_name.charAt(0).toUpperCase() : '?'}
                         </div>
                       )}
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{story.outlet_name}</span>
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{story.outlet_name}</span>
                       {story.broke_story_first && (
                         <span style={{ background: '#F39C12', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', marginLeft: '4px' }}>First to break</span>
                       )}
                     </div>
                     
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <OwnershipBadge outlet={story.outlets || {}} />
+                      <FactualityBadge outlet={story.outlets || {}} />
                       {story.outlet_coverage_tier && story.outlet_coverage_tier !== 'unscored' && (
                         <span style={{
                           border: story.outlet_coverage_tier === 'blog' ? '1px solid #888888' : `1px solid ${COVERAGE_TIER_COLORS[story.outlet_coverage_tier]}`,
@@ -455,30 +567,31 @@ export default function Story() {
                           {story.outlet_coverage_tier === 'blog' ? 'Blog' : (TIER_LABELS[story.outlet_coverage_tier] || story.outlet_coverage_tier)}
                         </span>
                       )}
+                      <span style={{ color: 'var(--text-muted)', cursor: 'pointer', marginLeft: '4px' }}>⋮</span>
                     </div>
 
                   </div>
                   
-                  <h4 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 12px 0', lineHeight: 1.4 }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px 0', lineHeight: 1.4 }}>
                     {story.title}
                   </h4>
                   
                   {story.summary && (
-                    <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 12px 0', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: 1.5 }}>
                       {(() => {
                         let clean = decodeHtml(story.summary);
                         clean = clean.replace(/https?:\/\/\S+/g, '').trim();
-                        return clean.length > 150 ? clean.substring(0, 150).trim() + '...' : clean;
+                        return clean.length > 160 ? clean.substring(0, 160).trim() + '...' : clean;
                       })()}
                     </p>
                   )}
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={12} /> {formatTimeAgo(story.published_at)}
+                      {formatTimeAgo(story.published_at)} {(story.outlets && story.outlets.headquarters_city) ? `· ${story.outlets.headquarters_city}` : ''}
                     </span>
                     <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600 }}>
-                      Read article <ExternalLink size={14} />
+                      Read Full Article →
                     </span>
                   </div>
                 </div>

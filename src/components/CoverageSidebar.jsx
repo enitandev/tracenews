@@ -38,7 +38,21 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
   const total = (groups['pro_establishment']?.length || 0) + 
                 (groups['institutional']?.length || 0) + 
                 (groups['adversarial']?.length || 0) +
-                (groups['blog']?.length || 0) || 1;
+                (groups['blog']?.length || 0);
+
+  const allUniqueStories = Object.values(groups).flat();
+  let trackRecordStats = { 'Clean': 0, 'Flagged': 0, 'Problematic': 0 };
+  let totalBrownEnvelopes = 0;
+  
+  allUniqueStories.forEach(s => {
+    const out = s.outlets || {};
+    if (out.track_record_status && trackRecordStats[out.track_record_status] !== undefined) {
+      trackRecordStats[out.track_record_status]++;
+    }
+    if (out.brown_envelope_count) {
+      totalBrownEnvelopes += out.brown_envelope_count;
+    }
+  });
 
   const tierDistribution = {
     'pro_establishment': groups['pro_establishment']?.length || 0,
@@ -183,7 +197,7 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
       </div>
 
       {/* Component 3: Outlet Logo Tubes */}
-      <div>
+      <div style={{ marginBottom: '32px' }}>
         <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           Sources By Tier
         </h4>
@@ -191,6 +205,90 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
           {renderLogoPill('pro_establishment')}
           {renderLogoPill('institutional')}
           {renderLogoPill('adversarial')}
+        </div>
+      </div>
+
+      {/* Component 4: Ownership */}
+      <div style={{ marginBottom: '32px' }}>
+        <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Ownership
+        </h4>
+        <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: 1.4 }}>
+          Unlike other platforms, TraceNews publishes ownership data freely.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {allUniqueStories.map((s, idx) => {
+            const out = s.outlets || {};
+            const initial = s.outlet_name ? s.outlet_name.charAt(0).toUpperCase() : '?';
+            return (
+              <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {out.logo_url ? (
+                    <img src={out.logo_url} alt={s.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
+                  ) : (
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: s.outlet_coverage_tier && s.outlet_coverage_tier !== 'unscored' ? COVERAGE_TIER_COLORS[s.outlet_coverage_tier] : '#888', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800 }}>
+                      {initial}
+                    </div>
+                  )}
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{s.outlet_name}</span>
+                  
+                  {out.ownership_type && (
+                    <span style={{
+                      background: out.ownership_type === 'Government' ? '#E74C3C' : out.ownership_type === 'Corporate' ? '#E67E22' : '#2ECC71',
+                      color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: 800
+                    }}>
+                      {out.ownership_type}
+                    </span>
+                  )}
+
+                  {out.ownership_transparency && (
+                    <div style={{
+                      width: '8px', height: '8px', borderRadius: '50%',
+                      background: out.ownership_transparency === 'High' ? '#2ECC71' : out.ownership_transparency === 'Medium' ? '#E67E22' : '#E74C3C'
+                    }} title={`Transparency: ${out.ownership_transparency}`} />
+                  )}
+                </div>
+                
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', paddingLeft: '32px' }}>
+                  {out.ownership_name || 'Unknown ownership'}
+                </div>
+                
+                {out.party_proximity && out.party_proximity !== 'None' && (
+                  <div style={{ paddingLeft: '32px', marginTop: '2px' }}>
+                    <span style={{ color: '#E74C3C', fontSize: '10px', fontWeight: 700, border: '1px solid #E74C3C', borderRadius: '4px', padding: '2px 6px' }}>
+                      {out.party_proximity}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Component 5: Track Record */}
+      <div>
+        <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Track Record
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'var(--text-primary)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600, color: '#2ECC71', display: 'flex', alignItems: 'center', gap: '6px' }}>✓ Clean</span>
+            <span style={{ fontWeight: 800 }}>{trackRecordStats['Clean']}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600, color: '#E67E22', display: 'flex', alignItems: 'center', gap: '6px' }}>⚠ Flagged</span>
+            <span style={{ fontWeight: 800 }}>{trackRecordStats['Flagged']}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+            <span style={{ fontWeight: 600, color: '#E74C3C', display: 'flex', alignItems: 'center', gap: '6px' }}>✗ Problematic</span>
+            <span style={{ fontWeight: 800 }}>{trackRecordStats['Problematic']}</span>
+          </div>
+          {totalBrownEnvelopes > 0 && (
+            <div style={{ color: '#E67E22', fontSize: '12px', fontWeight: 700, marginTop: '4px', padding: '8px', background: 'rgba(230,126,34,0.1)', borderRadius: '6px' }}>
+              ⚠ {totalBrownEnvelopes} brown envelope incident(s) recorded across covering outlets
+            </div>
+          )}
         </div>
       </div>
 
