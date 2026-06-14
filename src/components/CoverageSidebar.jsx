@@ -275,15 +275,17 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                   
                   {out.ownership_type && (
                     <span style={{
-                      color: 'var(--text-muted)', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border)'
+                      background: 'rgba(180, 160, 130, 0.12)', border: '1px solid rgba(180, 160, 130, 0.25)', color: 'var(--text-primary)', borderRadius: '4px', padding: '2px 6px', fontSize: '11px'
                     }}>
                       {out.ownership_type}
                     </span>
                   )}
 
                   {out.ownership_transparency && (
-                    <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-                      • Transp: {out.ownership_transparency}
+                    <span style={{
+                      background: 'rgba(180, 160, 130, 0.12)', border: '1px solid rgba(180, 160, 130, 0.25)', color: 'var(--text-primary)', borderRadius: '4px', padding: '2px 6px', fontSize: '11px'
+                    }}>
+                      Transparency: {out.ownership_transparency}
                     </span>
                   )}
                 </div>
@@ -292,7 +294,7 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                   {out.ownership_name || 'Unknown ownership'}
                 </div>
                 
-                {out.party_proximity && out.party_proximity !== 'None' && (
+                {out.party_proximity && out.party_proximity !== 'None' && out.party_proximity !== 'Unknown' && (
                   <div style={{ paddingLeft: '32px', marginTop: '2px' }}>
                     <span style={{ color: 'var(--text-primary)', background: 'var(--bg-hover)', fontSize: '10px', border: '1px solid var(--border)', borderRadius: '4px', padding: '2px 6px' }}>
                       Party Proximity: <span style={{ color: 'var(--text-muted)' }}>{out.party_proximity}</span>
@@ -303,6 +305,9 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
               </div>
             );
           })}
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '4px' }}>
+            * Party proximity shown only where documented.
+          </div>
         </div>
       </SidebarCard>
 
@@ -313,11 +318,8 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
           {/* ZONE A: Coverage Integrity verdict */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '16px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', position: 'relative' }}>
             <div style={{ fontSize: '32px', marginBottom: '8px' }}>{verdict.icon}</div>
-            <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               {verdict.text}
-            </div>
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-              {verdict.desc}
             </div>
           </div>
           
