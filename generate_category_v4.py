@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+with open("src/pages/Category.jsx", "w") as f:
+    f.write('''import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AlertTriangle, ChevronRight, ChevronDown } from 'lucide-react';
 
@@ -97,7 +98,7 @@ export default function Category() {
 
   if (!data) return null;
 
-  const { total_cluster_count, top_stories, stories, covered_most_by, bias_breakdown } = data;
+  const { total_cluster_count, top_stories, monitoring_spirit, stories, covered_most_by, bias_breakdown } = data;
 
   const total = bias_breakdown.total || 1;
   const tiers = ['pro_establishment', 'institutional', 'adversarial'];
@@ -311,7 +312,7 @@ export default function Category() {
                 <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.4 }}>
                   {biasSummary}
                 </p>
-                <div style={{ width: '100%', display: 'block', overflow: 'hidden', borderRadius: '4px' }}>
+                <div style={{ width: '100%', display: 'block', overflow: 'hidden', height: '24px', borderRadius: '4px' }}>
                   <CoverageBar variant="hero" coverageStats={synthCoverageStats} />
                 </div>
               </div>
@@ -419,3 +420,4 @@ export default function Category() {
     </div>
   );
 }
+''')
