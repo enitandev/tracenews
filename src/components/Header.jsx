@@ -138,9 +138,9 @@ export default function Header() {
             📈 Trending
           </span>
           {['Politics', 'Economy', 'Security', 'Entertainment', 'Sports', 'Technology', 'Health'].map(cat => (
-            <button key={cat} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '16px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Link key={cat} to={`/topics/${cat.toLowerCase()}`} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '16px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
               {cat} <span>+</span>
-            </button>
+            </Link>
           ))}
         </div>
       </div>

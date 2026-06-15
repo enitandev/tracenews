@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Registry from "./pages/Registry";
 import Story from "./pages/Story";
 import Layout from "./components/Layout";
+import Category from "./pages/Category";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
 
@@ -28,7 +29,7 @@ export default function App() {
             <Route path="/outlets" element={<HomepagePlaceholder />} />
             <Route path="/outlets/:outletSlug" element={<HomepagePlaceholder />} />
             <Route path="/topics" element={<HomepagePlaceholder />} />
-            <Route path="/topics/:topicSlug" element={<HomepagePlaceholder />} />
+            <Route path="/topics/:topicSlug" element={<Category />} />
             <Route path="/methodology" element={<HomepagePlaceholder />} />
           </Routes>
         </Layout>
