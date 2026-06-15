@@ -75,7 +75,7 @@ export default function Category() {
   // Category images for Related Categories
   const [categoryImages, setCategoryImages] = useState({});
 
-  const categoryName = topicSlug.charAt(0).toUpperCase() + topicSlug.slice(1).toLowerCase();
+  const categoryName = topicSlug ? topicSlug.charAt(0).toUpperCase() + topicSlug.slice(1).toLowerCase() : '';
 
   useEffect(() => {
     setLoading(true);
@@ -174,7 +174,7 @@ export default function Category() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)'
             }}>
-              {categoryName.charAt(0)}
+              {categoryName ? categoryName.charAt(0) : ''}
             </div>
             <div>
               <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0 0 12px 0', color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}>
@@ -290,7 +290,7 @@ export default function Category() {
                           <img src={outlet.logo_url} alt="" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'contain', background: '#fff' }} />
                         ) : (
                           <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--bg-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                            {outlet.name.charAt(0)}
+                            {outlet.name ? outlet.name.charAt(0) : '?'}
                           </div>
                         )}
                         <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -373,7 +373,7 @@ export default function Category() {
           Related Categories
         </h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-          {CATEGORIES.filter(c => c !== categoryName).map(topicCat => {
+          {CATEGORIES.filter(c => c && c !== categoryName).map(topicCat => {
             const catHeroImage = categoryImages[topicCat];
             return (
               <Link to={`/topics/${topicCat.toLowerCase()}`} key={topicCat} style={{ 
