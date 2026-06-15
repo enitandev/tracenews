@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+with open("src/pages/Category.jsx", "w") as f:
+    f.write('''import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AlertTriangle, ChevronRight } from 'lucide-react';
 
@@ -271,3 +272,4 @@ export default function Category() {
     </div>
   );
 }
+''')
