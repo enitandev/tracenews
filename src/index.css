@@ -127,3 +127,14 @@ body {
     display: none !important;
   }
 }
+
+.related-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  .related-categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

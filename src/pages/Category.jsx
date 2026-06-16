@@ -372,7 +372,7 @@ export default function Category() {
         <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', color: 'var(--text-primary)' }}>
           Related Categories
         </h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="related-categories-grid">
           {CATEGORIES.filter(c => c && c !== categoryName).map(topicCat => {
             const catHeroImage = categoryImages[topicCat];
             return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const COVERAGE_TIER_COLORS = {
   'pro_establishment': '#2980B9',
@@ -51,6 +51,8 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
   const tiers = ['pro_establishment', 'institutional', 'adversarial', 'unscored'];
   const isUnscored = Object.values(dist).every(v => v === 0);
 
+  const [hoveredTier, setHoveredTier] = useState(null);
+
   if (isHero) {
       const height = '28px';
       const fontSize = '12px';
@@ -62,28 +64,58 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
           </div>
         );
       }
-      
+
+      // Filter to find actual displayed tiers so we can skip right border on the last one
+      const displayedTiers = tiers.filter(tier => (dist[tier] || 0) > 0);
+
       return (
-        <div style={{ width: '100%', height, display: 'flex', overflow: 'hidden', background: '#333' }}>
-          {tiers.map(tier => {
+        <div style={{ width: '100%', height, display: 'flex', overflow: 'hidden', background: 'transparent' }}>
+          {displayedTiers.map((tier, index) => {
             const count = dist[tier] || 0;
-            if (count === 0) return null;
             const percentage = (count / total) * 100;
-            const showLabel = percentage >= 15;
-            let labelText = `${TIER_LABELS[tier]} ${Math.round(percentage)}%`;
-            if (tier === dominant) {
-              labelText += ` · ${total} sources`;
-            }
+            const labelText = `${TIER_LABELS[tier]} ${Math.round(percentage)}%`;
+            const isLast = index === displayedTiers.length - 1;
+            
             return (
               <div 
                 key={tier} 
-                style={{ width: `${percentage}%`, height: '100%', background: COVERAGE_TIER_COLORS[tier], display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
-                title={`${TIER_LABELS[tier]}: ${Math.round(percentage)}%`}
+                onMouseEnter={() => setHoveredTier(tier)}
+                onMouseLeave={() => setHoveredTier(null)}
+                style={{ 
+                  width: `${percentage}%`, 
+                  height: '100%', 
+                  background: COVERAGE_TIER_COLORS[tier],
+                  borderRight: isLast ? 'none' : '2px solid var(--bg-surface)',
+                  position: 'relative'
+                }} 
               >
-                {showLabel && (
-                  <span style={{ fontSize, fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', textShadow: '0 1px 2px rgba(0,0,0,0.5)', padding: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {hoveredTier === tier && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    marginBottom: '8px',
+                    background: 'var(--text-primary)',
+                    color: 'var(--bg-primary)',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                    zIndex: 20
+                  }}>
                     {labelText}
-                  </span>
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      borderWidth: '4px',
+                      borderStyle: 'solid',
+                      borderColor: 'var(--text-primary) transparent transparent transparent'
+                    }}></div>
+                  </div>
                 )}
               </div>
             );
