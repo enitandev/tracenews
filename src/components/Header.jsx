@@ -89,6 +89,7 @@ export default function Header() {
               <a href="/" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: '2px solid var(--text-primary)', paddingBottom: '4px' }}>Home</a>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>For You</a>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Local</a>
+              <Link to="/daily-briefing" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Daily Briefing</Link>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Monitoring Spirit</a>
             </nav>
           </div>

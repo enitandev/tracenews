@@ -28,3 +28,20 @@ export const TIER_LABELS = {
   'adversarial': 'Adversarial',
   'unscored': 'Unscored'
 };
+
+export function formatTimeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  if (hours < 1) return 'Just now';
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+export const COVERAGE_TIER_BG_COLORS = {
+  pro_establishment: 'rgba(41, 128, 185, 0.12)',
+  institutional: 'rgba(230, 126, 34, 0.12)',
+  adversarial: 'rgba(192, 57, 43, 0.12)',
+  unscored: 'rgba(153, 153, 153, 0.12)'
+};

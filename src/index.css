@@ -138,3 +138,15 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Daily Briefing Specifics */
+.briefing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  .briefing-grid {
+    grid-template-columns: 1fr;
+  }
+}

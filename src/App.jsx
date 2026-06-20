@@ -4,6 +4,8 @@ import Registry from "./pages/Registry";
 import Story from "./pages/Story";
 import Layout from "./components/Layout";
 import Category from "./pages/Category";
+import DailyBriefing from "./pages/DailyBriefing";
+import DailyBriefingStory from "./pages/DailyBriefingStory";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
 
@@ -25,6 +27,8 @@ export default function App() {
             <Route path="/home" element={<HomepagePlaceholder />} />
             <Route path="/registry" element={<Registry />} />
             <Route path="/story/:slug" element={<Story />} />
+            <Route path="/daily-briefing" element={<DailyBriefing />} />
+            <Route path="/daily-briefing/:slug" element={<DailyBriefingStory />} />
             {/* New static routes */}
             <Route path="/outlets" element={<HomepagePlaceholder />} />
             <Route path="/outlets/:outletSlug" element={<HomepagePlaceholder />} />
