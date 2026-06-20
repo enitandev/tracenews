@@ -108,16 +108,16 @@ export default function DailyBriefingStory() {
           <div className="mobile-stack" style={{ display: 'flex', gap: '24px', marginBottom: '32px' }}>
             <div style={{ width: '40%', flexShrink: 0 }}>
               {image_url ? (
-                <img src={image_url} alt="" style={{ width: '100%', height: '280px', objectFit: 'cover', borderRadius: '8px' }} />
+                <img src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} />
               ) : (
-                <div style={{ width: '100%', height: '280px', background: 'var(--bg-hover)', borderRadius: '8px' }}></div>
+                <div style={{ width: '100%', height: '320px', background: 'var(--bg-hover)', borderRadius: '8px' }}></div>
               )}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
                 {cluster?.outlet_count} articles · {formatTimeAgo(cluster?.first_seen_at)}
               </div>
-              <h1 style={{ fontSize: '32px', fontWeight: 800, lineHeight: 1.2, color: 'var(--text-primary)', fontFamily: 'var(--font-body)', margin: '0 0 24px 0' }}>
+              <h1 style={{ fontSize: '40px', fontWeight: 800, lineHeight: 1.2, color: 'var(--text-primary)', fontFamily: 'var(--font-body)', margin: '0 0 24px 0' }}>
                 {cluster?.representative_title}
               </h1>
               <div style={{ marginTop: 'auto' }}>
@@ -130,16 +130,16 @@ export default function DailyBriefingStory() {
           {ground_summary && (
             <div style={{ marginTop: '40px' }}>
               <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
-                Ground Summary
+                Trace Summary
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)', margin: 0 }}>
+              <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
+                <li style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)' }}>
                   <strong>What's happening:</strong>{" "}{ground_summary.whats_happening}
-                </p>
-                <p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)', margin: 0 }}>
+                </li>
+                <li style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)' }}>
                   <strong>Why it matters:</strong>{" "}{ground_summary.why_it_matters}
-                </p>
-              </div>
+                </li>
+              </ul>
               <div style={{ height: '1px', background: 'var(--border)', marginTop: '32px' }}></div>
             </div>
           )}
@@ -148,15 +148,15 @@ export default function DailyBriefingStory() {
           {common_ground && common_ground.length > 0 && (
             <div style={{ marginTop: '40px' }}>
               <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
-                Common Ground
+                Where Everyone Agrees
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
                 {common_ground.map((cg, i) => (
-                  <p key={i} style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)', margin: 0 }}>
+                  <li key={i} style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)' }}>
                     <strong>{cg.label}:</strong>{" "}{cg.text}
-                  </p>
+                  </li>
                 ))}
-              </div>
+              </ul>
               <div style={{ height: '1px', background: 'var(--border)', marginTop: '32px' }}></div>
             </div>
           )}
@@ -178,7 +178,7 @@ export default function DailyBriefingStory() {
                 display: 'flex',
                 alignItems: 'center'
               }}>
-                <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, maxWidth: '80%' }}>
+                <div style={{ fontSize: '36px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2, maxWidth: '100%' }}>
                   {perspectives_title}
                 </div>
               </div>
@@ -310,7 +310,7 @@ export default function DailyBriefingStory() {
             {more_from_briefing.map((m, i) => (
               <Link key={i} to={`/daily-briefing/${m.cluster_slug}`} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', textDecoration: 'none', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', padding: '12px' }}>
-                  <div style={{ width: '100px', height: '80px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ width: '120px', height: '90px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
                     {m.image_url ? (
                       <img src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
@@ -327,8 +327,8 @@ export default function DailyBriefingStory() {
                   </div>
                 </div>
                 <div style={{ padding: '0 12px 12px 12px' }}>
-                  <CoverageBar coverageStats={m.coverage_stats} variant="compact" />
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '8px' }}>
+                  <CoverageBar coverageStats={m.coverage_stats} variant="hero" />
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic' }}>
                     {m.perspectives_title}
                   </div>
                 </div>
