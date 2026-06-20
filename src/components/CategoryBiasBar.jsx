@@ -56,7 +56,7 @@ export default function CategoryBiasBar({ coverageStats }) {
               }}
             >
               {showAbbrev && (
-                <span style={{ color: '#fff', fontSize: '11px', fontWeight: 700 }}>
+                <span style={{ color: '#fff', fontSize: '11px', fontWeight: 700, textAlign: 'center', pointerEvents: 'none' }}>
                   {TIER_FULL_NAMES[tier]} {Math.round(percentage)}%
                 </span>
               )}

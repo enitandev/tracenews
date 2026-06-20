@@ -200,7 +200,7 @@ export default function Category() {
       <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
         
         {/* LEFT COLUMN */}
-        <div style={{ width: '65%', flexShrink: 0, minWidth: 0 }}>
+        <div style={{ width: 'calc(65% - 24px)', flexShrink: 0, minWidth: 0 }}>
           
           {/* ZONE 1: Top Stories */}
           <div style={{ marginBottom: '48px' }}>
@@ -250,7 +250,7 @@ export default function Category() {
         }}></div>
 
         {/* RIGHT COLUMN: Sidebar */}
-        <div style={{ width: '35%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ width: 'calc(35% - 24px)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {loading && (
             <>
               <SkeletonSidebarCard />
