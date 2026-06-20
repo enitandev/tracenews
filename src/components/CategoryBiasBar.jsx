@@ -36,7 +36,7 @@ export default function CategoryBiasBar({ coverageStats }) {
           const count = rawDist[tier] || 0;
           const percentage = (count / total) * 100;
           const isLast = index === displayedTiers.length - 1;
-          const showAbbrev = percentage >= 12;
+          const showAbbrev = percentage >= 15;
           
           return (
             <div 
@@ -91,7 +91,8 @@ export default function CategoryBiasBar({ coverageStats }) {
             transform: 'translateX(-50%)',
             marginBottom: '8px',
             background: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
+            color: 'var(--bg-surface)',
+            border: '1px solid var(--border)',
             padding: '4px 10px',
             borderRadius: '4px',
             fontSize: '12px',

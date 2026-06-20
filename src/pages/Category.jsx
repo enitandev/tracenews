@@ -200,7 +200,7 @@ export default function Category() {
       <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
         
         {/* LEFT COLUMN */}
-        <div style={{ flex: '1 1 0%', minWidth: 0 }}>
+        <div style={{ width: '65%', flexShrink: 0, minWidth: 0 }}>
           
           {/* ZONE 1: Top Stories */}
           <div style={{ marginBottom: '48px' }}>
@@ -250,7 +250,7 @@ export default function Category() {
         }}></div>
 
         {/* RIGHT COLUMN: Sidebar */}
-        <div style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ width: '35%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {loading && (
             <>
               <SkeletonSidebarCard />
@@ -280,7 +280,7 @@ export default function Category() {
                   covered_most_by.map((outlet, idx) => {
                     const tierColor = COVERAGE_TIER_COLORS[outlet.tier] || 'var(--border)';
                     const tierTextColor = outlet.tier === 'unscored' ? 'var(--text-muted)' : tierColor;
-                    const tierLabel = outlet.tier === 'pro_establishment' ? 'Pro-Est.' : outlet.tier === 'institutional' ? 'Inst.' : outlet.tier === 'adversarial' ? 'Adversarial' : 'Unscored';
+                    const tierLabel = outlet.tier === 'pro_establishment' ? 'Pro-Establishment' : outlet.tier === 'institutional' ? 'Institutional' : outlet.tier === 'adversarial' ? 'Adversarial' : 'Unscored';
                     
                     return (
                       <div key={idx} style={{ 
