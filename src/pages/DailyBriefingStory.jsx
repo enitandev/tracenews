@@ -21,7 +21,7 @@ function AccordionQuestion({ item, defaultExpanded }) {
         </div>
       </div>
       {expanded && (
-        <div style={{ fontSize: '18px', color: 'var(--text-muted)', lineHeight: 1.7, marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
+        <div style={{ fontSize: '16px', color: 'var(--text-muted)', lineHeight: 1.7, marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
           {item.answer}
         </div>
       )}
@@ -133,10 +133,10 @@ export default function DailyBriefingStory() {
                 Trace Summary
               </div>
               <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
-                <li style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
+                <li style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
                   <strong>What's happening:</strong>{" "}{ground_summary.whats_happening}
                 </li>
-                <li style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
+                <li style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
                   <strong>Why it matters:</strong>{" "}{ground_summary.why_it_matters}
                 </li>
               </ul>
@@ -152,7 +152,7 @@ export default function DailyBriefingStory() {
               </div>
               <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
                 {common_ground.map((cg, i) => (
-                  <li key={i} style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
+                  <li key={i} style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
                     <strong>{cg.label}:</strong>{" "}{cg.text}
                   </li>
                 ))}
@@ -201,10 +201,10 @@ export default function DailyBriefingStory() {
                     <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-muted)', paddingRight: '16px' }}>
                       {row.dimension}
                     </div>
-                    <div style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)', paddingRight: '12px' }}>
+                    <div style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)', paddingRight: '12px' }}>
                       {row.side_a}
                     </div>
-                    <div style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)', paddingLeft: '12px' }}>
+                    <div style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)', paddingLeft: '12px' }}>
                       {row.side_b}
                     </div>
                   </div>
@@ -228,7 +228,7 @@ export default function DailyBriefingStory() {
                   <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {location_context.city}, {location_context.country}
                   </div>
-                  <div style={{ fontSize: '18px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  <div style={{ fontSize: '16px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     {location_context.note}
                   </div>
                 </div>
@@ -240,7 +240,7 @@ export default function DailyBriefingStory() {
                   <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {cluster?.outlet_count} Articles
                   </div>
-                  <div style={{ fontSize: '18px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  <div style={{ fontSize: '16px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     {stories.slice(0, 3).map(s => s.outlets?.name || s.outlet_slug || s.outlet_name).join(', ')}
                     {stories.length > 3 ? ' and more' : ''}
                   </div>
