@@ -7,6 +7,7 @@ import StandardStoryItem from '../components/StandardStoryItem';
 import CompactStoryItem from '../components/CompactStoryItem';
 import MonitoringAlertCard from '../components/MonitoringAlertCard';
 import CoverageBar from '../components/CoverageBar';
+import CategoryBiasBar from '../components/CategoryBiasBar';
 import { COVERAGE_TIER_COLORS, TIER_LABELS } from '../utils/helpers';
 
 
