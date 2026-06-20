@@ -88,7 +88,10 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
                   height: '100%', 
                   background: COVERAGE_TIER_COLORS[tier],
                   borderRight: isLast ? 'none' : '2px solid var(--bg-surface)',
-                  position: 'relative'
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }} 
               >
                 {showAbbrev && (
