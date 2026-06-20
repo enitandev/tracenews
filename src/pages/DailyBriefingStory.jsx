@@ -13,7 +13,7 @@ function AccordionQuestion({ item, defaultExpanded }) {
       style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', marginBottom: '8px', cursor: 'pointer' }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', flex: 1, paddingRight: '8px' }}>
+        <div style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', flex: 1, paddingRight: '8px' }}>
           {item.question}
         </div>
         <div style={{ color: 'var(--text-muted)' }}>
@@ -21,7 +21,7 @@ function AccordionQuestion({ item, defaultExpanded }) {
         </div>
       </div>
       {expanded && (
-        <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6, marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
+        <div style={{ fontSize: '18px', color: 'var(--text-muted)', lineHeight: 1.7, marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
           {item.answer}
         </div>
       )}
@@ -129,14 +129,14 @@ export default function DailyBriefingStory() {
           {/* SECTION 2 - Ground Summary */}
           {ground_summary && (
             <div style={{ marginTop: '40px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
+              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
                 Trace Summary
               </div>
               <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
-                <li style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)' }}>
+                <li style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
                   <strong>What's happening:</strong>{" "}{ground_summary.whats_happening}
                 </li>
-                <li style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)' }}>
+                <li style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
                   <strong>Why it matters:</strong>{" "}{ground_summary.why_it_matters}
                 </li>
               </ul>
@@ -147,12 +147,12 @@ export default function DailyBriefingStory() {
           {/* SECTION 3 - Common Ground */}
           {common_ground && common_ground.length > 0 && (
             <div style={{ marginTop: '40px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
+              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
                 Where Everyone Agrees
               </div>
               <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
                 {common_ground.map((cg, i) => (
-                  <li key={i} style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)' }}>
+                  <li key={i} style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
                     <strong>{cg.label}:</strong>{" "}{cg.text}
                   </li>
                 ))}
@@ -164,7 +164,7 @@ export default function DailyBriefingStory() {
           {/* SECTION 4 - Perspectives */}
           {perspectives_title && perspectives_table && (
             <div style={{ marginTop: '40px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
+              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
                 Perspectives
               </div>
               
@@ -187,10 +187,10 @@ export default function DailyBriefingStory() {
                 {/* Header Row */}
                 <div style={{ display: 'grid', gridTemplateColumns: '25% 37.5% 37.5%', paddingBottom: '8px', borderBottom: '2px solid var(--border)', marginBottom: '8px' }}>
                   <div></div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, textAlign: 'center', color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '18px', fontWeight: 700, textAlign: 'center', color: 'var(--text-primary)' }}>
                     {perspectives_sides?.side_a}
                   </div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, textAlign: 'center', color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '18px', fontWeight: 700, textAlign: 'center', color: 'var(--text-primary)' }}>
                     {perspectives_sides?.side_b}
                   </div>
                 </div>
@@ -198,13 +198,13 @@ export default function DailyBriefingStory() {
                 {/* Data Rows */}
                 {perspectives_table.map((row, i) => (
                   <div key={i} style={{ display: 'grid', gridTemplateColumns: '25% 37.5% 37.5%', padding: '16px 0', borderBottom: i < perspectives_table.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', paddingRight: '16px' }}>
+                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-muted)', paddingRight: '16px' }}>
                       {row.dimension}
                     </div>
-                    <div style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--text-primary)', paddingRight: '12px' }}>
+                    <div style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)', paddingRight: '12px' }}>
                       {row.side_a}
                     </div>
-                    <div style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--text-primary)', paddingLeft: '12px' }}>
+                    <div style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-primary)', paddingLeft: '12px' }}>
                       {row.side_b}
                     </div>
                   </div>
@@ -225,10 +225,10 @@ export default function DailyBriefingStory() {
               <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                 <MapPin size={16} color="var(--text-muted)" style={{ marginTop: '2px' }} />
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {location_context.city}, {location_context.country}
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  <div style={{ fontSize: '18px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     {location_context.note}
                   </div>
                 </div>
@@ -237,10 +237,10 @@ export default function DailyBriefingStory() {
               <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                 <FileText size={16} color="var(--text-muted)" style={{ marginTop: '2px' }} />
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {cluster?.outlet_count} Articles
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  <div style={{ fontSize: '18px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     {stories.slice(0, 3).map(s => s.outlets?.name || s.outlet_slug || s.outlet_name).join(', ')}
                     {stories.length > 3 ? ' and more' : ''}
                   </div>
@@ -252,7 +252,7 @@ export default function DailyBriefingStory() {
           {/* CARD 2 - Follow-up Questions */}
           {followup_questions && followup_questions.length > 0 && (
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '16px' }}>
+              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '16px' }}>
                 Follow-up Questions
               </div>
               {followup_questions.map((q, i) => (
@@ -263,7 +263,7 @@ export default function DailyBriefingStory() {
 
           {/* CARD 3 - Bias Distribution */}
           <div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '16px' }}>
+            <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '16px' }}>
               Bias Distribution
             </div>
             <div style={{ marginBottom: '24px', borderRadius: '6px', overflow: 'hidden' }}>
@@ -299,7 +299,7 @@ export default function DailyBriefingStory() {
       {/* BOTTOM SECTION */}
       {more_from_briefing && more_from_briefing.length > 0 && (
         <div style={{ marginTop: '64px' }}>
-          <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '24px' }}>
+          <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '24px' }}>
             More from Today's Briefing
           </div>
           <div style={{ 
@@ -327,7 +327,9 @@ export default function DailyBriefingStory() {
                   </div>
                 </div>
                 <div style={{ padding: '0 12px 12px 12px' }}>
-                  <CoverageBar coverageStats={m.coverage_stats} variant="hero" />
+                  <div style={{ marginTop: '12px', overflow: 'hidden' }}>
+                    <CoverageBar coverageStats={m.coverage_stats} variant="compact" />
+                  </div>
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic' }}>
                     {m.perspectives_title}
                   </div>
