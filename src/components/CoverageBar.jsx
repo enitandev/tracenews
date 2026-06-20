@@ -76,7 +76,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
             const labelText = `${TIER_LABELS[tier]} ${Math.round(percentage)}%`;
             const isLast = index === displayedTiers.length - 1;
             const showAbbrev = percentage >= 15;
-            const TIER_ABBREVS = { 'pro_establishment': 'P-E', 'institutional': 'I', 'adversarial': 'A' };
+            const TIER_FULL_LABELS = { 'pro_establishment': 'Pro-Establishment', 'institutional': 'Institutional', 'adversarial': 'Adversarial' };
             
             return (
               <div 
@@ -93,7 +93,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
               >
                 {showAbbrev && (
                   <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, pointerEvents: 'none' }}>
-                    {TIER_ABBREVS[tier]} {Math.round(percentage)}%
+                    {TIER_FULL_LABELS[tier]} {Math.round(percentage)}%
                   </span>
                 )}
                 {hoveredTier === tier && (
