@@ -470,11 +470,7 @@ export default function DailyBriefingStory() {
           <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '24px' }}>
             More from Today's Briefing
           </div>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: `repeat(min(3, ${more_from_briefing.length}), 1fr)`, 
-            gap: '16px' 
-          }} className="mobile-stack">
+          <div className="briefing-more-grid">
             {more_from_briefing.map((m, i) => (
               <Link key={i} to={`/daily-briefing/${m.cluster_slug}`} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', textDecoration: 'none', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', padding: '12px' }}>
