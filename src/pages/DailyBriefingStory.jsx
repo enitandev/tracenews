@@ -29,6 +29,145 @@ function AccordionQuestion({ item, defaultExpanded }) {
   );
 }
 
+function SkeletonBriefingStory() {
+  return (
+    <div style={{ 
+      maxWidth: '1400px', 
+      margin: '0 auto', 
+      padding: '32px 24px'
+    }}>
+      {/* Back link skeleton */}
+      <div style={{ 
+        width: '120px', height: '16px',
+        background: 'var(--bg-hover)',
+        borderRadius: '4px',
+        marginBottom: '32px'
+      }} />
+      
+      <div className="mobile-stack" 
+        style={{ 
+          display: 'flex', 
+          gap: '48px'
+        }}>
+        {/* Left column */}
+        <div style={{ 
+          width: 'calc(65% - 24px)'
+        }}>
+          {/* Hero skeleton */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '24px',
+            marginBottom: '32px'
+          }}>
+            <div style={{ 
+              width: '40%', 
+              height: '320px',
+              background: 'var(--bg-hover)',
+              borderRadius: '8px',
+              flexShrink: 0
+            }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ 
+                width: '40%', height: '14px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px',
+                marginBottom: '16px'
+              }} />
+              <div style={{ 
+                width: '100%', height: '40px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px',
+                marginBottom: '12px'
+              }} />
+              <div style={{ 
+                width: '80%', height: '40px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px',
+                marginBottom: '24px'
+              }} />
+              <div style={{ 
+                width: '100%', height: '28px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px',
+                marginTop: 'auto'
+              }} />
+            </div>
+          </div>
+          {/* Content skeleton */}
+          {[1,2,3].map(i => (
+            <div key={i} style={{ 
+              marginBottom: '32px'
+            }}>
+              <div style={{ 
+                width: '200px', 
+                height: '26px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px',
+                marginBottom: '20px'
+              }} />
+              {[1,2,3].map(j => (
+                <div key={j} style={{ 
+                  width: j === 3 
+                    ? '60%' : '100%',
+                  height: '16px',
+                  background: 'var(--bg-hover)',
+                  borderRadius: '4px',
+                  marginBottom: '12px'
+                }} />
+              ))}
+            </div>
+          ))}
+        </div>
+        
+        {/* Divider */}
+        <div className="hide-on-mobile" 
+          style={{ 
+            width: '1px',
+            background: 'var(--border)',
+            alignSelf: 'stretch'
+          }} 
+        />
+        
+        {/* Right column */}
+        <div style={{ 
+          width: 'calc(35% - 24px)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          {[1,2,3].map(i => (
+            <div key={i} style={{ 
+              background: 'var(--bg-elevated)',
+              border: '1px solid var(--border)',
+              borderRadius: '8px',
+              padding: '16px',
+              height: '120px'
+            }}>
+              <div style={{ 
+                width: '60%', height: '14px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px',
+                marginBottom: '12px'
+              }} />
+              <div style={{ 
+                width: '90%', height: '12px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px',
+                marginBottom: '8px'
+              }} />
+              <div style={{ 
+                width: '70%', height: '12px',
+                background: 'var(--bg-hover)',
+                borderRadius: '4px'
+              }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function DailyBriefingStory() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
@@ -53,12 +192,27 @@ export default function DailyBriefingStory() {
       });
   }, [slug]);
 
-  if (loading) {
-    return <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>Loading...</div>;
-  }
-  if (error || !data) {
-    return <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', color: 'var(--text-muted)' }}>{error || "Story not found"}</div>;
-  }
+  if (loading) return <SkeletonBriefingStory />
+  
+  if (error || !data) return (
+    <div style={{ 
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: '60px 24px',
+      textAlign: 'center',
+      color: 'var(--text-muted)',
+      fontFamily: 'var(--font-body)',
+      fontSize: '16px'
+    }}>
+      This briefing is not available. 
+      <Link to="/" style={{ 
+        color: 'var(--text-primary)',
+        marginLeft: '8px'
+      }}>
+        Return to homepage
+      </Link>
+    </div>
+  )
 
   const { cluster, stories, ground_summary, common_ground, perspectives_title, perspectives_sides, perspectives_table, followup_questions, location_context, more_from_briefing, image_url } = data;
 
@@ -223,7 +377,14 @@ export default function DailyBriefingStory() {
           {location_context && location_context.city && (
             <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', marginBottom: '24px' }}>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                <MapPin size={16} color="var(--text-muted)" style={{ marginTop: '2px' }} />
+                <MapPin 
+                  size={18} 
+                  color="var(--text-muted)"
+                  style={{ 
+                    flexShrink: 0,
+                    marginTop: '3px'
+                  }} 
+                />
                 <div>
                   <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {location_context.city}, {location_context.country}
@@ -235,7 +396,14 @@ export default function DailyBriefingStory() {
               </div>
               <div style={{ height: '1px', background: 'var(--border)', margin: '16px 0' }}></div>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                <FileText size={16} color="var(--text-muted)" style={{ marginTop: '2px' }} />
+                <FileText 
+                  size={18} 
+                  color="var(--text-muted)"
+                  style={{ 
+                    flexShrink: 0,
+                    marginTop: '3px'
+                  }} 
+                />
                 <div>
                   <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {cluster?.outlet_count} Articles
