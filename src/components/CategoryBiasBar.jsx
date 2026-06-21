@@ -25,8 +25,11 @@ export default function CategoryBiasBar({ coverageStats }) {
   const rawDist = coverageStats?.coverage_tier_distribution || {};
   const total = coverageStats?.total_coverage || 1;
   
-  const tiers = ['pro_establishment', 'institutional', 'adversarial'];
-  const displayedTiers = tiers.filter(tier => (rawDist[tier] || 0) > 0);
+  const displayedTiers = [
+    'pro_establishment', 
+    'institutional', 
+    'adversarial'
+  ].filter(tier => (rawDist[tier] || 0) > 0);
 
   return (
     <div style={{ width: '100%', height: '28px', display: 'flex', overflow: 'visible', borderRadius: '4px', position: 'relative' }}>

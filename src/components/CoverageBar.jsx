@@ -66,7 +66,11 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
       }
 
       // Filter to find actual displayed tiers so we can skip right border on the last one
-      const displayedTiers = tiers.filter(tier => (dist[tier] || 0) > 0);
+      const displayedTiers = [
+        'pro_establishment', 
+        'institutional', 
+        'adversarial'
+      ].filter(tier => (dist[tier] || 0) > 0);
 
       return (
         <div style={{ width: '100%', height, display: 'flex', overflow: 'hidden', background: 'transparent' }}>
