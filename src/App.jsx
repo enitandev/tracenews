@@ -28,6 +28,9 @@ function DailyBriefingRedirect() {
             `/daily-briefing/${d.stories[0].cluster_slug}`,
             { replace: true }
           )
+        } else {
+          // No briefing available
+          navigate('/', { replace: true })
         }
       })
       .catch(() => navigate('/'))
