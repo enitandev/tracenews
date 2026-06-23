@@ -8,9 +8,9 @@ const COVERAGE_TIER_COLORS = {
 };
 
 const TIER_FULL_NAMES = {
-  'pro_establishment': 'Pro-Establishment',
-  'institutional': 'Institutional',
-  'adversarial': 'Adversarial'
+  'pro_establishment': 'Govt',
+  'institutional': 'Mainstream',
+  'adversarial': 'Watchdog'
 };
 
 const TIER_ABBREVS = {

@@ -23,9 +23,9 @@ export const COVERAGE_TIER_COLORS = {
 };
 
 export const TIER_LABELS = {
-  'pro_establishment': 'Pro-Establishment',
-  'institutional': 'Institutional',
-  'adversarial': 'Adversarial',
+  'pro_establishment': 'Govt',
+  'institutional': 'Mainstream',
+  'adversarial': 'Watchdog',
   'unscored': 'Unscored'
 };
 

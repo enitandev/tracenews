@@ -280,7 +280,7 @@ export default function Category() {
                   covered_most_by.map((outlet, idx) => {
                     const tierColor = COVERAGE_TIER_COLORS[outlet.tier] || 'var(--border)';
                     const tierTextColor = outlet.tier === 'unscored' ? 'var(--text-muted)' : tierColor;
-                    const tierLabel = outlet.tier === 'pro_establishment' ? 'Pro-Establishment' : outlet.tier === 'institutional' ? 'Institutional' : outlet.tier === 'adversarial' ? 'Adversarial' : 'Unscored';
+                    const tierLabel = outlet.tier === 'pro_establishment' ? 'Govt' : outlet.tier === 'institutional' ? 'Mainstream' : outlet.tier === 'adversarial' ? 'Watchdog' : 'Unscored';
                     
                     return (
                       <div key={idx} style={{ 

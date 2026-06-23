@@ -218,15 +218,15 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
             <span style={{ fontWeight: 800 }}>{total}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['pro_establishment'] }}>Pro-Establishment</span>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['pro_establishment'] }}>Govt</span>
             <span style={{ fontWeight: 800 }}>{groups['pro_establishment']?.length || 0}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['institutional'] }}>Institutional</span>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['institutional'] }}>Mainstream</span>
             <span style={{ fontWeight: 800 }}>{groups['institutional']?.length || 0}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['adversarial'] }}>Adversarial</span>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['adversarial'] }}>Watchdog</span>
             <span style={{ fontWeight: 800 }}>{groups['adversarial']?.length || 0}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>

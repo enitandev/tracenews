@@ -14,9 +14,9 @@ const LEGACY_MAP = {
 };
 
 const TIER_LABELS = {
-  'pro_establishment': 'Pro-Establishment',
-  'institutional': 'Institutional',
-  'adversarial': 'Adversarial',
+  'pro_establishment': 'Govt',
+  'institutional': 'Mainstream',
+  'adversarial': 'Watchdog',
   'unscored': 'Unscored'
 };
 
@@ -76,7 +76,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
             const labelText = `${TIER_LABELS[tier]} ${Math.round(percentage)}%`;
             const isLast = index === displayedTiers.length - 1;
             const showAbbrev = percentage >= 15;
-            const TIER_FULL_LABELS = { 'pro_establishment': 'Pro-Establishment', 'institutional': 'Institutional', 'adversarial': 'Adversarial' };
+            const TIER_FULL_LABELS = { 'pro_establishment': 'Govt', 'institutional': 'Mainstream', 'adversarial': 'Watchdog' };
             
             return (
               <div 

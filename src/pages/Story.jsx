@@ -12,17 +12,17 @@ const COVERAGE_TIER_COLORS = {
 };
 
 const TIER_LABELS = {
-  'pro_establishment': 'Pro-Establishment',
-  'institutional': 'Institutional',
-  'adversarial': 'Adversarial',
+  'pro_establishment': 'Govt',
+  'institutional': 'Mainstream',
+  'adversarial': 'Watchdog',
   'unscored': 'Unscored'
 };
 
 const TAB_TO_KEY = {
   'All': 'all',
-  'Adversarial': 'adversarial',
-  'Institutional': 'institutional',
-  'Pro-Establishment': 'pro_establishment',
+  'Watchdog': 'adversarial',
+  'Mainstream': 'institutional',
+  'Govt': 'pro_establishment',
   'Bias Comparison': 'comparison'
 };
 
@@ -310,7 +310,7 @@ export default function Story() {
     
     // Determine which segment the average score falls into
     const isStatePR = avgScore <= 34;
-    const isInstitutional = avgScore > 34 && avgScore <= 69;
+    const isMainstream = avgScore > 34 && avgScore <= 69;
     const isIndependent = avgScore >= 70;
 
     return (
@@ -318,12 +318,12 @@ export default function Story() {
         <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Layer 2: Editorial Independence</h4>
         <div style={{ display: 'flex', height: '16px', borderRadius: '4px', overflow: 'hidden', gap: '2px' }}>
           <div style={{ flex: '1', background: isStatePR ? '#C0392B' : '#333' }} title={`State PR (0-34)`} />
-          <div style={{ flex: '1', background: isInstitutional ? '#E67E22' : '#333' }} title={`Institutional (35-69)`} />
+          <div style={{ flex: '1', background: isMainstream ? '#E67E22' : '#333' }} title={`Mainstream (35-69)`} />
           <div style={{ flex: '1', background: isIndependent ? '#008751' : '#333' }} title={`Independent (70-100)`} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
           <span style={{ color: isStatePR ? '#C0392B' : '#888' }}>State PR</span>
-          <span style={{ color: isInstitutional ? '#E67E22' : '#888' }}>Institutional</span>
+          <span style={{ color: isMainstream ? '#E67E22' : '#888' }}>Mainstream</span>
           <span style={{ color: isIndependent ? '#008751' : '#888' }}>Independent</span>
         </div>
       </div>
@@ -526,14 +526,14 @@ export default function Story() {
 
           {/* BAR 1: AI Insight Bar */}
           <div style={{ display: 'flex', gap: '8px', background: 'transparent', marginBottom: '16px', flexWrap: 'wrap' }}>
-            {['Pro-Establishment', 'Institutional', 'Adversarial', 'Bias Comparison'].map(tab => {
+            {['Govt', 'Mainstream', 'Watchdog', 'Bias Comparison'].map(tab => {
               const isActive = activeSummaryTab === tab;
               let bg = 'transparent';
               let color = 'var(--text-muted)';
               if (isActive) {
-                if (tab === 'Pro-Establishment') { bg = '#2980B9'; color = '#fff'; }
-                else if (tab === 'Institutional') { bg = '#E67E22'; color = '#fff'; }
-                else if (tab === 'Adversarial') { bg = '#C0392B'; color = '#fff'; }
+                if (tab === 'Govt') { bg = '#2980B9'; color = '#fff'; }
+                else if (tab === 'Mainstream') { bg = '#E67E22'; color = '#fff'; }
+                else if (tab === 'Watchdog') { bg = '#C0392B'; color = '#fff'; }
                 else { bg = 'var(--bg-elevated)'; color = 'var(--text-primary)'; }
               }
               return (
@@ -605,9 +605,9 @@ export default function Story() {
           <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #333', marginBottom: '24px', paddingBottom: '0' }}>
             {[
               { id: 'all', label: 'All', count: null },
-              { id: 'pro_establishment', label: 'Pro-Establishment', count: outletGroups['pro_establishment']?.length || 0 },
-              { id: 'institutional', label: 'Institutional', count: outletGroups['institutional']?.length || 0 },
-              { id: 'adversarial', label: 'Adversarial', count: outletGroups['adversarial']?.length || 0 },
+              { id: 'pro_establishment', label: 'Govt', count: outletGroups['pro_establishment']?.length || 0 },
+              { id: 'institutional', label: 'Mainstream', count: outletGroups['institutional']?.length || 0 },
+              { id: 'adversarial', label: 'Watchdog', count: outletGroups['adversarial']?.length || 0 },
               ...(outletGroups['blog']?.length > 0 ? [{ id: 'blog', label: 'Blog', count: outletGroups['blog'].length }] : [])
             ].map(tab => {
               const isActive = activeFilterTab === tab.id;
@@ -880,9 +880,9 @@ export default function Story() {
                   style={{ width: '100%', padding: '10px', borderRadius: '6px', background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-primary)', marginBottom: '16px' }}
                 >
                   <option value="All">All / Event Briefing</option>
-                  <option value="Adversarial">Adversarial</option>
-                  <option value="Institutional">Institutional</option>
-                  <option value="Pro-Establishment">Pro-Establishment</option>
+                  <option value="Watchdog">Watchdog</option>
+                  <option value="Mainstream">Mainstream</option>
+                  <option value="Govt">Govt</option>
                 </select>
 
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-primary)' }}>Additional Comments</label>
