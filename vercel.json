@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/story/:slug",
-      "destination": "/api/story-og?slug=:slug"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
