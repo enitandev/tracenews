@@ -79,6 +79,10 @@ export default function Category() {
 
   const categoryName = topicSlug ? topicSlug.charAt(0).toUpperCase() + topicSlug.slice(1).toLowerCase() : '';
 
+  if (typeof window !== 'undefined') {
+    window.prerenderReady = false;
+  }
+
   useEffect(() => {
     setLoading(true);
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/categories/${categoryName}/feed?limit=30&offset=0`)
@@ -86,10 +90,16 @@ export default function Category() {
       .then(d => {
         setData(d);
         setLoading(false);
+        if (typeof window !== 'undefined') {
+          window.prerenderReady = true;
+        }
       })
       .catch(err => {
         console.error(err);
         setLoading(false);
+        if (typeof window !== 'undefined') {
+          window.prerenderReady = true;
+        }
       });
       
     // Fetch global clusters for category hero images (Exact pattern from Home.jsx)
