@@ -94,9 +94,9 @@ function FactualityBadge({ outlet }) {
           {outlet.track_record_status === 'Clean' ? '✓' : outlet.track_record_status === 'Flagged' ? '⚠' : '✗'} {outlet.track_record_status}
         </div>
       )}
-      {outlet.brown_envelope_count > 0 && (
+      {outlet.promotional_alignment_count > 0 && (
         <div style={{ color: '#E67E22', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-          ⚠ {outlet.brown_envelope_count} brown envelope incident(s) recorded
+          ⚠ {outlet.promotional_alignment_count} brown envelope incident(s) recorded
         </div>
       )}
       {outlet.credibility_tier && (

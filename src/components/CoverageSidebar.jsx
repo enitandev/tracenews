@@ -72,8 +72,8 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
     if (out.track_record_status && trackRecordStats[out.track_record_status] !== undefined) {
       trackRecordStats[out.track_record_status]++;
     }
-    if (out.brown_envelope_count) {
-      totalBrownEnvelopes += out.brown_envelope_count;
+    if (out.promotional_alignment_count) {
+      totalBrownEnvelopes += out.promotional_alignment_count;
       brownEnvelopeOutlets.push(s.outlet_name);
     }
     if (out.ownership_transparency === 'Low' || out.ownership_transparency === 'low') {
@@ -88,8 +88,8 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
     
     if (out.track_record_status === 'Problematic') integrityScore -= 20;
     
-    if (out.brown_envelope_count > 2) integrityScore -= 15;
-    else if (out.brown_envelope_count >= 1) integrityScore -= 8;
+    if (out.promotional_alignment_count > 2) integrityScore -= 15;
+    else if (out.promotional_alignment_count >= 1) integrityScore -= 8;
     
     if (out.structural_risk === 'High') integrityScore -= 5;
     
