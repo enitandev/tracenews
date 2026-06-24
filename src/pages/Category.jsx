@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AlertTriangle, ChevronRight, ChevronDown } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 import HeroStoryCard from '../components/HeroStoryCard';
 import StandardStoryItem from '../components/StandardStoryItem';
@@ -164,6 +165,41 @@ export default function Category() {
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
+      {(() => {
+        const categoryDisplayName = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+        const categoryMeta = {
+          Politics: 'Track how Nigerian media covers politics — bias, silences, and coverage gaps across government-aligned and watchdog outlets.',
+          Security: 'See how Nigerian media covers security — banditry, terrorism, and police accountability across all editorial tiers.',
+          Economy: 'Monitor Nigerian business and economy coverage — who reports on fiscal policy, inflation, and corporate accountability.',
+          Sports: 'Nigerian sports news coverage across all major outlets — football, athletics, and more.',
+          Health: 'Health and medical coverage in Nigerian media — disease, policy, and accountability reporting.',
+          Entertainment: 'Nigerian entertainment news tracked across outlets.',
+          Technology: 'Nigerian tech and innovation coverage across media.',
+          Education: 'Education policy and school news coverage in Nigerian media.',
+          International: 'How Nigerian outlets cover international news and foreign affairs.',
+          Judiciary: 'Court cases, legal accountability, and judicial coverage in Nigerian media.',
+          Religion: 'Religious affairs coverage across Nigerian media outlets.'
+        };
+        const metaDesc = categoryMeta[categoryDisplayName] || `See how Nigerian media covers ${categoryDisplayName} — track bias, silences and coverage gaps on TraceNews.`;
+        const canonicalUrl = `https://tracenews.ng/topics/${topicSlug}`;
+
+        return (
+          <Helmet>
+            <title>{`${categoryDisplayName} News Coverage Analysis | TraceNews`}</title>
+            <meta name="description" content={metaDesc} />
+            <meta property="og:title" content={`${categoryDisplayName} News | TraceNews`} />
+            <meta property="og:description" content={metaDesc} />
+            <meta property="og:image" content="https://tracenews.ng/og-default.png" />
+            <meta property="og:url" content={canonicalUrl} />
+            <meta property="og:type" content="website" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content={`${categoryDisplayName} News | TraceNews`} />
+            <meta name="twitter:description" content={metaDesc} />
+            <meta name="twitter:image" content="https://tracenews.ng/og-default.png" />
+            <link rel="canonical" href={canonicalUrl} />
+          </Helmet>
+        );
+      })()}
       
       {/* HEADER */}
       <div style={{ marginBottom: '32px' }}>

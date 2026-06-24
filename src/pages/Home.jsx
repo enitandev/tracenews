@@ -147,13 +147,13 @@ export default function Home() {
         <meta name="description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
         <meta property="og:title" content="TraceNews — Nigerian Media Intelligence" />
         <meta property="og:description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
-        <meta property="og:image" content="/logo.png" />
+        <meta property="og:image" content="https://tracenews.ng/og-default.png" />
         <meta property="og:url" content="https://tracenews.ng/" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="TraceNews — Nigerian Media Intelligence" />
         <meta name="twitter:description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
-        <meta name="twitter:image" content="/logo.png" />
+        <meta name="twitter:image" content="https://tracenews.ng/og-default.png" />
         <link rel="canonical" href="https://tracenews.ng/" />
         <script type="application/ld+json">
           {JSON.stringify(jsonLd)}
