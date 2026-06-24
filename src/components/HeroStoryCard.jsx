@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import CoverageBar, { getDominantTier } from './CoverageBar';
+import MonitoringSignals from './MonitoringSignals';
 import { COVERAGE_TIER_COLORS } from '../utils/helpers';
 
 export default function HeroStoryCard({ cluster }) {
@@ -33,6 +34,11 @@ export default function HeroStoryCard({ cluster }) {
           <CoverageBar variant="hero" coverageStats={stats} />
         </div>
       </div>
+      <MonitoringSignals
+        coverageStats={cluster.coverage_stats}
+        stories={null}
+        compact={false}
+      />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
         <div style={{ fontFamily: 'var(--font-body)', fontSize: '12px', color: 'var(--text-muted)' }}>
           {cluster.category || 'General'} • {cluster.outlet_count} sources

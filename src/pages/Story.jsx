@@ -3,6 +3,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info, MapPin } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
+import MonitoringSignals from '../components/MonitoringSignals';
 
 const COVERAGE_TIER_COLORS = {
   'pro_establishment': '#2980B9',
@@ -785,6 +786,12 @@ export default function Story() {
               <Info size={20} color="#e67e22" />
               <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0 }}>Monitoring Spirit</h3>
             </div>
+            
+            <MonitoringSignals
+              coverageStats={cluster.coverage_stats || {}}
+              stories={stories}
+              compact={false}
+            />
             
             {flags.length === 0 ? (
               <p style={{ fontSize: '13px', color: '#888', margin: '16px 0 0 0', fontStyle: 'italic' }}>No alerts detected for this story.</p>

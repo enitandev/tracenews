@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import CoverageBar from './CoverageBar';
+import MonitoringSignals from './MonitoringSignals';
 
 export default function StandardStoryItem({ cluster }) {
   const [imgError, setImgError] = useState(false);
@@ -20,6 +21,11 @@ export default function StandardStoryItem({ cluster }) {
           </h3>
           <div style={{ marginTop: '0px' }}>
             <CoverageBar variant="compact" coverageStats={cluster.coverage_stats} />
+            <MonitoringSignals
+              coverageStats={cluster.coverage_stats}
+              stories={null}
+              compact={true}
+            />
           </div>
         </div>
         {cluster.image_url && !imgError && (
