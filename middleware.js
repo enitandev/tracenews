@@ -126,6 +126,48 @@ export default async function middleware(
     }
   }
   
+  if (
+    url.pathname === '/methodology' ||
+    url.pathname === '/daily-briefing'
+  ) {
+    const pageMap = {
+      '/methodology': 'methodology',
+      '/daily-briefing': 'daily-briefing'
+    }
+    const pageKey = pageMap[url.pathname]
+    const apiUrl = new URL(request.url)
+    apiUrl.pathname = '/api/static-og'
+    apiUrl.search = `?page=${pageKey}`
+    
+    try {
+      const apiResponse = await fetch(
+        apiUrl.toString(),
+        { headers: { 'user-agent': ua }}
+      )
+      const html = await apiResponse.text()
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type':
+            'text/html; charset=utf-8',
+          'Cache-Control':
+            'public, max-age=86400, ' +
+            'stale-while-revalidate=604800'
+        }
+      })
+    } catch (error) {
+      console.error(
+        'static-og proxy failed:',
+        error.message
+      )
+      return new Response(null, {
+        headers: {
+          'x-middleware-next': '1'
+        }
+      })
+    }
+  }
+
   // Bot on all other pages:
   // proxy to Railway Chrome prerender
   const PRERENDER_URL = 
