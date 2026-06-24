@@ -434,22 +434,45 @@ export default function Story() {
 
   const metaTitle = `${cluster.representative_title} | TraceNews`;
   
-  // Clean truncation at word boundary (~150 chars) for meta description
-  let metaDesc = cluster.summary || "See every side of every Nigerian story.";
-  if (metaDesc.length > 150) {
-    const truncated = metaDesc.substring(0, 150);
-    metaDesc = truncated.substring(0, Math.min(truncated.length, truncated.lastIndexOf(" "))) + "...";
+  // Derive description from first story
+  // with a usable summary
+  const firstSummary = (stories || [])
+    .map(s => s.summary || '')
+    .find(s => s.length > 20) || 
+    "See every side of every Nigerian story.";
+  let metaDesc = firstSummary
+    .replace(/<[^>]+>/g, '')
+    .trim();
+  if (metaDesc.length > 155) {
+    const truncated = metaDesc
+      .substring(0, 155);
+    metaDesc = truncated.substring(
+      0, 
+      Math.min(
+        truncated.length, 
+        truncated.lastIndexOf(" ")
+      )
+    ) + "...";
   }
+
+  // Derive image from first story 
+  // with a real image_url
+  const metaImage = (stories || [])
+    .map(s => s.image_url)
+    .find(img => img && 
+      !img.includes('logo') && 
+      img.startsWith('http')
+    ) || "https://tracenews.ng/og-default.png";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     "headline": cluster.representative_title,
-    "datePublished": cluster.first_seen_at || new Date().toISOString(),
-    "dateModified": cluster.last_updated_at || cluster.first_seen_at || new Date().toISOString(),
-    "image": [
-      cluster.hero_image_url || "https://tracenews.ng/logo.png"
-    ],
+    "datePublished": cluster.first_seen_at || 
+      new Date().toISOString(),
+    "dateModified": cluster.first_seen_at || 
+      new Date().toISOString(),
+    "image": [metaImage],
     "author": [{
       "@type": "Organization",
       "name": "TraceNews",
@@ -477,13 +500,13 @@ export default function Story() {
         <meta name="description" content={metaDesc} />
         <meta property="og:title" content={metaTitle} />
         <meta property="og:description" content={metaDesc} />
-        <meta property="og:image" content={cluster.hero_image_url || "/logo.png"} />
+        <meta property="og:image" content={metaImage} />
         <meta property="og:url" content={`https://tracenews.ng/story/${cluster.slug}`} />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={metaTitle} />
         <meta name="twitter:description" content={metaDesc} />
-        <meta name="twitter:image" content={cluster.hero_image_url || "/logo.png"} />
+        <meta name="twitter:image" content={metaImage} />
         <link rel="canonical" href={`https://tracenews.ng/story/${cluster.slug}`} />
         <script type="application/ld+json">
           {JSON.stringify(jsonLd)}

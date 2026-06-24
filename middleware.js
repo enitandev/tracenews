@@ -1,80 +1,148 @@
+// Bot UA list — must stay identical 
+// to BOT_USER_AGENTS in api/story-og.js
+// Update both together if adding new bots
+const BOT_USER_AGENTS = [
+  'googlebot',
+  'gptbot',
+  'claudebot',
+  'perplexitybot',
+  'ccbot',
+  'bingbot',
+  'twitterbot',
+  'facebookexternalhit',
+  'linkedinbot',
+  'slackbot',
+  'applebot',
+  'yahoo! slurp',
+  'duckduckbot',
+  'baiduspider',
+  'yandexbot',
+  'whatsapp',
+  'telegrambot',
+  'discordbot'
+]
+
 export const config = {
   matcher: '/((?!api|_next/static|_next/image|favicon.ico|assets|logo.png|favicon-32.png|apple-touch-icon.png|.*\\.svg$).*)',
-};
+}
 
-// Vercel Edge Middleware
-export default async function middleware(request) {
-  const url = new URL(request.url);
-  const userAgent = request.headers.get('user-agent') || '';
-
-  // List of bots to prerender for
-  const bots = [
-    'googlebot',
-    'gptbot',
-    'claudebot',
-    'perplexitybot',
-    'ccbot',
-    'bingbot',
-    'twitterbot',
-    'facebookexternalhit',
-    'linkedinbot',
-    'slackbot',
-    'applebot',
-    'yahoo! slurp',
-    'duckduckbot',
-    'baiduspider',
-    'yandexbot'
-  ];
-
-  const isBot = bots.some(bot => userAgent.toLowerCase().includes(bot));
-
+export default async function middleware(
+  request
+) {
+  const url = new URL(request.url)
+  const ua = request.headers.get(
+    'user-agent'
+  ) || ''
+  
+  const isBot = BOT_USER_AGENTS.some(
+    bot => ua.toLowerCase().includes(bot)
+  )
+  
+  // Non-bots: pass through to SPA
   if (!isBot) {
-    // Pass through to standard SPA
     return new Response(null, {
       headers: { 'x-middleware-next': '1' }
-    });
+    })
   }
-
-  // Rewrite to Railway Prerender
-  // User will set PRERENDER_URL in Vercel environment variables, 
-  // e.g., https://prerender-production.up.railway.app
-  const PRERENDER_URL = process.env.PRERENDER_URL || 'https://tracenews-prerender.up.railway.app';
-  const targetUrl = `${PRERENDER_URL}/${url.toString()}`;
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second hard timeout
-
-  try {
-    const prerenderResponse = await fetch(targetUrl, {
-      headers: {
-        'User-Agent': userAgent
-      },
-      signal: controller.signal
-    });
+  
+  // Bot on a story page:
+  // proxy to /api/story-og and return
+  // the response AT THE ORIGINAL URL
+  // No redirect — bot never sees 
+  // /api/story-og, just gets full HTML
+  // at /story/:slug
+  if (url.pathname.startsWith('/story/')) {
+    const slug = url.pathname
+      .replace('/story/', '')
+    const apiUrl = new URL(request.url)
+    apiUrl.pathname = '/api/story-og'
+    apiUrl.search = `?slug=${slug}`
     
-    clearTimeout(timeoutId);
-
-    if (!prerenderResponse.ok) {
-      throw new Error(`Prerender failed with status: ${prerenderResponse.status}`);
+    try {
+      const apiResponse = await fetch(
+        apiUrl.toString(),
+        { headers: { 
+          'user-agent': ua 
+        }}
+      )
+      const html = await apiResponse.text()
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 
+            'text/html; charset=utf-8',
+          'Cache-Control': 
+            'public, max-age=900, ' +
+            'stale-while-revalidate=3600'
+        }
+      })
+    } catch (error) {
+      // Fallback to SPA on any error
+      console.error(
+        'story-og proxy failed:', 
+        error.message
+      )
+      return new Response(null, {
+        headers: { 
+          'x-middleware-next': '1' 
+        }
+      })
     }
-
-    const html = await prerenderResponse.text();
-
+  }
+  
+  // Bot on all other pages:
+  // proxy to Railway Chrome prerender
+  const PRERENDER_URL = 
+    process.env.PRERENDER_URL || 
+    'https://tracenews-prerender-production.up.railway.app'
+  const targetUrl = 
+    `${PRERENDER_URL}/${url.toString()}`
+  
+  const controller = new AbortController()
+  const timeoutId = setTimeout(
+    () => controller.abort(), 
+    8000
+  )
+  
+  try {
+    const prerenderResponse = await fetch(
+      targetUrl,
+      { 
+        headers: { 'User-Agent': ua },
+        signal: controller.signal
+      }
+    )
+    clearTimeout(timeoutId)
+    
+    if (!prerenderResponse.ok) {
+      throw new Error(
+        `Prerender failed: ` + 
+        prerenderResponse.status
+      )
+    }
+    
+    const html = await 
+      prerenderResponse.text()
     return new Response(html, {
       status: 200,
       headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=0, must-revalidate', // Let prerender caching handle it
+        'Content-Type': 
+          'text/html; charset=utf-8',
+        'Cache-Control': 
+          'public, max-age=0, ' +
+          'must-revalidate'
       }
-    });
-
+    })
   } catch (error) {
-    clearTimeout(timeoutId);
-    console.error('Prerender fallback triggered:', error.message);
-    
-    // Graceful fallback to the standard SPA (empty shell) so the bot gets a 200, not a 500
+    clearTimeout(timeoutId)
+    console.error(
+      'Prerender fallback:', 
+      error.message
+    )
     return new Response(null, {
-      headers: { 'x-middleware-next': '1' }
-    });
+      headers: { 
+        'x-middleware-next': '1' 
+      }
+    })
   }
 }
