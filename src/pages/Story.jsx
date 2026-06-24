@@ -195,9 +195,17 @@ export default function Story() {
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackStatus, setFeedbackStatus] = useState('');
 
+  // Signal prerender to wait
+  if (typeof window !== 'undefined') {
+    window.prerenderReady = false;
+  }
+
   useEffect(() => {
     if (!slug) {
       setLoading(false);
+      if (typeof window !== 'undefined') {
+        window.prerenderReady = true;
+      }
       return;
     }
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/by-slug/${slug}`)
@@ -209,10 +217,17 @@ export default function Story() {
            setData(d);
         }
         setLoading(false);
+        // Signal prerender the page is ready
+        if (typeof window !== 'undefined') {
+          window.prerenderReady = true;
+        }
       })
       .catch(e => {
         console.error(e);
         setLoading(false);
+        if (typeof window !== 'undefined') {
+          window.prerenderReady = true;
+        }
       });
   }, [slug]);
 
