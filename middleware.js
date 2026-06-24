@@ -38,8 +38,7 @@ export default async function middleware(request) {
   // Rewrite to Railway Prerender
   // User will set PRERENDER_URL in Vercel environment variables, 
   // e.g., https://prerender-production.up.railway.app
-  // Temporarily force a bad URL to test graceful fallback
-  const PRERENDER_URL = 'https://this-is-a-completely-broken-url.railway.app';
+  const PRERENDER_URL = process.env.PRERENDER_URL || 'https://tracenews-prerender.up.railway.app';
   const targetUrl = `${PRERENDER_URL}/${url.toString()}`;
 
   const controller = new AbortController();
