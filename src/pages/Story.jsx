@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info, MapPin } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
@@ -416,8 +417,63 @@ export default function Story() {
     }
   }
 
+  const metaTitle = `${cluster.representative_title} | TraceNews`;
+  
+  // Clean truncation at word boundary (~150 chars) for meta description
+  let metaDesc = cluster.summary || "See every side of every Nigerian story.";
+  if (metaDesc.length > 150) {
+    const truncated = metaDesc.substring(0, 150);
+    metaDesc = truncated.substring(0, Math.min(truncated.length, truncated.lastIndexOf(" "))) + "...";
+  }
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": cluster.representative_title,
+    "datePublished": cluster.first_seen_at || new Date().toISOString(),
+    "dateModified": cluster.last_updated_at || cluster.first_seen_at || new Date().toISOString(),
+    "image": [
+      cluster.hero_image_url || "https://tracenews.ng/logo.png"
+    ],
+    "author": [{
+      "@type": "Organization",
+      "name": "TraceNews",
+      "url": "https://tracenews.ng/"
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "TraceNews",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://tracenews.ng/logo.png"
+      }
+    },
+    "description": metaDesc,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://tracenews.ng/story/${cluster.slug}`
+    }
+  };
+
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDesc} />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDesc} />
+        <meta property="og:image" content={cluster.hero_image_url || "/logo.png"} />
+        <meta property="og:url" content={`https://tracenews.ng/story/${cluster.slug}`} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDesc} />
+        <meta name="twitter:image" content={cluster.hero_image_url || "/logo.png"} />
+        <link rel="canonical" href={`https://tracenews.ng/story/${cluster.slug}`} />
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      </Helmet>
       
       {/* Top Nav Back */}
       <div style={{ marginBottom: '24px' }}>

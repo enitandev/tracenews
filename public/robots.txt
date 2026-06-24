@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+Disallow: /registry
+
+# Explicitly allow AI bots for citation
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://tracenews.ng/sitemap.xml

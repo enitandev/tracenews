@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { MapPin, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import { formatTimeAgo } from '../utils/helpers';
@@ -248,8 +249,32 @@ export default function DailyBriefingStory() {
   };
   const outletGroups = groupOutlets();
 
+  const metaTitle = `${story.representative_title} | TraceNews Briefing`;
+  
+  // Clean truncation at word boundary (~150 chars) for meta description
+  let metaDesc = story.summary || "See every side of every Nigerian story.";
+  if (metaDesc.length > 150) {
+    const truncated = metaDesc.substring(0, 150);
+    metaDesc = truncated.substring(0, Math.min(truncated.length, truncated.lastIndexOf(" "))) + "...";
+  }
+
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDesc} />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDesc} />
+        <meta property="og:image" content={story.hero_image_url || "/logo.png"} />
+        <meta property="og:url" content={`https://tracenews.ng/daily-briefing/${story.cluster_slug}`} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDesc} />
+        <meta name="twitter:image" content={story.hero_image_url || "/logo.png"} />
+        <link rel="canonical" href={`https://tracenews.ng/daily-briefing/${story.cluster_slug}`} />
+      </Helmet>
+      
       {/* Back link */}
       <Link to="/daily-briefing" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontSize: '13px', marginBottom: '32px' }}>
         ← Daily Briefing

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { AlertTriangle } from 'lucide-react';
 import CoverageBar, { getDominantTier } from '../components/CoverageBar';
 
@@ -127,8 +128,37 @@ export default function Home() {
   });
   const validCategories = Object.keys(categories).filter(cat => categories[cat].length >= 3);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "TraceNews",
+    "url": "https://tracenews.ng/",
+    "logo": "https://tracenews.ng/logo.png",
+    "sameAs": [
+      "https://twitter.com/TraceNewsNG"
+    ],
+    "description": "See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria."
+  };
+
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>
+      <Helmet>
+        <title>TraceNews — Nigerian Media Intelligence</title>
+        <meta name="description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
+        <meta property="og:title" content="TraceNews — Nigerian Media Intelligence" />
+        <meta property="og:description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
+        <meta property="og:image" content="/logo.png" />
+        <meta property="og:url" content="https://tracenews.ng/" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="TraceNews — Nigerian Media Intelligence" />
+        <meta name="twitter:description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
+        <meta name="twitter:image" content="/logo.png" />
+        <link rel="canonical" href="https://tracenews.ng/" />
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      </Helmet>
       
       {/* PHASE 1: THE TOP FOLD */}
       <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', marginBottom: '60px', alignItems: 'flex-start' }}>

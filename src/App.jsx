@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import Home from "./pages/Home";
 import Registry from "./pages/Registry";
 import Story from "./pages/Story";
@@ -12,6 +13,9 @@ import "./App.css";
 function HomepagePlaceholder() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'Montserrat', fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>
+      <Helmet>
+        <meta name="robots" content="noindex" />
+      </Helmet>
       Homepage coming soon
     </div>
   );
