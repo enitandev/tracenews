@@ -42,7 +42,7 @@ export default async function middleware(request) {
   const targetUrl = `${PRERENDER_URL}/${url.toString()}`;
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 4000); // 4-second hard timeout
+  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second hard timeout
 
   try {
     const prerenderResponse = await fetch(targetUrl, {
