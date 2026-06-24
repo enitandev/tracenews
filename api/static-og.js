@@ -76,36 +76,36 @@ export default async function handler(
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>\${safe(pageData.title)}</title>
+  <title>${safe(pageData.title)}</title>
   <meta name="description" 
-    content="\${safe(pageData.description)}">
+    content="${safe(pageData.description)}">
   <link rel="canonical" 
-    href="\${pageData.url}">
+    href="${pageData.url}">
   <meta property="og:type" 
     content="website">
   <meta property="og:title" 
-    content="\${safe(pageData.title)}">
+    content="${safe(pageData.title)}">
   <meta property="og:description" 
-    content="\${safe(pageData.description)}">
+    content="${safe(pageData.description)}">
   <meta property="og:image" 
     content="https://tracenews.ng/og-default.png">
   <meta property="og:url" 
-    content="\${pageData.url}">
+    content="${pageData.url}">
   <meta property="og:site_name" 
     content="TraceNews">
   <meta name="twitter:card" 
     content="summary_large_image">
   <meta name="twitter:title" 
-    content="\${safe(pageData.title)}">
+    content="${safe(pageData.title)}">
   <meta name="twitter:description" 
-    content="\${safe(pageData.description)}">
+    content="${safe(pageData.description)}">
   <meta name="twitter:image" 
     content="https://tracenews.ng/og-default.png">
 </head>
 <body>
-  <h1>\${safe(pageData.title)}</h1>
-  <p>\${safe(pageData.description)}</p>
-  <a href="\${pageData.url}">
+  <h1>${safe(pageData.title)}</h1>
+  <p>${safe(pageData.description)}</p>
+  <a href="${pageData.url}">
     Read on TraceNews
   </a>
 </body>
