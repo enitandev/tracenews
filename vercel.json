@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/sitemap.xml"
+    },
+    {
+      "source": "/news-sitemap.xml", 
+      "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/news-sitemap.xml"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
