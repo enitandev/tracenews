@@ -415,7 +415,7 @@ export default function Methodology() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '32px' }}>
           {/* S1 */}
-          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #0F6E56', borderRadius: '8px', padding: '24px', background: 'rgba(15,110,86,0.06)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-elevated, transparent)' }}>
             <div>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#0F6E56' }}>S1</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>30%</span>
@@ -424,8 +424,8 @@ export default function Methodology() {
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
               Does the outlet rely primarily on official government sources, or does it seek independent verification and alternative voices? We assess whether stories draw predominantly from government spokespeople, press releases, and official statements versus journalists, civil society, or independently verified accounts.
             </p>
-            <div style={{ borderLeft: '2px solid #E67E22', padding: '8px 12px', marginTop: '16px', background: 'rgba(230,126,34,0.06)', borderRadius: '0 4px 4px 0' }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#E67E22', display: 'block', marginBottom: '4px' }}>example</span>
+            <div style={{ borderLeft: '2px solid #0F6E56', padding: '8px 12px', marginTop: '16px', background: 'rgba(15,110,86,0.06)', borderRadius: '0 4px 4px 0' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#0F6E56', display: 'block', marginBottom: '4px' }}>example</span>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
                 A story on fuel scarcity that quotes only the NNPC spokesperson scores low. One that also quotes petrol station owners, independent economists, and civil society analysts scores higher.
               </p>
@@ -433,7 +433,7 @@ export default function Methodology() {
           </div>
 
           {/* S2 */}
-          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #1D9E75', borderRadius: '8px', padding: '24px', background: 'rgba(29,158,117,0.06)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-elevated, transparent)' }}>
             <div>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#0F6E56' }}>S2</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>25%</span>
@@ -442,8 +442,8 @@ export default function Methodology() {
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
               What proportion of stories are original reporting versus republished wire copy or press releases? We compare each story against NAN wire content and detect semantic near-duplicates — stories where the outlet added no original reporting and simply reformatted a government wire or press release.
             </p>
-            <div style={{ borderLeft: '2px solid #E67E22', padding: '8px 12px', marginTop: '16px', background: 'rgba(230,126,34,0.06)', borderRadius: '0 4px 4px 0' }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#E67E22', display: 'block', marginBottom: '4px' }}>example</span>
+            <div style={{ borderLeft: '2px solid #1D9E75', padding: '8px 12px', marginTop: '16px', background: 'rgba(29,158,117,0.06)', borderRadius: '0 4px 4px 0' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#1D9E75', display: 'block', marginBottom: '4px' }}>example</span>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
                 An outlet running 13 of 14 stories as near-identical NAN wire copy scores very low. An outlet where most stories carry original bylines and new information scores high.
               </p>
@@ -451,7 +451,7 @@ export default function Methodology() {
           </div>
 
           {/* S3 */}
-          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #5DCAA5', borderRadius: '8px', padding: '24px', background: 'rgba(93,202,165,0.06)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-elevated, transparent)' }}>
             <div>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#1D9E75' }}>S3</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>20%</span>
@@ -460,8 +460,8 @@ export default function Methodology() {
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
               Does the outlet consistently avoid covering major accountability stories that the wider Nigerian media ecosystem reports? We identify clusters of stories covered by ≥60% of outlets and check whether this outlet is absent from them — a pattern of strategic silence on accountability topics.
             </p>
-            <div style={{ borderLeft: '2px solid #E67E22', padding: '8px 12px', marginTop: '16px', background: 'rgba(230,126,34,0.06)', borderRadius: '0 4px 4px 0' }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#E67E22', display: 'block', marginBottom: '4px' }}>example</span>
+            <div style={{ borderLeft: '2px solid #5DCAA5', padding: '8px 12px', marginTop: '16px', background: 'rgba(93,202,165,0.06)', borderRadius: '0 4px 4px 0' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#5DCAA5', display: 'block', marginBottom: '4px' }}>example</span>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
                 If 35 outlets cover a court ruling against a government agency but a specific outlet never publishes it across multiple such cases, this depresses S3.
               </p>
@@ -469,7 +469,7 @@ export default function Methodology() {
           </div>
 
           {/* S4 */}
-          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #9FE1CB', borderRadius: '8px', padding: '24px', background: 'rgba(159,225,203,0.06)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-elevated, transparent)' }}>
             <div>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#1D9E75' }}>S4</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>10%</span>
@@ -478,8 +478,8 @@ export default function Methodology() {
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
               Does the outlet's language use political honorifics, PR framing, or deferential terms toward officials? We score the density of terms like "His Excellency," "magnanimous," "graciously," and promotional superlatives that signal editorial deference rather than neutral reporting.
             </p>
-            <div style={{ borderLeft: '2px solid #E67E22', padding: '8px 12px', marginTop: '16px', background: 'rgba(230,126,34,0.06)', borderRadius: '0 4px 4px 0' }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#E67E22', display: 'block', marginBottom: '4px' }}>example</span>
+            <div style={{ borderLeft: '2px solid #9FE1CB', padding: '8px 12px', marginTop: '16px', background: 'rgba(159,225,203,0.06)', borderRadius: '0 4px 4px 0' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#9FE1CB', display: 'block', marginBottom: '4px' }}>example</span>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
                 "His Excellency graciously approved a landmark directive" scores lower than "The governor approved the policy."
               </p>
@@ -487,7 +487,7 @@ export default function Methodology() {
           </div>
 
           {/* S5 */}
-          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #C7EDE0', borderRadius: '8px', padding: '24px', background: 'rgba(199,237,224,0.06)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-elevated, transparent)' }}>
             <div>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#5DCAA5' }}>S5</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>10%</span>
@@ -496,8 +496,8 @@ export default function Methodology() {
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
               What proportion of coverage focuses on accountability, oversight, and public-interest topics versus government announcements, ceremonies, and promotional content? We classify stories by category and assess the ratio of accountability-relevant coverage.
             </p>
-            <div style={{ borderLeft: '2px solid #E67E22', padding: '8px 12px', marginTop: '16px', background: 'rgba(230,126,34,0.06)', borderRadius: '0 4px 4px 0' }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#E67E22', display: 'block', marginBottom: '4px' }}>example</span>
+            <div style={{ borderLeft: '2px solid #C7EDE0', padding: '8px 12px', marginTop: '16px', background: 'rgba(199,237,224,0.06)', borderRadius: '0 4px 4px 0' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#C7EDE0', display: 'block', marginBottom: '4px' }}>example</span>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
                 A politics section dominated by "Governor commissions borehole in community" coverage scores lower than one where government-accountability stories predominate.
               </p>
@@ -505,7 +505,7 @@ export default function Methodology() {
           </div>
 
           {/* S6 */}
-          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #E1F5EE', borderRadius: '8px', padding: '24px', background: 'rgba(225,245,238,0.04)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-elevated, transparent)' }}>
             <div>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#5DCAA5' }}>S6</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>5%</span>
@@ -514,8 +514,8 @@ export default function Methodology() {
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
               Does the outlet publish corrections, engage with source disputes, or show evidence of editorial independence processes? This is the lightest-weighted signal because it is harder to systematically measure from RSS feeds, but carries meaningful signal when present or provably absent.
             </p>
-            <div style={{ borderLeft: '2px solid #E67E22', padding: '8px 12px', marginTop: '16px', background: 'rgba(230,126,34,0.06)', borderRadius: '0 4px 4px 0' }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#E67E22', display: 'block', marginBottom: '4px' }}>example</span>
+            <div style={{ borderLeft: '2px solid #E1F5EE', padding: '8px 12px', marginTop: '16px', background: 'rgba(225,245,238,0.04)', borderRadius: '0 4px 4px 0' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#9FE1CB', display: 'block', marginBottom: '4px' }}>example</span>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
                 An outlet that has published named corrections scores higher than one with no public record of corrections or source engagement.
               </p>
@@ -540,7 +540,7 @@ export default function Methodology() {
           <h2 style={styles.h2Visual}>Monitoring Spirit Signals</h2>
         </div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', marginBottom: '24px' }}>
           {/* Card 1 */}
           <div style={{ background: 'var(--bg-base)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
             <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#C0392B', background: 'rgba(192,57,43,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
@@ -588,7 +588,7 @@ export default function Methodology() {
           <h2 style={styles.h2Visual}>Special Cases</h2>
         </div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
           {/* Card 1 */}
           <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '20px', background: 'var(--bg-base)' }}>
             <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', display: 'block', marginBottom: '12px' }}>
