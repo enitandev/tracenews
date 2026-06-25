@@ -12,7 +12,7 @@ const SIGNAL_COMPONENT_HTML = `
   --tn-accent:#E67E22;
   --tn-serif:'Spectral',Georgia,serif;
   --tn-mono:'IBM Plex Mono',ui-monospace,monospace;
-  max-width:740px;
+  max-width:100%;
 }
 .tn-meth *{box-sizing:border-box;}
 .tn-eyebrow{font-family:var(--tn-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--tn-accent);margin:0 0 10px;}
@@ -26,7 +26,7 @@ const SIGNAL_COMPONENT_HTML = `
 .tn-meth.in-view .tn-seg{animation:tn-grow .9s cubic-bezier(.2,.8,.2,1) forwards;}
 .tn-seg .k{font-family:var(--tn-mono);font-size:11px;letter-spacing:.05em;line-height:1.2;}
 .tn-seg .v{font-family:var(--tn-mono);font-size:16px;font-weight:500;line-height:1.2;}
-.tn-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px 18px;}
+.tn-legend{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 18px;}
 .tn-legrow{display:flex;gap:9px;padding:7px 0;border-bottom:.5px solid var(--tn-line);}
 .tn-legrow .s{font-family:var(--tn-mono);font-size:11px;color:#0F6E56;padding-top:2px;}
 .tn-legrow .n{margin:0;font-size:13px;font-weight:500;color:var(--tn-ink);}
@@ -199,13 +199,10 @@ const runDistributionPlot = () => {
 
   var TN_NOTABLE={
     "NTA":1,
-    "The Nation":1,
     "Punch Nigeria":1,
-    "Daily Trust":1,
     "The Cable":1,
     "FIJ Nigeria":1,
-    "Sahara Reporters":1,
-    "Premium Times":1
+    "Sahara Reporters":1
   };
   var DEFAULT_READOUT="hover any mark to read an outlet  \u00B7  81 outlets  \u00B7  30-day window";
 
@@ -239,7 +236,14 @@ const runDistributionPlot = () => {
       lab.className='tn-olabel';
       lab.textContent=name;
       lab.style.left=score+'%';
-      lab.style.bottom='46px';
+      var labelHeights = {
+        "NTA": '46px',
+        "Punch Nigeria": '62px',
+        "The Cable": '46px',
+        "FIJ Nigeria": '62px',
+        "Sahara Reporters": '46px'
+      };
+      lab.style.bottom = labelHeights[name] || '46px';
       lab.style.animationDelay=(0.6+i*0.01)+'s';
       plot.appendChild(lab);
     }
@@ -264,18 +268,21 @@ export default function Methodology() {
   const styles = {
     eyebrow: {
       fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
-      fontSize: '11px',
+      fontSize: '12px',
       letterSpacing: '.18em',
       textTransform: 'uppercase',
       color: '#E67E22',
-      margin: '0 0 8px'
+      margin: '0 0 10px 0',
+      paddingTop: '8px',
+      display: 'block',
+      opacity: 1
     },
     h2: {
       fontFamily: "'Spectral', Georgia, serif",
       fontSize: '28px',
       fontWeight: 600,
       color: 'var(--text-primary)',
-      margin: '0 0 20px',
+      margin: '4px 0 18px 0',
       lineHeight: 1.2
     },
     h2Visual: {
@@ -283,7 +290,7 @@ export default function Methodology() {
       fontSize: '28px',
       fontWeight: 600,
       color: 'var(--text-primary)',
-      margin: '0 0 24px',
+      margin: '4px 0 18px 0',
       lineHeight: 1.2
     },
     prose: {
@@ -356,12 +363,12 @@ export default function Methodology() {
             <a key={id}
               href={`#${id}`}
               style={{
-                color: 'var(--text-muted)',
+                color: 'var(--text-secondary, #888)',
                 textDecoration: 'none',
                 whiteSpace: 'nowrap'
               }}
               onMouseEnter={e => e.target.style.color = '#E67E22'}
-              onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
+              onMouseLeave={e => e.target.style.color = 'var(--text-secondary, #888)'}
             >
               <span style={{color: '#E67E22'}}>{num}</span>
               {' '}{label}
@@ -406,11 +413,11 @@ export default function Methodology() {
 
         <div style={{ marginTop: '0' }} dangerouslySetInnerHTML={{ __html: SIGNAL_COMPONENT_HTML }} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginTop: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '32px' }}>
           {/* S1 */}
-          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-base)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #0F6E56', borderRadius: '8px', padding: '24px', background: 'rgba(15,110,86,0.06)' }}>
             <div>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>S1</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#0F6E56' }}>S1</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>30%</span>
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Source Hierarchy</h3>
@@ -426,9 +433,9 @@ export default function Methodology() {
           </div>
 
           {/* S2 */}
-          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-base)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #1D9E75', borderRadius: '8px', padding: '24px', background: 'rgba(29,158,117,0.06)' }}>
             <div>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>S2</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#0F6E56' }}>S2</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>25%</span>
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Original Reporting</h3>
@@ -444,9 +451,9 @@ export default function Methodology() {
           </div>
 
           {/* S3 */}
-          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-base)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #5DCAA5', borderRadius: '8px', padding: '24px', background: 'rgba(93,202,165,0.06)' }}>
             <div>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>S3</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#1D9E75' }}>S3</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>20%</span>
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Omission Pattern</h3>
@@ -462,9 +469,9 @@ export default function Methodology() {
           </div>
 
           {/* S4 */}
-          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-base)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #9FE1CB', borderRadius: '8px', padding: '24px', background: 'rgba(159,225,203,0.06)' }}>
             <div>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>S4</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#1D9E75' }}>S4</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>10%</span>
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Lexical Deference</h3>
@@ -480,9 +487,9 @@ export default function Methodology() {
           </div>
 
           {/* S5 */}
-          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-base)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #C7EDE0', borderRadius: '8px', padding: '24px', background: 'rgba(199,237,224,0.06)' }}>
             <div>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>S5</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#5DCAA5' }}>S5</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>10%</span>
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Story Selection</h3>
@@ -498,9 +505,9 @@ export default function Methodology() {
           </div>
 
           {/* S6 */}
-          <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '24px', background: 'var(--bg-base)' }}>
+          <div style={{ border: '0.5px solid var(--border)', borderTop: '3px solid #E1F5EE', borderRadius: '8px', padding: '24px', background: 'rgba(225,245,238,0.04)' }}>
             <div>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>S6</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#5DCAA5' }}>S6</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>5%</span>
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Editorial Indicators</h3>
@@ -533,7 +540,7 @@ export default function Methodology() {
           <h2 style={styles.h2Visual}>Monitoring Spirit Signals</h2>
         </div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
           {/* Card 1 */}
           <div style={{ background: 'var(--bg-base)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
             <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#C0392B', background: 'rgba(192,57,43,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
@@ -581,7 +588,7 @@ export default function Methodology() {
           <h2 style={styles.h2Visual}>Special Cases</h2>
         </div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
           {/* Card 1 */}
           <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '20px', background: 'var(--bg-base)' }}>
             <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', display: 'block', marginBottom: '12px' }}>
