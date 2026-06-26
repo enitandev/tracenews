@@ -10,6 +10,7 @@ import DailyBriefingStory from "./pages/DailyBriefingStory";
 import Methodology from "./pages/Methodology";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
+import OutletProfile from './pages/OutletProfile'
 
 function HomepagePlaceholder() {
   return (
@@ -66,7 +67,7 @@ export default function App() {
             <Route path="/daily-briefing/:slug" element={<DailyBriefingStory />} />
             {/* New static routes */}
             <Route path="/outlets" element={<HomepagePlaceholder />} />
-            <Route path="/outlets/:outletSlug" element={<HomepagePlaceholder />} />
+            <Route path="/outlets/:slug" element={<OutletProfile />} />
             <Route path="/topics" element={<HomepagePlaceholder />} />
             <Route path="/topics/:topicSlug" element={<Category />} />
             <Route path="/methodology" element={<Methodology />} />

@@ -126,6 +126,35 @@ export default async function middleware(
     }
   }
   
+  if (url.pathname.startsWith('/outlets/')) {
+    const outletSlug = url.pathname.replace('/outlets/', '')
+    if (outletSlug) {
+      const apiUrl = new URL(request.url)
+      apiUrl.pathname = '/api/outlet-og'
+      apiUrl.search = `?slug=${outletSlug}`
+      
+      try {
+        const apiResponse = await fetch(
+          apiUrl.toString(),
+          { headers: { 'user-agent': ua } }
+        )
+        const html = await apiResponse.text()
+        return new Response(html, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400'
+          }
+        })
+      } catch (error) {
+        console.error('outlet-og proxy failed:', error.message)
+        return new Response(null, {
+          headers: { 'x-middleware-next': '1' }
+        })
+      }
+    }
+  }
+
   if (
     url.pathname === '/methodology' ||
     url.pathname === '/daily-briefing'
