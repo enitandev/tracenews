@@ -48,6 +48,7 @@ export default function OutletProfile() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(7);
 
   useEffect(() => {
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/outlets/${slug}`)
@@ -87,18 +88,9 @@ export default function OutletProfile() {
   
   const score = outlet.independence_score !== null && outlet.independence_score !== undefined ? outlet.independence_score : 0;
 
-  let rawTier = outlet.credibility_tier || 'unscored';
-  if (outlet.independence_score !== null && outlet.independence_score !== undefined) {
-    if (outlet.promotional_alignment_count > 0 || score < 35) rawTier = 'pro_establishment';
-    else if (score < 60) rawTier = 'institutional';
-    else rawTier = 'adversarial';
-  } else {
-    if (outlet.government_alignment === 'pro_government') rawTier = 'pro_establishment';
-    else if (outlet.government_alignment === 'opposition') rawTier = 'adversarial';
-    else if (outlet.government_alignment === 'neutral') rawTier = 'institutional';
-  }
+  let rawTier = (outlet.credibility_tier || 'unscored').toLowerCase();
 
-  const tierLabel = TIER_MAP[rawTier] || 'Unscored';
+  const tierLabel = TIER_MAP[rawTier] || (rawTier.charAt(0).toUpperCase() + rawTier.slice(1));
   const tierColor = TIER_COLORS[rawTier] || 'var(--text-secondary)';
 
   const getInterpretation = () => {
@@ -133,7 +125,7 @@ export default function OutletProfile() {
   }
 
   return (
-    <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 24px 80px', fontFamily: 'var(--font-body)' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
       <Helmet>
         <title>{outlet.name} — Editorial Independence Score | TraceNews</title>
         <meta name="description" content={`TraceNews scores ${outlet.name} ${score}/100 for editorial independence — ${tierLabel} tier. Owned by ${outlet.ownership_name || 'Unknown'}. See recent coverage and methodology.`} />
@@ -271,7 +263,7 @@ export default function OutletProfile() {
           <div style={{ fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Owner</span>
-              <span style={{ fontWeight: 500, color: 'var(--text-primary)', textAlign: 'right', maxWidth: '140px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={outlet.ownership_name}>{outlet.ownership_name || 'Unknown'}</span>
+              <span style={{ fontWeight: 500, color: 'var(--text-primary)', textAlign: 'right', maxWidth: '180px', wordBreak: 'break-word' }} title={outlet.ownership_name}>{outlet.ownership_name || 'Unknown'}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Type</span>
@@ -350,7 +342,7 @@ export default function OutletProfile() {
             {recent_stories.length === 0 ? (
               <p style={{ color: 'var(--text-muted)', fontSize: '14px', padding: '20px 0' }}>No recent stories tracked for this outlet.</p>
             ) : (
-              recent_stories.map(story => (
+              recent_stories.slice(0, visibleCount).map(story => (
                 <Link key={story.id || story.url} to={`/story/${story.cluster_slug}`} style={{
                   display: 'flex',
                   gap: '12px',
@@ -395,6 +387,26 @@ export default function OutletProfile() {
                   )}
                 </Link>
               ))
+            )}
+            
+            {visibleCount < recent_stories.length && (
+              <button
+                onClick={() => setVisibleCount(recent_stories.length)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  marginTop: '8px',
+                  background: 'var(--bg-elevated)',
+                  border: '0.5px solid var(--border)',
+                  borderRadius: '8px',
+                  color: 'var(--text-primary)',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Show all {recent_stories.length} stories
+              </button>
             )}
           </div>
         </div>
