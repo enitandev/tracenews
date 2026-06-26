@@ -249,9 +249,9 @@ export default function DailyBriefingStory() {
   };
   const outletGroups = groupOutlets();
 
-  const metaTitle = `${story.representative_title} | TraceNews Briefing`;
+  const metaTitle = `${cluster.representative_title} | TraceNews Briefing`;
   
-  let metaDesc = story.ground_summary || story.summary || "See every side of every Nigerian story.";
+  let metaDesc = cluster.ground_summary || cluster.summary || "See every side of every Nigerian story.";
   if (metaDesc.length > 155) {
     const truncated = metaDesc.substring(0, 155);
     metaDesc = truncated.substring(0, Math.min(truncated.length, truncated.lastIndexOf(" "))) + "...";
@@ -264,15 +264,15 @@ export default function DailyBriefingStory() {
         <meta name="description" content={metaDesc} />
         <meta property="og:title" content={metaTitle} />
         <meta property="og:description" content={metaDesc} />
-        <meta property="og:image" content={story.hero_image_url || "https://tracenews.ng/og-default.png"} />
-        <meta property="og:url" content={`https://tracenews.ng/daily-briefing/${story.cluster_slug}`} />
-        <meta property="og:type" content="article" />
-        <meta property="article:published_time" content={story.published_at || new Date().toISOString()} />
+        <meta property="og:image" content={cluster.hero_image_url || "https://tracenews.ng/og-default.png"} />
+        <meta property="og:url" content={`https://tracenews.ng/daily-briefing/${cluster.cluster_slug}`} />
+        <meta property="og:site_name" content="TraceNews" />
+        <meta property="article:published_time" content={cluster.published_at || new Date().toISOString()} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={metaTitle} />
         <meta name="twitter:description" content={metaDesc} />
-        <meta name="twitter:image" content={story.hero_image_url || "https://tracenews.ng/og-default.png"} />
-        <link rel="canonical" href={`https://tracenews.ng/daily-briefing/${story.cluster_slug}`} />
+        <meta name="twitter:image" content={cluster.hero_image_url || "https://tracenews.ng/og-default.png"} />
+        <link rel="canonical" href={`https://tracenews.ng/daily-briefing/${cluster.cluster_slug}`} />
       </Helmet>
       
       {/* Back link */}
