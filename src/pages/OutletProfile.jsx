@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import CoverageBar from '../components/CoverageBar';
+
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
@@ -375,9 +375,13 @@ export default function OutletProfile() {
                       {story.title}
                     </h3>
                     
-                    {story.cluster_coverage_stats && (
-                      <CoverageBar variant="compact" coverageStats={story.cluster_coverage_stats} />
-                    )}
+                    <div style={{
+                      fontSize: '11px',
+                      color: 'var(--text-muted)',
+                      marginTop: '4px'
+                    }}>
+                      {story.cluster_outlet_count} {story.cluster_outlet_count === 1 ? 'source' : 'sources'} covering this story
+                    </div>
                   </div>
                   
                   {story.image_url && (
