@@ -15,9 +15,7 @@ import OutletProfile from './pages/OutletProfile'
 function HomepagePlaceholder() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'Montserrat', fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>
-      <Helmet>
-        <meta name="robots" content="noindex" />
-      </Helmet>
+
       Homepage coming soon
     </div>
   );
