@@ -125,7 +125,7 @@ export default function OutletProfile() {
   }
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
+    <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
       <Helmet>
         <title>{outlet.name} — Editorial Independence Score | TraceNews</title>
         <meta name="description" content={`TraceNews scores ${outlet.name} ${score}/100 for editorial independence — ${tierLabel} tier. Owned by ${outlet.ownership_name || 'Unknown'}. See recent coverage and methodology.`} />
