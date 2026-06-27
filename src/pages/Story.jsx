@@ -83,25 +83,81 @@ function BadgeWithTooltip({ label, warning, children }) {
 }
 
 function FactualityBadge({ outlet }) {
-  if (!outlet || !outlet.track_record_status) return null;
+  if (!outlet || 
+    !outlet.track_record_status
+  ) return null;
+  
+  const status = 
+    outlet.track_record_status;
+  
+  // Map internal values to 
+  // safe public display text
+  const DISPLAY_MAP = {
+    'Clean': {
+      label: 'Clean record',
+      color: '#2ECC71',
+      icon: '✓'
+    },
+    'Flagged': {
+      label: 'Mixed record',
+      color: '#E67E22', 
+      icon: '⚠'
+    },
+    'Problematic': {
+      label: 'Disputed record',
+      color: '#E74C3C',
+      icon: '⚠'
+    }
+  };
+  
+  const display = DISPLAY_MAP[status];
+  if (!display) return null;
+  
+  const TIER_LABELS = {
+    'adversarial': 'Watchdog',
+    'institutional': 'Mainstream',
+    'pro_establishment': 'Govt',
+    'Adversarial': 'Watchdog',
+    'Institutional': 'Mainstream',
+    'Pro_establishment': 'Govt'
+  };
+  
   return (
     <BadgeWithTooltip label="Factuality">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>Factuality</span>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center' 
+      }}>
+        <span style={{ 
+          fontSize: '12px', 
+          fontWeight: 700, 
+          color: 'var(--text-primary)' 
+        }}>
+          Factuality
+        </span>
       </div>
-      {outlet.track_record_status && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: outlet.track_record_status === 'Clean' ? '#2ECC71' : outlet.track_record_status === 'Flagged' ? '#E67E22' : '#E74C3C' }}>
-          {outlet.track_record_status === 'Clean' ? '✓' : outlet.track_record_status === 'Flagged' ? '⚠' : '✗'} {outlet.track_record_status}
-        </div>
-      )}
-      {outlet.promotional_alignment_count > 0 && (
-        <div style={{ color: '#E67E22', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-          ⚠ {outlet.promotional_alignment_count} brown envelope incident(s) recorded
-        </div>
-      )}
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '6px', 
+        fontSize: '12px', 
+        fontWeight: 600, 
+        color: display.color 
+      }}>
+        {display.icon} {display.label}
+      </div>
       {outlet.credibility_tier && (
-        <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '4px', textTransform: 'uppercase', fontWeight: 600 }}>
-          Tier: {outlet.credibility_tier}
+        <div style={{ 
+          color: 'var(--text-muted)', 
+          fontSize: '11px', 
+          marginTop: '4px', 
+          textTransform: 'uppercase', 
+          fontWeight: 600 
+        }}>
+          Tier: {TIER_LABELS[
+            outlet.credibility_tier
+          ] || outlet.credibility_tier}
         </div>
       )}
     </BadgeWithTooltip>
