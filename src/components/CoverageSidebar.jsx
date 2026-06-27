@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CoverageBar from './CoverageBar';
 import { Clock, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const COVERAGE_TIER_COLORS = {
   'pro_establishment': '#2980B9',
@@ -160,8 +161,9 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
           const logoUrl = s.outlets?.logo_url;
           
           return (
-            <div 
+            <Link 
               key={idx} 
+              to={`/outlets/${s.outlets?.slug}`}
               title={s.outlet_name}
               style={{
                 width: '40px', height: '40px', borderRadius: '50%',
@@ -171,7 +173,8 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                 fontWeight: 800, fontSize: '18px',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                 overflow: 'hidden',
-                flexShrink: 0
+                flexShrink: 0,
+                textDecoration: 'none'
               }}
             >
               {logoUrl ? (
@@ -179,7 +182,7 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
               ) : (
                 initial
               )}
-            </div>
+            </Link>
           );
         })}
         
@@ -263,15 +266,17 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
             const initial = s.outlet_name ? s.outlet_name.charAt(0).toUpperCase() : '?';
             return (
               <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {out.logo_url ? (
-                    <img src={out.logo_url} alt={s.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
-                  ) : (
-                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: s.outlet_coverage_tier && s.outlet_coverage_tier !== 'unscored' ? COVERAGE_TIER_COLORS[s.outlet_coverage_tier] : '#888', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800 }}>
-                      {initial}
-                    </div>
-                  )}
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{s.outlet_name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <Link to={`/outlets/${out.slug}`} style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}>
+                    {out.logo_url ? (
+                      <img src={out.logo_url} alt={s.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
+                    ) : (
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: s.outlet_coverage_tier && s.outlet_coverage_tier !== 'unscored' ? COVERAGE_TIER_COLORS[s.outlet_coverage_tier] : '#888', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800 }}>
+                        {initial}
+                      </div>
+                    )}
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{s.outlet_name}</span>
+                  </Link>
                   
                   {out.ownership_type && (
                     <span style={{

@@ -821,11 +821,11 @@ export default function Story() {
             <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>{filteredStories.length} Articles</h3>
             
             {filteredStories.map(story => (
-              <a key={story.id} href={story.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'block' }}>
+              <div key={story.id} style={{ display: 'block' }}>
                 <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-2px)' } }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Link to={`/outlets/${story.outlet_slug}`} style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }} onClick={e => e.stopPropagation()}>
                       {story.outlet_logo_url ? (
                         <img src={story.outlet_logo_url} alt={story.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
                       ) : (
@@ -837,7 +837,7 @@ export default function Story() {
                       {story.broke_story_first && (
                         <span style={{ background: '#F39C12', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', marginLeft: '4px' }}>First to break</span>
                       )}
-                    </div>
+                    </Link>
                     
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <OwnershipBadge outlet={story.outlets || {}} />
@@ -914,12 +914,12 @@ export default function Story() {
                     <span style={{ color: 'var(--text-muted)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {formatTimeAgo(story.published_at)} {(story.outlets && story.outlets.headquarters_city) ? `· ${story.outlets.headquarters_city}` : ''}
                     </span>
-                    <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600 }}>
+                    <a href={story.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}>
                       Read Full Article →
-                    </span>
+                    </a>
                   </div>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
 
