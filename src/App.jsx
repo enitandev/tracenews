@@ -11,6 +11,7 @@ import Methodology from "./pages/Methodology";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
 import OutletProfile from './pages/OutletProfile'
+import Corrections from './pages/Corrections'
 
 function HomepagePlaceholder() {
   return (
@@ -69,6 +70,7 @@ export default function App() {
             <Route path="/topics" element={<HomepagePlaceholder />} />
             <Route path="/topics/:topicSlug" element={<Category />} />
             <Route path="/methodology" element={<Methodology />} />
+            <Route path="/corrections" element={<Corrections />} />
           </Routes>
         </Layout>
       </BrowserRouter>

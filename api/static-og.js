@@ -31,6 +31,11 @@ const STATIC_PAGES = {
       'covered, and what the coverage ' +
       'patterns reveal.',
     url: 'https://tracenews.ng/daily-briefing'
+  },
+  'corrections': {
+    title: 'Request a Correction | TraceNews',
+    description: 'If you believe something on a TraceNews page is factually wrong, tell us and we will look into it promptly.',
+    url: 'https://tracenews.ng/corrections'
   }
 }
 
