@@ -155,6 +155,35 @@ export default async function middleware(
     }
   }
 
+  if (url.pathname.startsWith('/politicians/')) {
+    const polSlug = url.pathname.replace('/politicians/', '')
+    if (polSlug) {
+      const apiUrl = new URL(request.url)
+      apiUrl.pathname = '/api/politician-og'
+      apiUrl.search = `?slug=${polSlug}`
+      
+      try {
+        const apiResponse = await fetch(
+          apiUrl.toString(),
+          { headers: { 'user-agent': ua } }
+        )
+        const html = await apiResponse.text()
+        return new Response(html, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400'
+          }
+        })
+      } catch (error) {
+        console.error('politician-og proxy failed:', error.message)
+        return new Response(null, {
+          headers: { 'x-middleware-next': '1' }
+        })
+      }
+    }
+  }
+
   if (
     url.pathname === '/methodology' ||
     url.pathname === '/daily-briefing' ||

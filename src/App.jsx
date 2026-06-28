@@ -12,6 +12,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
 import OutletProfile from './pages/OutletProfile'
 import Corrections from './pages/Corrections'
+import PoliticianProfile from './pages/PoliticianProfile'
 
 function HomepagePlaceholder() {
   return (
@@ -67,6 +68,7 @@ export default function App() {
             {/* New static routes */}
             <Route path="/outlets" element={<HomepagePlaceholder />} />
             <Route path="/outlets/:slug" element={<OutletProfile />} />
+            <Route path="/politicians/:slug" element={<PoliticianProfile />} />
             <Route path="/topics" element={<HomepagePlaceholder />} />
             <Route path="/topics/:topicSlug" element={<Category />} />
             <Route path="/methodology" element={<Methodology />} />
