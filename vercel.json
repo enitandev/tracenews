@@ -9,6 +9,26 @@
       "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/news-sitemap.xml"
     },
     {
+      "source": "/sitemap-index.xml",
+      "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/sitemap-index.xml"
+    },
+    {
+      "source": "/sitemap-stories.xml",
+      "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/sitemap-stories.xml"
+    },
+    {
+      "source": "/sitemap-outlets.xml",
+      "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/sitemap-outlets.xml"
+    },
+    {
+      "source": "/sitemap-politicians.xml",
+      "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/sitemap-politicians.xml"
+    },
+    {
+      "source": "/sitemap-static.xml",
+      "destination": "https://uvicorn-appmain-production-79c6.up.railway.app/sitemap-static.xml"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
