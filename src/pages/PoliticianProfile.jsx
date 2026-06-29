@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import CoverageBar from '../components/CoverageBar';
 
 const DATA_SINCE = "22 June 2026";
 const SMALL_N_THRESHOLD = 25;
@@ -343,11 +342,13 @@ export default function PoliticianProfile() {
                     <div style={{ fontSize: '15px', fontWeight: 700, lineHeight: 1.4, color: 'var(--text-primary)' }}>
                       {story.title}
                     </div>
-                    {story.cluster_coverage_stats && (
-                      <div style={{ marginTop: '4px' }}>
-                        <CoverageBar variant="compact" coverageStats={story.cluster_coverage_stats} />
-                      </div>
-                    )}
+                    <div style={{
+                      fontSize: '11px',
+                      color: 'var(--text-muted)',
+                      marginTop: '4px'
+                    }}>
+                      {story.cluster_outlet_count} {story.cluster_outlet_count === 1 ? 'source' : 'sources'} covering this story
+                    </div>
                   </div>
                   {story.image_url && (
                     <div style={{ width: '88px', height: '66px', flexShrink: 0 }}>
