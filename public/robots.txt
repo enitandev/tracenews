@@ -21,4 +21,5 @@ Allow: /
 User-agent: Bytespider
 Allow: /
 
-Sitemap: https://tracenews.ng/sitemap.xml
+Sitemap: https://tracenews.ng/sitemap-index.xml
+Sitemap: https://tracenews.ng/news-sitemap.xml
