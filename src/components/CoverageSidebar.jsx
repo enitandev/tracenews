@@ -59,11 +59,9 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
 
   const allUniqueStories = Object.values(groups).flat();
   let trackRecordStats = { 'Clean': 0, 'Flagged': 0, 'Problematic': 0 };
-  let totalBrownEnvelopes = 0;
   let opaqueOwnershipCount = 0;
   let politicallyLinkedCount = 0;
   let highStructuralRiskCount = 0;
-  let brownEnvelopeOutlets = [];
   
   let integrityScore = 100;
   
@@ -72,10 +70,6 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
     
     if (out.track_record_status && trackRecordStats[out.track_record_status] !== undefined) {
       trackRecordStats[out.track_record_status]++;
-    }
-    if (out.promotional_alignment_count) {
-      totalBrownEnvelopes += out.promotional_alignment_count;
-      brownEnvelopeOutlets.push(s.outlet_name);
     }
     if (out.ownership_transparency === 'Low' || out.ownership_transparency === 'low') {
       opaqueOwnershipCount++;
@@ -356,18 +350,7 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
               </div>
             )}
             
-            {totalBrownEnvelopes > 0 && (
-              <div style={{ color: 'var(--text-primary)', fontSize: '12px', padding: '10px 12px', background: 'var(--bg-hover)', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  ⚠ <span style={{ color: 'var(--text-muted)' }}>{totalBrownEnvelopes} brown envelope incident(s) recorded</span>
-                </div>
-                {brownEnvelopeOutlets.length > 0 && (
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    Linked to: {Array.from(new Set(brownEnvelopeOutlets)).join(', ')}
-                  </div>
-                )}
-              </div>
-            )}
+
 
             {highStructuralRiskCount > 0 && (
               <div style={{ color: 'var(--text-primary)', fontSize: '12px', padding: '10px 12px', background: 'var(--bg-hover)', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
