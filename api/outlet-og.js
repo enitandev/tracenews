@@ -72,7 +72,8 @@ export default async function handler(req, res) {
   
   const outlet = outlets[0]
   const score = outlet.independence_score
-  const tier = TIER_MAP[outlet.credibility_tier] || outlet.credibility_tier
+  const rawTier = (outlet.credibility_tier || 'unscored').toLowerCase()
+  const tier = TIER_MAP[rawTier] || rawTier
   const alignment = ALIGNMENT_MAP[outlet.government_alignment] || outlet.government_alignment
   
   const canonical = `https://tracenews.ng/outlets/${slug}`
@@ -86,8 +87,17 @@ export default async function handler(req, res) {
     '@context': 'https://schema.org',
     '@type': ['Organization', 'Dataset'],
     'name': outlet.name,
-    'url': outlet.website ? `https://${outlet.website}` : canonical,
+    'url': outlet.website 
+      ? `https://${outlet.website}` 
+      : canonical,
     'description': metaDesc,
+    'creator': {
+      '@type': 'Organization',
+      'name': 'TraceNews',
+      'url': 'https://tracenews.ng'
+    },
+    'license': 
+      'https://tracenews.ng/methodology',
     'mainEntityOfPage': {
       '@type': 'WebPage',
       '@id': canonical
@@ -95,7 +105,8 @@ export default async function handler(req, res) {
     'additionalProperty': [
       {
         '@type': 'PropertyValue',
-        'name': 'TraceNews Independence Index',
+        'name': 
+          'TraceNews Independence Index',
         'value': score,
         'minValue': 0,
         'maxValue': 100
