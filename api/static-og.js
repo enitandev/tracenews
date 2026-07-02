@@ -36,6 +36,11 @@ const STATIC_PAGES = {
     title: 'Request a Correction | TraceNews',
     description: 'If you believe something on a TraceNews page is factually wrong, tell us and we will look into it promptly.',
     url: 'https://tracenews.ng/corrections'
+  },
+  'about': {
+    title: 'About TraceNews | Nigerian Media Intelligence Platform',
+    description: 'TraceNews is a media intelligence platform that measures editorial independence across Nigerian news outlets. We analyse coverage patterns — we do not produce news.',
+    url: 'https://tracenews.ng/about'
   }
 }
 

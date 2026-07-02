@@ -12,6 +12,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
 import OutletProfile from './pages/OutletProfile'
 import Corrections from './pages/Corrections'
+import About from './pages/About'
 import PoliticianProfile from './pages/PoliticianProfile'
 
 function HomepagePlaceholder() {
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="/topics/:topicSlug" element={<Category />} />
             <Route path="/methodology" element={<Methodology />} />
             <Route path="/corrections" element={<Corrections />} />
+            <Route path="/about" element={<About />} />
           </Routes>
         </Layout>
       </BrowserRouter>

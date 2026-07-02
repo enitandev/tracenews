@@ -187,12 +187,14 @@ export default async function middleware(
   if (
     url.pathname === '/methodology' ||
     url.pathname === '/daily-briefing' ||
-    url.pathname === '/corrections'
+    url.pathname === '/corrections' ||
+    url.pathname === '/about'
   ) {
     const pageMap = {
       '/methodology': 'methodology',
       '/daily-briefing': 'daily-briefing',
-      '/corrections': 'corrections'
+      '/corrections': 'corrections',
+      '/about': 'about'
     }
     const pageKey = pageMap[url.pathname]
     const apiUrl = new URL(request.url)
