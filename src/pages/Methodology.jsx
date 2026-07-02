@@ -770,7 +770,7 @@ export default function Methodology() {
           </div>
 
           <p style={styles.prose}>
-            Coverage snapshots are taken every 10 minutes per cluster and retained permanently, enabling historical analysis of how coverage patterns changed over time. This is what makes Memory Hole detection possible — stories that spike in coverage and then quietly disappear before resolution.
+            Coverage snapshots are taken every 10 minutes per cluster and retained permanently, enabling historical analysis of how coverage patterns changed over time. This accumulated data makes it possible to track whether coverage of a story broadens or narrows over its lifecycle.
           </p>
           <p style={styles.prose}>
             The entity registry covers 10 categories: Legislature (450 members), Governors (217 current and former since 1999), Security apparatus (73), Executive (33), Party leadership (28), Judiciary (27), Power brokers (24), Civil society (15), Traditional rulers (10), and Business crossovers (5). The registry is updated as appointments, elections, and party changes occur.
