@@ -38,6 +38,43 @@ export default async function middleware(
     bot => ua.toLowerCase().includes(bot)
   )
   
+  if (url.pathname === '/' || 
+      url.pathname === '') {
+    const apiUrl = new URL(request.url)
+    apiUrl.pathname = '/api/home-og'
+    
+    try {
+      const apiResponse = await fetch(
+        apiUrl.toString(),
+        { headers: { 
+          'user-agent': ua 
+        }}
+      )
+      const html = 
+        await apiResponse.text()
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type':
+            'text/html; charset=utf-8',
+          'Cache-Control':
+            'public, max-age=86400, ' +
+            'stale-while-revalidate=604800'
+        }
+      })
+    } catch (error) {
+      console.error(
+        'home-og proxy failed:',
+        error.message
+      )
+      return new Response(null, {
+        headers: {
+          'x-middleware-next': '1'
+        }
+      })
+    }
+  }
+
   // Non-bots: pass through to SPA
   if (!isBot) {
     return new Response(null, {
