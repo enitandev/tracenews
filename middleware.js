@@ -38,8 +38,8 @@ export default async function middleware(
     bot => ua.toLowerCase().includes(bot)
   )
   
-  if (url.pathname === '/' || 
-      url.pathname === '') {
+  if ((url.pathname === '/' || 
+       url.pathname === '') && isBot) {
     const apiUrl = new URL(request.url)
     apiUrl.pathname = '/api/home-og'
     
