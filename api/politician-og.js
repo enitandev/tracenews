@@ -90,7 +90,8 @@ export default async function handler(
         'full_name, common_name, ' +
         'slug, party, state, ' +
         'current_position, category, ' +
-        'wikipedia_image_url'
+        'wikipedia_image_url, ' +
+        'publication_status'
       )
       .eq('slug', slug)
       .eq('active', true)
@@ -104,6 +105,25 @@ export default async function handler(
   }
 
   const p = politicians[0]
+
+  // Check publication status
+  const pubStatus = 
+    p.publication_status || 'published'
+
+  if (pubStatus === 'excluded') {
+    res.status(410).json({
+      detail: 'Gone — this page has ' +
+        'been permanently withdrawn.'
+    })
+    return
+  }
+
+  if (pubStatus === 'pending_review') {
+    res.status(404).json({
+      detail: 'Not found'
+    })
+    return
+  }
   const name = p.common_name || 
     p.full_name
   const canonical =
