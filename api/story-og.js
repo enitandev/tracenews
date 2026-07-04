@@ -35,6 +35,12 @@ export const BOT_USER_AGENTS = [
 function truncateDesc(raw, maxLen = 155) {
   const clean = (raw || '')
     .replace(/<[^>]+>/g, '')
+    .replace(
+      /\s*read more\s+.{0,80}\.{3}$/i, 
+      ''
+    )
+    .replace(/\s*read more\.{3}$/i, '')
+    .replace(/\s*read more$/i, '')
     .trim()
   if (clean.length <= maxLen) 
     return clean
