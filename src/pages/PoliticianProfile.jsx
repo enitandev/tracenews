@@ -92,19 +92,28 @@ export default function PoliticianProfile() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [gone, setGone] = useState(false);
   const [visibleCount, setVisibleCount] = useState(7);
 
   useEffect(() => {
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/politicians/${slug}`)
-      .then(r => {
-        if (!r.ok) throw new Error('Not found');
-        return r.json();
+      .then(res => {
+        if (res.status === 410) {
+          setGone(true);
+          setLoading(false);
+          return null;
+        }
+        if (!res.ok) {
+          throw new Error('Not found');
+        }
+        return res.json();
       })
       .then(d => {
+        if (!d) return;
         setData(d);
         setLoading(false);
       })
-      .catch(e => {
+      .catch(() => {
         setError(true);
         setLoading(false);
       });
@@ -114,6 +123,49 @@ export default function PoliticianProfile() {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', padding: '100px 24px', fontFamily: 'var(--font-body)', color: 'var(--text-muted)' }}>
         Loading coverage record...
+      </div>
+    );
+  }
+
+  if (gone) {
+    return (
+      <div style={{
+        maxWidth: '680px',
+        margin: '80px auto',
+        padding: '0 24px',
+        textAlign: 'center',
+        fontFamily: 'var(--font-body)'
+      }}>
+        <p style={{
+          fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
+          fontSize: '11px',
+          textTransform: 'uppercase',
+          letterSpacing: '.12em',
+          color: '#E67E22',
+          marginBottom: '16px'
+        }}>Page removed</p>
+        <h1 style={{
+          fontFamily: 'Spectral, Georgia, serif',
+          fontSize: '28px',
+          fontWeight: 600,
+          color: 'var(--text-primary)',
+          marginBottom: '16px'
+        }}>
+          This page is no longer available
+        </h1>
+        <p style={{
+          fontSize: '14px',
+          color: 'var(--text-secondary)',
+          lineHeight: 1.7,
+          marginBottom: '24px'
+        }}>
+          This coverage record has been permanently withdrawn.
+        </p>
+        <a href="/" style={{
+          color: '#E67E22',
+          fontSize: '14px',
+          textDecoration: 'none'
+        }}>← Return to TraceNews</a>
       </div>
     );
   }
