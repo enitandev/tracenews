@@ -58,50 +58,6 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
                 (groups['blog']?.length || 0);
 
   const allUniqueStories = Object.values(groups).flat();
-  let trackRecordStats = { 'Clean': 0, 'Flagged': 0, 'Problematic': 0 };
-  let opaqueOwnershipCount = 0;
-  let politicallyLinkedCount = 0;
-  let highStructuralRiskCount = 0;
-  
-  let integrityScore = 100;
-  
-  allUniqueStories.forEach(s => {
-    const out = s.outlets || {};
-    
-    if (out.track_record_status && trackRecordStats[out.track_record_status] !== undefined) {
-      trackRecordStats[out.track_record_status]++;
-    }
-    if (out.ownership_transparency === 'Low' || out.ownership_transparency === 'low') {
-      opaqueOwnershipCount++;
-    }
-    if (out.party_proximity && out.party_proximity !== 'None') {
-      politicallyLinkedCount++;
-    }
-    if (out.structural_risk === 'High') {
-      highStructuralRiskCount++;
-    }
-    
-    if (out.track_record_status === 'Problematic') integrityScore -= 20;
-    
-    if (out.promotional_alignment_count > 2) integrityScore -= 15;
-    else if (out.promotional_alignment_count >= 1) integrityScore -= 8;
-    
-    if (out.structural_risk === 'High') integrityScore -= 5;
-    
-    const isLowTransparency = out.ownership_transparency === 'Low' || out.ownership_transparency === 'low';
-    const hasPartyProximity = out.party_proximity && out.party_proximity !== 'None';
-    
-    if (hasPartyProximity && isLowTransparency) {
-      integrityScore -= 12;
-    }
-  });
-
-  let verdict = { text: 'Concerning', icon: '🔴', desc: 'Multiple sources covering this story have documented integrity issues.' };
-  if (integrityScore >= 75) {
-    verdict = { text: 'Reliable', icon: '🟢', desc: 'Coverage comes primarily from sources with clean or acceptable track records.' };
-  } else if (integrityScore >= 50) {
-    verdict = { text: 'Mixed', icon: '🟡', desc: 'Some sources in this coverage pool have reliability concerns worth noting.' };
-  }
 
   const tierDistribution = {
     'pro_establishment': groups['pro_establishment']?.length || 0,
@@ -310,57 +266,7 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
         </div>
       </SidebarCard>
 
-      {/* CARD 4: Track Record */}
-      <SidebarCard title="Track Record">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
-          {/* ZONE A: Coverage Integrity verdict */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '16px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', position: 'relative' }}>
-            <div style={{ fontSize: '32px', marginBottom: '8px' }}>{verdict.icon}</div>
-            <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              {verdict.text}
-            </div>
-          </div>
-          
-          {/* ZONE B: Source breakdown */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--text-primary)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderBottom: '1px solid var(--border)' }}>
-              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>✓ Clean sources</span>
-              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{trackRecordStats['Clean']}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderBottom: '1px solid var(--border)' }}>
-              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>⚠ Flagged sources</span>
-              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{trackRecordStats['Flagged']}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderBottom: '1px solid var(--border)' }}>
-              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>✗ Problematic sources</span>
-              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{trackRecordStats['Problematic']}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px' }}>
-              <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>🔒 Opaque ownership</span>
-              <span style={{ fontWeight: 800, color: 'var(--text-muted)' }}>{opaqueOwnershipCount}</span>
-            </div>
-          </div>
 
-          {/* ZONE C: Specific alerts */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {politicallyLinkedCount > 0 && (
-              <div style={{ color: 'var(--text-primary)', fontSize: '12px', padding: '10px 12px', background: 'var(--bg-hover)', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                ⚠ <span style={{ color: 'var(--text-muted)' }}>{politicallyLinkedCount} politically-linked outlet(s) in coverage pool</span>
-              </div>
-            )}
-            
-
-
-            {highStructuralRiskCount > 0 && (
-              <div style={{ color: 'var(--text-primary)', fontSize: '12px', padding: '10px 12px', background: 'var(--bg-hover)', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                ⚠ <span style={{ color: 'var(--text-muted)' }}>{highStructuralRiskCount} high structural-risk outlet(s)</span>
-              </div>
-            )}
-          </div>
-          
-        </div>
-      </SidebarCard>
 
     </div>
   );

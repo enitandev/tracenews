@@ -82,87 +82,7 @@ function BadgeWithTooltip({ label, warning, children }) {
   );
 }
 
-function FactualityBadge({ outlet }) {
-  if (!outlet || 
-    !outlet.track_record_status
-  ) return null;
-  
-  const status = 
-    outlet.track_record_status;
-  
-  // Map internal values to 
-  // safe public display text
-  const DISPLAY_MAP = {
-    'Clean': {
-      label: 'Clean record',
-      color: '#2ECC71',
-      icon: '✓'
-    },
-    'Flagged': {
-      label: 'Mixed record',
-      color: '#E67E22', 
-      icon: '⚠'
-    },
-    'Problematic': {
-      label: 'Disputed record',
-      color: '#E74C3C',
-      icon: '⚠'
-    }
-  };
-  
-  const display = DISPLAY_MAP[status];
-  if (!display) return null;
-  
-  const TIER_LABELS = {
-    'adversarial': 'Watchdog',
-    'institutional': 'Mainstream',
-    'pro_establishment': 'Govt',
-    'Adversarial': 'Watchdog',
-    'Institutional': 'Mainstream',
-    'Pro_establishment': 'Govt'
-  };
-  
-  return (
-    <BadgeWithTooltip label="Factuality">
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center' 
-      }}>
-        <span style={{ 
-          fontSize: '12px', 
-          fontWeight: 700, 
-          color: 'var(--text-primary)' 
-        }}>
-          Factuality
-        </span>
-      </div>
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: '6px', 
-        fontSize: '12px', 
-        fontWeight: 600, 
-        color: display.color 
-      }}>
-        {display.icon} {display.label}
-      </div>
-      {outlet.credibility_tier && (
-        <div style={{ 
-          color: 'var(--text-muted)', 
-          fontSize: '11px', 
-          marginTop: '4px', 
-          textTransform: 'uppercase', 
-          fontWeight: 600 
-        }}>
-          Tier: {TIER_LABELS[
-            outlet.credibility_tier
-          ] || outlet.credibility_tier}
-        </div>
-      )}
-    </BadgeWithTooltip>
-  );
-}
+
 
 function OwnershipBadge({ outlet }) {
   if (!outlet || !outlet.ownership_type) return null;
@@ -841,7 +761,7 @@ export default function Story() {
                     
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <OwnershipBadge outlet={story.outlets || {}} />
-                      <FactualityBadge outlet={story.outlets || {}} />
+
                       {story.outlet_coverage_tier && story.outlet_coverage_tier !== 'unscored' && (
                         <span style={{
                           border: story.outlet_coverage_tier === 'blog' ? '1px solid #888888' : `1px solid ${COVERAGE_TIER_COLORS[story.outlet_coverage_tier]}`,
