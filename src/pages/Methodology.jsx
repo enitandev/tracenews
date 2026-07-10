@@ -9,7 +9,7 @@ const SIGNAL_COMPONENT_HTML = `
   --tn-faint:var(--text-tertiary,#6b6b6b);
   --tn-line:var(--border,rgba(255,255,255,.12));
   --tn-line2:var(--border,rgba(255,255,255,.25));
-  --tn-accent:#E67E22;
+  --tn-accent:#a49889;
   --tn-serif:'Spectral',Georgia,serif;
   --tn-mono:'IBM Plex Mono',ui-monospace,monospace;
   max-width:100%;
@@ -90,9 +90,9 @@ const DISTRIBUTION_COMPONENT_HTML = `
   <p class="tn-readout" id="tn-readout">hover any mark to read an outlet &nbsp;·&nbsp; 81 outlets &nbsp;·&nbsp; 30-day window</p>
 
   <div class="tn-bands" aria-hidden="true">
-    <span style="width:34%;background:#185FA5;opacity:.85;"></span>
-    <span style="width:25%;background:#BA7517;opacity:.85;"></span>
-    <span style="width:41%;background:#993C1D;opacity:.85;"></span>
+    <span style="width:34%;background:#6d7f92;opacity:.85;"></span>
+    <span style="width:25%;background:#a49889;opacity:.85;"></span>
+    <span style="width:41%;background:#8f9a6f;opacity:.85;"></span>
   </div>
 
   <div class="tn-plot" id="tn-plot" role="img" aria-label="Distribution of all 82 outlets across the 0 to 100 independence spectrum, clustered densely in the lower-middle range."></div>
@@ -105,9 +105,9 @@ const DISTRIBUTION_COMPONENT_HTML = `
   </div>
 
   <div class="tn-tiers">
-    <div class="tn-tier" style="border-top:2px solid #185FA5;"><p class="tt">Govt <span class="tr">0–34</span></p><p class="td">Editorial choices consistently defer to government or aligned interests.</p><p class="tc" style="color:#185FA5;">7 outlets</p></div>
-    <div class="tn-tier" style="border-top:2px solid #BA7517;"><p class="tt">Mainstream <span class="tr">35–59</span></p><p class="td">Broadly balanced but constrained by access and commercial pressure.</p><p class="tc" style="color:#BA7517;">50 outlets</p></div>
-    <div class="tn-tier" style="border-top:2px solid #993C1D;"><p class="tt">Watchdog <span class="tr">60–100</span></p><p class="td">Consistent original accountability reporting, independent of official narratives.</p><p class="tc" style="color:#993C1D;">24 outlets</p></div>
+    <div class="tn-tier" style="border-top:2px solid #6d7f92;"><p class="tt">Govt <span class="tr">0–34</span></p><p class="td">Editorial choices consistently defer to government or aligned interests.</p><p class="tc" style="color:#6d7f92;">7 outlets</p></div>
+    <div class="tn-tier" style="border-top:2px solid #a49889;"><p class="tt">Mainstream <span class="tr">35–59</span></p><p class="td">Broadly balanced but constrained by access and commercial pressure.</p><p class="tc" style="color:#a49889;">50 outlets</p></div>
+    <div class="tn-tier" style="border-top:2px solid #8f9a6f;"><p class="tt">Watchdog <span class="tr">60–100</span></p><p class="td">Consistent original accountability reporting, independent of official narratives.</p><p class="tc" style="color:#8f9a6f;">24 outlets</p></div>
   </div>
 </div>
 `;
@@ -271,7 +271,7 @@ export default function Methodology() {
       fontSize: '12px',
       letterSpacing: '.18em',
       textTransform: 'uppercase',
-      color: '#E67E22',
+      color: '#a49889',
       margin: '0 0 10px 0',
       paddingTop: '8px',
       display: 'block',
@@ -331,7 +331,7 @@ export default function Methodology() {
 
       {/* HERO */}
       <div style={{ paddingTop: '48px', ...styles.narrow }}>
-        <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#E67E22', margin: '0 0 16px 0' }}>
+        <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#a49889', margin: '0 0 16px 0' }}>
           TRACENEWS INDEPENDENCE INDEX
         </p>
         <h1 className="meth-hero-h1">
@@ -367,10 +367,10 @@ export default function Methodology() {
                 textDecoration: 'none',
                 whiteSpace: 'nowrap'
               }}
-              onMouseEnter={e => e.target.style.color = '#E67E22'}
+              onMouseEnter={e => e.target.style.color = '#a49889'}
               onMouseLeave={e => e.target.style.color = 'var(--text-secondary, #888)'}
             >
-              <span style={{color: '#E67E22'}}>{num}</span>
+              <span style={{color: '#a49889'}}>{num}</span>
               {' '}{label}
             </a>
           ))}
@@ -543,7 +543,7 @@ export default function Methodology() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', marginBottom: '24px' }}>
           {/* Card 1 */}
           <div style={{ background: 'var(--bg-base)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
-            <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#C0392B', background: 'rgba(192,57,43,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
+            <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#8f9a6f', background: 'rgba(192,57,43,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
               ONE-SIDED COVERAGE
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
@@ -559,7 +559,7 @@ export default function Methodology() {
 
           {/* Card 2 */}
           <div style={{ background: 'var(--bg-base)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
-            <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#E67E22', background: 'rgba(230,126,34,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
+            <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#a49889', background: 'rgba(230,126,34,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
               COPY-AND-PASTE
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
@@ -682,7 +682,7 @@ export default function Methodology() {
             </p>
 
             <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid rgba(192,57,43,0.15)' }}>
-              <span style={{ color: '#C0392B', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
+              <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
               <div>
                 <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '14px', fontFamily: "'Montserrat', sans-serif" }}>
                   We do not assert that any outlet accepted payment for coverage.
@@ -694,7 +694,7 @@ export default function Methodology() {
             </div>
 
             <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid rgba(192,57,43,0.15)' }}>
-              <span style={{ color: '#C0392B', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
+              <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
               <div>
                 <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '14px', fontFamily: "'Montserrat', sans-serif" }}>
                   We do not assert that any journalist or editor acted in bad faith.
@@ -706,7 +706,7 @@ export default function Methodology() {
             </div>
 
             <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid rgba(192,57,43,0.15)' }}>
-              <span style={{ color: '#C0392B', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
+              <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
               <div>
                 <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '14px', fontFamily: "'Montserrat', sans-serif" }}>
                   We do not measure the factual accuracy of individual stories.
@@ -718,7 +718,7 @@ export default function Methodology() {
             </div>
 
             <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid rgba(192,57,43,0.15)' }}>
-              <span style={{ color: '#C0392B', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
+              <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
               <div>
                 <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '14px', fontFamily: "'Montserrat', sans-serif" }}>
                   We do not assert that One-Sided Coverage signals represent deliberate suppression.
@@ -730,7 +730,7 @@ export default function Methodology() {
             </div>
 
             <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid transparent' }}>
-              <span style={{ color: '#C0392B', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
+              <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
               <div>
                 <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '14px', fontFamily: "'Montserrat', sans-serif" }}>
                   We do not claim the TII is final or infallible.

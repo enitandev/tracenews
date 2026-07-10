@@ -11,8 +11,9 @@ import Methodology from "./pages/Methodology";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
 import OutletProfile from './pages/OutletProfile'
-import Corrections from './pages/Corrections'
-import About from './pages/About'
+import Corrections from './pages/Corrections';
+import About from './pages/About';
+import TestVerdict from './pages/TestVerdict';
 import PoliticianProfile from './pages/PoliticianProfile'
 
 function HomepagePlaceholder() {
@@ -61,6 +62,7 @@ export default function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/test-verdict" element={<TestVerdict />} />
             <Route path="/home" element={<HomepagePlaceholder />} />
             <Route path="/registry" element={<Registry />} />
             <Route path="/story/:slug" element={<Story />} />

@@ -13,7 +13,7 @@ export default function About() {
 
       {/* SECTION 1 — What TraceNews is */}
       <div>
-        <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '11px', textTransform: 'uppercase', color: '#E67E22', margin: '0 0 12px 0' }}>ABOUT TRACENEWS</p>
+        <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '11px', textTransform: 'uppercase', color: '#a49889', margin: '0 0 12px 0' }}>ABOUT TRACENEWS</p>
         <h1 style={{ fontFamily: 'Spectral, Georgia, serif', fontSize: '36px', fontWeight: 600, margin: '0 0 24px 0', color: 'var(--text-primary)' }}>A media intelligence platform, not a news publisher</h1>
         
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '16px' }}>
@@ -26,7 +26,7 @@ export default function About() {
           Every score on this platform is derived from observable editorial behaviour across a 30-day rolling window, applied consistently across all 82 outlets in our registry. Our methodology is public and fully documented.
         </p>
         
-        <Link to="/methodology" style={{ fontSize: '14px', color: '#E67E22', textDecoration: 'none', fontWeight: 500, display: 'inline-block', marginTop: '8px' }}>
+        <Link to="/methodology" style={{ fontSize: '14px', color: '#a49889', textDecoration: 'none', fontWeight: 500, display: 'inline-block', marginTop: '8px' }}>
           Read the methodology →
         </Link>
       </div>
@@ -51,13 +51,13 @@ export default function About() {
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '4px' }}>
           For corrections to outlet or politician pages:
         </p>
-        <a href="mailto:corrections@tracenews.ng" style={{ fontSize: '14px', color: '#E67E22', textDecoration: 'none', display: 'block', marginBottom: '16px' }}>
+        <a href="mailto:corrections@tracenews.ng" style={{ fontSize: '14px', color: '#a49889', textDecoration: 'none', display: 'block', marginBottom: '16px' }}>
           corrections@tracenews.ng
         </a>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '4px' }}>
           For data access or methodology questions:
         </p>
-        <a href="mailto:methodology@tracenews.ng" style={{ fontSize: '14px', color: '#E67E22', textDecoration: 'none', display: 'block', marginBottom: '0' }}>
+        <a href="mailto:methodology@tracenews.ng" style={{ fontSize: '14px', color: '#a49889', textDecoration: 'none', display: 'block', marginBottom: '0' }}>
           methodology@tracenews.ng
         </a>
       </div>

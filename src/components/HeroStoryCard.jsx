@@ -22,7 +22,7 @@ export default function HeroStoryCard({ cluster }) {
         
         {hasAlerts && (
           <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--bg-surface)', padding: '8px', borderRadius: '50%', boxShadow: '0 2px 8px rgba(0,0,0,0.3)', display: 'flex', zIndex: 10 }}>
-            <AlertTriangle size={20} color="#c0392b" />
+            <AlertTriangle size={20} color="#8f9a6f" />
           </div>
         )}
 

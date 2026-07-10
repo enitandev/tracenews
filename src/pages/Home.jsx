@@ -305,7 +305,7 @@ export default function Home() {
         {/* RIGHT COLUMN: Monitoring Spirit */}
         <div style={{ width: '25%', flexShrink: 0, paddingLeft: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <AlertTriangle size={20} color="#e67e22" />
+            <AlertTriangle size={20} color="#a49889" />
             <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '20px', color: 'var(--text-primary)', margin: 0 }}>Monitoring Spirit</h2>
           </div>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '24px' }}>

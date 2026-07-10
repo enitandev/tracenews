@@ -7,9 +7,9 @@ import CoverageSidebar from '../components/CoverageSidebar';
 import MonitoringSignals from '../components/MonitoringSignals';
 
 const COVERAGE_TIER_COLORS = {
-  'pro_establishment': '#2980B9',
-  'institutional': '#E67E22',
-  'adversarial': '#C0392B',
+  'pro_establishment': '#6d7f92',
+  'institutional': '#a49889',
+  'adversarial': '#8f9a6f',
   'unscored': '#999999'
 };
 
@@ -93,7 +93,7 @@ function OwnershipBadge({ outlet }) {
         <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>Ownership</span>
         {outlet.ownership_type && (
           <span style={{
-            background: outlet.ownership_type === 'Government' ? '#E74C3C' : outlet.ownership_type === 'Corporate' ? '#E67E22' : '#2ECC71',
+            background: outlet.ownership_type === 'Government' ? '#E74C3C' : outlet.ownership_type === 'Corporate' ? '#a49889' : '#2ECC71',
             color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: 800
           }}>
             {outlet.ownership_type}
@@ -104,7 +104,7 @@ function OwnershipBadge({ outlet }) {
         {outlet.ownership_transparency && (
           <div style={{
             width: '8px', height: '8px', borderRadius: '50%',
-            background: outlet.ownership_transparency === 'High' ? '#2ECC71' : outlet.ownership_transparency === 'Medium' ? '#E67E22' : '#E74C3C'
+            background: outlet.ownership_transparency === 'High' ? '#2ECC71' : outlet.ownership_transparency === 'Medium' ? '#a49889' : '#E74C3C'
           }} />
         )}
         <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -121,15 +121,15 @@ function OwnershipBadge({ outlet }) {
 }
 
 const SEVERITY_COLORS = {
-  'high': '#e67e22',
-  'critical': '#c0392b',
+  'high': '#a49889',
+  'critical': '#8f9a6f',
   'medium': '#f39c12',
   'low': '#2471a3'
 };
 
 const REGION_COLORS = {
   'North': '#2471A3',
-  'Southwest': '#C0392B',
+  'Southwest': '#8f9a6f',
   'Southeast': '#008751',
   'South-South': '#F39C12',
   'Niger Delta': '#F39C12',
@@ -310,13 +310,13 @@ export default function Story() {
       <div style={{ marginBottom: '32px' }}>
         <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Layer 2: Editorial Independence</h4>
         <div style={{ display: 'flex', height: '16px', borderRadius: '4px', overflow: 'hidden', gap: '2px' }}>
-          <div style={{ flex: '1', background: isStatePR ? '#C0392B' : '#333' }} title={`State PR (0-34)`} />
-          <div style={{ flex: '1', background: isMainstream ? '#E67E22' : '#333' }} title={`Mainstream (35-69)`} />
+          <div style={{ flex: '1', background: isStatePR ? '#8f9a6f' : '#333' }} title={`State PR (0-34)`} />
+          <div style={{ flex: '1', background: isMainstream ? '#a49889' : '#333' }} title={`Mainstream (35-69)`} />
           <div style={{ flex: '1', background: isIndependent ? '#008751' : '#333' }} title={`Independent (70-100)`} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-          <span style={{ color: isStatePR ? '#C0392B' : '#888' }}>State PR</span>
-          <span style={{ color: isMainstream ? '#E67E22' : '#888' }}>Mainstream</span>
+          <span style={{ color: isStatePR ? '#8f9a6f' : '#888' }}>State PR</span>
+          <span style={{ color: isMainstream ? '#a49889' : '#888' }}>Mainstream</span>
           <span style={{ color: isIndependent ? '#008751' : '#888' }}>Independent</span>
         </div>
       </div>
@@ -602,9 +602,9 @@ export default function Story() {
               let bg = 'transparent';
               let color = 'var(--text-muted)';
               if (isActive) {
-                if (tab === 'Govt') { bg = '#2980B9'; color = '#fff'; }
-                else if (tab === 'Mainstream') { bg = '#E67E22'; color = '#fff'; }
-                else if (tab === 'Watchdog') { bg = '#C0392B'; color = '#fff'; }
+                if (tab === 'Govt') { bg = '#6d7f92'; color = '#fff'; }
+                else if (tab === 'Mainstream') { bg = '#a49889'; color = '#fff'; }
+                else if (tab === 'Watchdog') { bg = '#8f9a6f'; color = '#fff'; }
                 else { bg = 'var(--bg-elevated)'; color = 'var(--text-primary)'; }
               }
               return (
@@ -684,9 +684,9 @@ export default function Story() {
               const isActive = activeFilterTab === tab.id;
               let borderColor = 'transparent';
               if (isActive) {
-                if (tab.id === 'pro_establishment') borderColor = '#2980B9';
-                else if (tab.id === 'institutional') borderColor = '#E67E22';
-                else if (tab.id === 'adversarial') borderColor = '#C0392B';
+                if (tab.id === 'pro_establishment') borderColor = '#6d7f92';
+                else if (tab.id === 'institutional') borderColor = '#a49889';
+                else if (tab.id === 'adversarial') borderColor = '#8f9a6f';
                 else if (tab.id === 'blog') borderColor = '#888888';
                 else borderColor = 'var(--text-primary)';
               }
@@ -853,7 +853,7 @@ export default function Story() {
           {/* Monitoring Spirit Layer */}
           <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', color: 'var(--text-primary)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: flags.length > 0 ? '20px' : '0' }}>
-              <Info size={20} color="#e67e22" />
+              <Info size={20} color="#a49889" />
               <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0 }}>Monitoring Spirit</h3>
             </div>
             

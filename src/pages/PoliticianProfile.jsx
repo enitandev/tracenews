@@ -12,9 +12,9 @@ const TIER_LABEL = {
 };
 
 const TIER_COLOR = {
-  pro_establishment: "#2980B9",
-  institutional: "#E67E22",
-  adversarial: "#C0392B"
+  pro_establishment: "#6d7f92",
+  institutional: "#a49889",
+  adversarial: "#8f9a6f"
 };
 
 const CATEGORY_DISPLAY = {
@@ -141,7 +141,7 @@ export default function PoliticianProfile() {
           fontSize: '11px',
           textTransform: 'uppercase',
           letterSpacing: '.12em',
-          color: '#E67E22',
+          color: '#a49889',
           marginBottom: '16px'
         }}>Page removed</p>
         <h1 style={{
@@ -162,7 +162,7 @@ export default function PoliticianProfile() {
           This coverage record has been permanently withdrawn.
         </p>
         <a href="/" style={{
-          color: '#E67E22',
+          color: '#a49889',
           fontSize: '14px',
           textDecoration: 'none'
         }}>← Return to TraceNews</a>
@@ -174,7 +174,7 @@ export default function PoliticianProfile() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '100px 24px', fontFamily: 'var(--font-body)', color: 'var(--text-primary)' }}>
         <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>Politician not found.</h2>
-        <Link to="/" style={{ color: '#E67E22', textDecoration: 'none', fontWeight: 600 }}>Return to homepage →</Link>
+        <Link to="/" style={{ color: '#a49889', textDecoration: 'none', fontWeight: 600 }}>Return to homepage →</Link>
       </div>
     );
   }
@@ -237,7 +237,7 @@ export default function PoliticianProfile() {
           <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '800px' }}>
             This page describes how Nigerian media has covered stories mentioning this person. Every figure is a fact about coverage, not a judgement about the person or any outlet.
           </p>
-          <Link to="/methodology" style={{ fontSize: '13px', color: '#E67E22', textDecoration: 'none', fontWeight: 600 }}>How TraceNews classifies outlets →</Link>
+          <Link to="/methodology" style={{ fontSize: '13px', color: '#a49889', textDecoration: 'none', fontWeight: 600 }}>How TraceNews classifies outlets →</Link>
         </div>
       </div>
 
@@ -432,7 +432,7 @@ export default function PoliticianProfile() {
               Stories tracked by TraceNews that mention this person, and how that coverage was distributed across editorial tiers. This page describes coverage behaviour — not the person, and not any outlet's editorial intent.<br/><br/>
               Data recorded since {DATA_SINCE}.
             </p>
-            <Link to="/methodology" style={{ fontSize: '13px', color: '#E67E22', textDecoration: 'none', fontWeight: 600 }}>How TraceNews classifies outlets →</Link>
+            <Link to="/methodology" style={{ fontSize: '13px', color: '#a49889', textDecoration: 'none', fontWeight: 600 }}>How TraceNews classifies outlets →</Link>
           </div>
 
           {/* Sidebar Card 2 */}
@@ -456,11 +456,11 @@ export default function PoliticianProfile() {
 
           {/* Sidebar Card 3 */}
           <div style={{ background: 'rgba(192,57,43,0.04)', border: '1px solid rgba(192,57,43,0.15)', borderRadius: '12px', padding: '20px' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 12px 0', color: '#C0392B' }}>Request a correction</h3>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 12px 0', color: '#8f9a6f' }}>Request a correction</h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
               If you believe something on this page is factually wrong — a wrong title, an out-of-date party, a miscounted figure — tell us and we will look into it promptly.
             </p>
-            <Link to="/corrections" style={{ fontSize: '13px', color: '#C0392B', textDecoration: 'none', fontWeight: 600 }}>Request a correction →</Link>
+            <Link to="/corrections" style={{ fontSize: '13px', color: '#8f9a6f', textDecoration: 'none', fontWeight: 600 }}>Request a correction →</Link>
           </div>
           
         </div>

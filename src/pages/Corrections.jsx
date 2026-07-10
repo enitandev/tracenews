@@ -44,7 +44,7 @@ export default function Corrections() {
   const commitmentLabelStyle = {
     fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
     fontSize: '11px',
-    color: '#E67E22',
+    color: '#a49889',
     flexShrink: 0,
     minWidth: '140px'
   };
@@ -75,7 +75,7 @@ export default function Corrections() {
 
       {/* SECTION 1 — Header */}
       <div>
-        <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '11px', textTransform: 'uppercase', color: '#E67E22', margin: '0 0 12px 0' }}>TRACENEWS ACCURACY</p>
+        <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '11px', textTransform: 'uppercase', color: '#a49889', margin: '0 0 12px 0' }}>TRACENEWS ACCURACY</p>
         <h1 style={{ fontFamily: 'Spectral, Georgia, serif', fontSize: '36px', fontWeight: 600, margin: '0 0 24px 0', color: 'var(--text-primary)' }}>Request a correction</h1>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '16px' }}>
           TraceNews pages describe how Nigerian media has covered stories — the number of stories that mention a person, and how that coverage was distributed across editorial tiers. The pages describe coverage behaviour; they do not pass judgement on any person or outlet.
@@ -96,7 +96,7 @@ export default function Corrections() {
         </ul>
         <div style={{ background: 'var(--bg-elevated)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px', marginTop: '16px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
           This form is for factual accuracy. It is not a route to remove accurate, lawfully published coverage data, or to dispute how Nigerian outlets are classified. Our classification method is explained at{' '}
-          <Link to="/methodology" style={{ color: '#E67E22', textDecoration: 'none' }}>/methodology</Link>, and outlet pages carry their own 'dispute this score' route.
+          <Link to="/methodology" style={{ color: '#a49889', textDecoration: 'none' }}>/methodology</Link>, and outlet pages carry their own 'dispute this score' route.
         </div>
       </div>
 
@@ -186,7 +186,7 @@ export default function Corrections() {
       {/* SECTION 5 — Footer contact */}
       <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '0.5px solid var(--border)', fontSize: '13px', color: 'var(--text-muted)' }}>
         Questions about this process:{' '}
-        <a href="mailto:corrections@tracenews.ng" style={{ color: '#E67E22', textDecoration: 'none' }}>
+        <a href="mailto:corrections@tracenews.ng" style={{ color: '#a49889', textDecoration: 'none' }}>
           corrections@tracenews.ng
         </a>
       </div>

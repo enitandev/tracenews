@@ -17,7 +17,7 @@ export default function CompactStoryItem({ cluster }) {
             <CoverageBar variant="compact" coverageStats={cluster.coverage_stats} />
           </div>
         </div>
-        {hasAlerts && <AlertTriangle size={14} color="#c0392b" style={{ flexShrink: 0, marginTop: '2px' }} />}
+        {hasAlerts && <AlertTriangle size={14} color="#8f9a6f" style={{ flexShrink: 0, marginTop: '2px' }} />}
       </div>
     </Link>
   );

@@ -20,9 +20,9 @@ const ALIGNMENT_MAP = {
 };
 
 const ALIGNMENT_COLORS = {
-  'pro_government': '#2980B9',
+  'pro_government': '#6d7f92',
   'neutral': 'var(--text-secondary)',
-  'opposition': '#C0392B'
+  'opposition': '#8f9a6f'
 };
 
 const TIER_MAP = {
@@ -32,15 +32,15 @@ const TIER_MAP = {
 };
 
 const TIER_COLORS = {
-  'adversarial': '#C0392B',
-  'institutional': '#E67E22',
-  'pro_establishment': '#2980B9'
+  'adversarial': '#8f9a6f',
+  'institutional': '#a49889',
+  'pro_establishment': '#6d7f92'
 };
 
 const TRANSPARENCY_COLORS = {
   'high': '#27B060',
-  'medium': '#E67E22',
-  'low': '#C0392B'
+  'medium': '#a49889',
+  'low': '#8f9a6f'
 };
 
 export default function OutletProfile() {
@@ -453,14 +453,14 @@ export default function OutletProfile() {
           </div>
 
           <div style={{ background: 'rgba(192,57,43,0.04)', border: '0.5px solid rgba(192,57,43,0.15)', borderRadius: '10px', padding: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#C0392B' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#8f9a6f' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               <span style={{ fontSize: '14px', fontWeight: 600 }}>Dispute this score</span>
             </div>
             <p style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: '0 0 12px 0' }}>
               If you represent this outlet and believe this score relies on flawed sampling or incorrect data, we will review documented challenges.
             </p>
-            <a href="mailto:methodology@tracenews.ng" style={{ fontSize: '13px', fontWeight: 600, color: '#C0392B', textDecoration: 'none' }}>
+            <a href="mailto:methodology@tracenews.ng" style={{ fontSize: '13px', fontWeight: 600, color: '#8f9a6f', textDecoration: 'none' }}>
               methodology@tracenews.ng
             </a>
           </div>

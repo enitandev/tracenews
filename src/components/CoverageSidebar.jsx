@@ -4,9 +4,9 @@ import { Clock, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const COVERAGE_TIER_COLORS = {
-  'pro_establishment': '#2980B9',
-  'institutional': '#E67E22',
-  'adversarial': '#C0392B',
+  'pro_establishment': '#6d7f92',
+  'institutional': '#a49889',
+  'adversarial': '#8f9a6f',
   'unscored': '#999999'
 };
 

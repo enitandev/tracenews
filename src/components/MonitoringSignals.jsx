@@ -41,7 +41,7 @@ export default function MonitoringSignals({
         `accountability outlets — ` +
         `government-aligned outlets ` +
         `have not covered this.`,
-      color: '#C0392B',
+      color: '#8f9a6f',
       bg: 'rgba(192, 57, 43, 0.12)'
     })
   } else if (
@@ -55,7 +55,7 @@ export default function MonitoringSignals({
         `government-aligned outlets — ` +
         `accountability outlets have ` +
         `not covered this.`,
-      color: '#2980B9',
+      color: '#6d7f92',
       bg: 'rgba(41, 128, 185, 0.12)'
     })
   }
@@ -111,7 +111,7 @@ export default function MonitoringSignals({
             `the same report — ` +
             `${original} did their ` +
             `own reporting.`,
-          color: '#E67E22',
+          color: '#a49889',
           bg: 'rgba(230, 126, 34, 0.12)'
         })
       }

@@ -14,7 +14,7 @@ export default function StandardStoryItem({ cluster }) {
         <div style={{ flexGrow: 1, position: 'relative' }}>
           <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span>{cluster.category || 'General'} • {cluster.outlet_count} sources</span>
-            {hasAlerts && <AlertTriangle size={12} color="#c0392b" />}
+            {hasAlerts && <AlertTriangle size={12} color="#8f9a6f" />}
           </div>
           <h3 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)', margin: '0 0 12px 0', lineHeight: 1.3 }}>
             {cluster.representative_title}
