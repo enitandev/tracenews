@@ -595,81 +595,21 @@ export default function Story() {
             <CoverageBar variant="compact" coverageStats={stats} liveTotal={Object.values(stats?.coverage_tier_distribution || {}).reduce((a, b) => a + b, 0) || cluster.outlet_count} />
           </div>
 
-          {/* BAR 1: AI Insight Bar */}
-          <div style={{ display: 'flex', gap: '8px', background: 'transparent', marginBottom: '16px', flexWrap: 'wrap' }}>
-            {['Govt', 'Mainstream', 'Watchdog', 'Bias Comparison'].map(tab => {
-              const isActive = activeSummaryTab === tab;
-              let bg = 'transparent';
-              let color = 'var(--text-muted)';
-              if (isActive) {
-                if (tab === 'Govt') { bg = '#6d7f92'; color = '#fff'; }
-                else if (tab === 'Mainstream') { bg = '#a49889'; color = '#fff'; }
-                else if (tab === 'Watchdog') { bg = '#8f9a6f'; color = '#fff'; }
-                else { bg = 'var(--bg-elevated)'; color = 'var(--text-primary)'; }
-              }
-              return (
-                <button 
-                  key={tab}
-                  onClick={() => setActiveSummaryTab(tab)}
-                  style={{
-                    padding: '6px 16px',
-                    background: bg,
-                    color: color,
-                    border: isActive && tab === 'Bias Comparison' ? '1px solid var(--border)' : '1px solid transparent',
-                    borderRadius: '8px',
-                    fontWeight: 600,
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    boxShadow: isActive && tab !== 'Bias Comparison' ? '0 2px 4px rgba(0,0,0,0.2)' : 'none'
-                  }}
-                >
-                  {tab}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Dynamic AI Framing Box */}
-          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', marginBottom: '40px', color: 'var(--text-primary)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '20px' }}>✨</span>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>
-                {activeSummaryTab === 'Bias Comparison' ? 'Bias Comparison' : `${activeSummaryTab} Framing Analysis`}
-              </h3>
-            </div>
-            
-            {loadingFraming ? (
-              <div style={{ color: '#888', fontStyle: 'italic', fontSize: '14px' }}>Analyzing {activeSummaryTab.toLowerCase()}-aligned coverage...</div>
-            ) : framingCache[activeSummaryTab] && framingCache[activeSummaryTab].length > 0 ? (
-              <ul style={{ fontSize: '15px', lineHeight: 1.6, color: 'var(--text-secondary)', margin: 0, paddingLeft: '20px' }}>
-                {framingCache[activeSummaryTab].map((bullet, i) => (
-                  <li key={i} style={{ marginBottom: '12px' }}>{bullet}</li>
-                ))}
-              </ul>
-            ) : (
-              <p style={{ fontSize: '14px', color: '#888', margin: 0, fontStyle: 'italic' }}>
-                No sufficient coverage to analyze framing.
-              </p>
-            )}
-
-            {!loadingFraming && framingCache[activeSummaryTab]?.length > 0 && (
-              <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border)', textAlign: 'right' }}>
-                <a 
-                  href="#" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setFeedbackTier(activeSummaryTab);
-                    setFeedbackComment('');
-                    setFeedbackStatus('');
-                    setIsFeedbackModalOpen(true);
-                  }}
-                  style={{ color: '#888', fontSize: '12px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                >
-                  <Info size={12} /> Does this summary seem wrong?
-                </a>
-              </div>
-            )}
+          {/* Bias Comparison suppressed —
+              Bridge Chambers ruling 
+              9 Jul 2026. Feature returns 
+              pending redesign with human 
+              verification gate. */}
+          <div style={{
+            padding: '16px',
+            fontSize: '13px',
+            color: 'var(--text-muted)',
+            fontStyle: 'italic',
+            textAlign: 'center'
+          }}>
+            Coverage analysis by tier 
+            is being updated. Check back 
+            shortly.
           </div>
 
           {/* BAR 2: Article Filter Bar */}
