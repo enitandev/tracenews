@@ -15,6 +15,7 @@ import Corrections from './pages/Corrections';
 import About from './pages/About';
 import TestVerdict from './pages/TestVerdict';
 import PoliticianProfile from './pages/PoliticianProfile'
+import AdminCorrections from './admin/AdminCorrections';
 
 function HomepagePlaceholder() {
   return (
@@ -76,6 +77,7 @@ export default function App() {
             <Route path="/topics/:topicSlug" element={<Category />} />
             <Route path="/methodology" element={<Methodology />} />
             <Route path="/corrections" element={<Corrections />} />
+            <Route path="/admin/corrections" element={<AdminCorrections />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </Layout>
