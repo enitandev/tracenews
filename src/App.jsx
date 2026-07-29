@@ -16,6 +16,7 @@ import About from './pages/About';
 import TestVerdict from './pages/TestVerdict';
 import PoliticianProfile from './pages/PoliticianProfile'
 import AdminCorrections from './admin/AdminCorrections';
+import MonitoringSpiritAdmin from './admin/MonitoringSpiritAdmin';
 
 function HomepagePlaceholder() {
   return (
@@ -78,6 +79,7 @@ export default function App() {
             <Route path="/methodology" element={<Methodology />} />
             <Route path="/corrections" element={<Corrections />} />
             <Route path="/admin/corrections" element={<AdminCorrections />} />
+            <Route path="/admin/monitoring-spirit" element={<MonitoringSpiritAdmin />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </Layout>
