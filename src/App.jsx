@@ -17,6 +17,9 @@ import TestVerdict from './pages/TestVerdict';
 import PoliticianProfile from './pages/PoliticianProfile'
 import AdminCorrections from './admin/AdminCorrections';
 import MonitoringSpiritAdmin from './admin/MonitoringSpiritAdmin';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import AccountSettings from './pages/AccountSettings';
 
 function HomepagePlaceholder() {
   return (
@@ -81,6 +84,9 @@ export default function App() {
             <Route path="/admin/corrections" element={<AdminCorrections />} />
             <Route path="/admin/monitoring-spirit" element={<MonitoringSpiritAdmin />} />
             <Route path="/about" element={<About />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/settings" element={<AccountSettings />} />
           </Routes>
         </Layout>
       </BrowserRouter>
