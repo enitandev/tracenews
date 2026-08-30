@@ -17,6 +17,7 @@ import TestVerdict from './pages/TestVerdict';
 import PoliticianProfile from './pages/PoliticianProfile'
 import AdminCorrections from './admin/AdminCorrections';
 import MonitoringSpiritAdmin from './admin/MonitoringSpiritAdmin';
+import AdminPoliticians from './admin/AdminPoliticians';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import AccountSettings from './pages/AccountSettings';
@@ -83,6 +84,7 @@ export default function App() {
             <Route path="/corrections" element={<Corrections />} />
             <Route path="/admin/corrections" element={<AdminCorrections />} />
             <Route path="/admin/monitoring-spirit" element={<MonitoringSpiritAdmin />} />
+            <Route path="/admin/politicians" element={<AdminPoliticians />} />
             <Route path="/about" element={<About />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
