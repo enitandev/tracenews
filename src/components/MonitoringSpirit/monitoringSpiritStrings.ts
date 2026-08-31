@@ -64,7 +64,7 @@ export const TOKENS = {
 } as const;
 /** Gauge zones — left→right. The active zone (by state) takes the accent colour;
  *  the other two stay muted. Position: clear=0, mixed=1, dark=2. */
-export const GAUGE_ZONES = ["Broad", "Partial", "Concentrated"] as const;
+export const GAUGE_ZONES = ["Broad", "Partial"] as const;
 export const TIER_LABEL: Record<TierKey, string> = {
   govt: "Govt",                    // face bar label
   mainstream: "Mainstream",

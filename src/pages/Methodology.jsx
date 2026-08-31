@@ -540,23 +540,7 @@ export default function Methodology() {
           <h2 style={styles.h2Visual}>Monitoring Spirit Signals</h2>
         </div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', marginBottom: '24px' }}>
-          {/* Card 1 */}
-          <div style={{ background: 'var(--bg-base)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
-            <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#8f9a6f', background: 'rgba(192,57,43,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
-              ONE-SIDED COVERAGE
-            </div>
-            <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
-              Coverage concentrated in one tier
-            </h3>
-            <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: '0 0 16px 0' }}>
-              Fires when a story's coverage is dominated by one editorial tier while another is largely silent. The signal is direction-agnostic: it fires both when accountability outlets are covering something government-aligned outlets ignore, and when government-aligned outlets are amplifying something accountability outlets ignore.
-            </p>
-            <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '12px', borderRadius: '6px', color: 'var(--text-muted)' }}>
-              Fires when: one tier ≥ 60% of coverage AND another tier ≤ 10%, with total outlets ≥ 5 and imbalance persisting ≥ 2 hours.
-            </div>
-          </div>
-
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px', marginBottom: '24px' }}>
           {/* Card 2 */}
           <div style={{ background: 'var(--bg-base)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
             <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#a49889', background: 'rgba(230,126,34,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
@@ -573,10 +557,9 @@ export default function Methodology() {
             </div>
           </div>
         </div>
-        
         <div style={styles.narrow}>
           <p style={styles.prose}>
-            Both signals are direction-agnostic by design. The same logic fires whether government-aligned outlets are silent or whether watchdog outlets are silent. A monitoring system that only points one way is an advocacy instrument, not an editorial one.
+            This signal focuses on information provenance. A monitoring system must flag when multiple outlets run the exact same text without independent verification, particularly when that text originates from a government wire.
           </p>
         </div>
       </div>

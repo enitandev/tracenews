@@ -1,10 +1,16 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import VerdictCard from './VerdictCard';
 import { WIRE_ATTRIBUTION } from './monitoringSpiritStrings';
 
 describe('VerdictCard Invariants', () => {
+
+  // I7: Stale imbalances (Enforced on backend by has_persistence)
+  // A verdict CANNOT render (or resolve to MIXED/DARK) if the tier 
+  // imbalance is absent from the most recent snapshot read. This ensures 
+  // the approved present-tense language ("not yet reported") is literally 
+  // true at render time. Tested in backend: test_invariant_7_stale_imbalance_fails.
 
   // I1: Withhold rather than display stale data
   it('I1: renders nothing when live verdict data is missing or computation fails', () => {
@@ -94,4 +100,17 @@ describe('VerdictCard Invariants', () => {
     expect(rows[1].textContent).toContain('4·8·6');
   });
 
+  // I8: DARK never renders on face or evidence
+  it('I8: structurally prevents DARK from rendering on public surfaces', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const mockData = { verdict: 'dark', snapshots: [] };
+    render(<VerdictCard verdictData={mockData} clusterStories={[]} />);
+    
+    // Ensure it renders the 'clear' (calm) state strings instead of 'dark'
+    expect(screen.getByText('Covered widely, across outlet types')).toBeDefined();
+    expect(screen.queryByText(/not yet by others/i)).toBeNull();
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('VerdictCard received DARK on a rendering surface'));
+    
+    consoleSpy.mockRestore();
+  });
 });

@@ -18,7 +18,11 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
     return null;
   }
 
-  const state = verdictData.verdict;
+  let state = verdictData.verdict;
+  if (state === 'dark') {
+    console.error('VerdictCard received DARK on a rendering surface — should never happen post-Gate-D-closure. Falling back to calm state.');
+    state = 'clear';
+  }
   const accent = TOKENS.verdict[state];
   const gaugeActiveIndex = state === 'clear' ? 0 : state === 'mixed' ? 1 : 2;
 
