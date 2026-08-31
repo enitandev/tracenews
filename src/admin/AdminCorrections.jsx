@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 export default function AdminCorrections() {
-  const [token, setToken] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
   const [expandedRow, setExpandedRow] = useState(null);
-  const [actorName, setActorName] = useState('');
+  const [staffName, setStaffName] = useState('');
   const [resolutionNote, setResolutionNote] = useState('');
   const [statusDraft, setStatusDraft] = useState('');
   const [updating, setUpdating] = useState(false);
@@ -17,14 +18,18 @@ export default function AdminCorrections() {
     setLoading(true);
     setError(null);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+        return;
+      }
       const res = await fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/api/admin/corrections`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
       });
       if (!res.ok) {
-        if (res.status === 401) {
-          setIsLoggedIn(false);
-          setToken('');
-          throw new Error('Invalid token');
+        if (res.status === 401 || res.status === 403) {
+          navigate('/login');
+          throw new Error('Unauthorized or staff access required');
         }
         throw new Error('Failed to fetch');
       }
@@ -37,38 +42,38 @@ export default function AdminCorrections() {
     }
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (token.trim()) {
-      setIsLoggedIn(true);
-      // Fetch will happen in useEffect
-    }
-  };
-
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchCorrections();
-    }
-  }, [isLoggedIn]);
+    fetchCorrections();
+
+    const getProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data } = await supabase.from('profiles').select('display_name').eq('id', session.user.id).single();
+        if (data) setStaffName(data.display_name || session.user.email);
+      }
+    };
+    getProfile();
+  }, [navigate]);
 
   const handleUpdate = async (id) => {
-    if (!actorName.trim()) {
-      alert("Actor name is required before making changes.");
-      return;
-    }
+
     
     setUpdating(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+        return;
+      }
       const res = await fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/api/admin/corrections/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
           status: statusDraft || undefined,
-          resolution_note: resolutionNote || undefined,
-          actor: actorName
+          resolution_note: resolutionNote || undefined
         })
       });
       
@@ -84,30 +89,15 @@ export default function AdminCorrections() {
     }
   };
 
-  if (!isLoggedIn) {
-    return (
-      <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px', background: 'var(--bg-elevated)', borderRadius: '8px' }}>
-        <h2 style={{ marginBottom: '20px' }}>Staff Access</h2>
-        <form onSubmit={handleLogin}>
-          <input
-            type="password"
-            placeholder="Enter Staff Token"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            style={{ width: '100%', padding: '10px', marginBottom: '16px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
-          />
-          <button type="submit" style={{ width: '100%', padding: '10px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-            Authenticate
-          </button>
-        </form>
-      </div>
-    );
-  }
+
 
   return (
     <div style={{ maxWidth: '1200px', margin: '40px auto', padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2>Corrections Queue</h2>
+        <div>
+          <h2 style={{ margin: '0 0 4px 0' }}>Corrections Queue</h2>
+          {staffName && <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Signed in as {staffName}</div>}
+        </div>
         <button onClick={fetchCorrections} style={{ padding: '6px 12px', cursor: 'pointer' }}>Refresh</button>
       </div>
       
@@ -186,16 +176,7 @@ export default function AdminCorrections() {
                         <div style={{ padding: '16px', background: 'var(--bg-elevated)', borderRadius: '8px', border: '1px solid var(--border)' }}>
                           <h4 style={{ margin: '0 0 16px 0' }}>Resolution Actions</h4>
                           
-                          <div style={{ marginBottom: '12px' }}>
-                            <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>Actor Name (Required)</label>
-                            <input 
-                              type="text" 
-                              value={actorName} 
-                              onChange={e => setActorName(e.target.value)} 
-                              placeholder="Your full name"
-                              style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
-                            />
-                          </div>
+
                           
                           <div style={{ marginBottom: '12px' }}>
                             <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>Status</label>

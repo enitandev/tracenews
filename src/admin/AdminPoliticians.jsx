@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const REFERENCE_LIST = [
   { name: 'Herbert Wigwe', category: 'Business', reason: 'Deceased Feb 2024 — posthumous treatment not reviewed' },
@@ -17,8 +19,7 @@ const REFERENCE_LIST = [
 ];
 
 export default function AdminPoliticians() {
-  const [token, setToken] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -26,7 +27,7 @@ export default function AdminPoliticians() {
   const [currentTab, setCurrentTab] = useState('pending_review');
   const [expandedRow, setExpandedRow] = useState(null);
   
-  const [actorName, setActorName] = useState('');
+  const [staffName, setStaffName] = useState('');
   const [reason, setReason] = useState('');
   const [statusDraft, setStatusDraft] = useState('');
   const [updating, setUpdating] = useState(false);
@@ -38,14 +39,18 @@ export default function AdminPoliticians() {
     setLoading(true);
     setError(null);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+        return;
+      }
       const res = await fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/api/admin/politicians?status=${status}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
       });
       if (!res.ok) {
-        if (res.status === 401) {
-          setIsLoggedIn(false);
-          setToken('');
-          throw new Error('Invalid token');
+        if (res.status === 401 || res.status === 403) {
+          navigate('/login');
+          throw new Error('Unauthorized or staff access required');
         }
         throw new Error('Failed to fetch');
       }
@@ -61,8 +66,10 @@ export default function AdminPoliticians() {
   const fetchHistory = async (id) => {
     setLoadingHistory(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
       const res = await fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/api/admin/politicians/${id}/history`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
       });
       if (res.ok) {
         const json = await res.json();
@@ -75,25 +82,22 @@ export default function AdminPoliticians() {
     }
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (token.trim()) {
-      setIsLoggedIn(true);
-    }
-  };
-
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchPoliticians(currentTab);
-      setExpandedRow(null);
-    }
-  }, [isLoggedIn, currentTab]);
+    fetchPoliticians(currentTab);
+    setExpandedRow(null);
+
+    const getProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data } = await supabase.from('profiles').select('display_name').eq('id', session.user.id).single();
+        if (data) setStaffName(data.display_name || session.user.email);
+      }
+    };
+    getProfile();
+  }, [currentTab, navigate]);
 
   const handleUpdate = async (id) => {
-    if (!actorName.trim()) {
-      alert('Actor name is required');
-      return;
-    }
+
     if (!reason.trim()) {
       alert('Reason is required');
       return;
@@ -105,16 +109,20 @@ export default function AdminPoliticians() {
 
     setUpdating(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+        return;
+      }
       const res = await fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/api/admin/politicians/${id}`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           publication_status: statusDraft,
-          reason: reason,
-          actor: actorName
+          reason: reason
         })
       });
       
@@ -130,30 +138,15 @@ export default function AdminPoliticians() {
     }
   };
 
-  if (!isLoggedIn) {
-    return (
-      <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px', background: 'var(--bg-elevated)', borderRadius: '8px' }}>
-        <h2 style={{ marginBottom: '20px' }}>Admin Login</h2>
-        <form onSubmit={handleLogin}>
-          <input 
-            type="password" 
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder="Admin Token"
-            style={{ width: '100%', padding: '10px', marginBottom: '16px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
-          />
-          <button type="submit" style={{ width: '100%', padding: '10px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-            Authenticate
-          </button>
-        </form>
-      </div>
-    );
-  }
+
 
   return (
     <div style={{ maxWidth: '1200px', margin: '40px auto', padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2>Politicians Review Queue</h2>
+        <div>
+          <h2 style={{ margin: '0 0 4px 0' }}>Politicians Review Queue</h2>
+          {staffName && <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Signed in as {staffName}</div>}
+        </div>
         <button onClick={() => fetchPoliticians(currentTab)} style={{ padding: '6px 12px', cursor: 'pointer' }}>Refresh</button>
       </div>
       
@@ -245,16 +238,7 @@ export default function AdminPoliticians() {
                               </div>
                             )}
 
-                            <div style={{ marginBottom: '12px' }}>
-                              <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>Actor Name (Required)</label>
-                              <input 
-                                type="text" 
-                                value={actorName} 
-                                onChange={e => setActorName(e.target.value)} 
-                                placeholder="Your full name"
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
-                              />
-                            </div>
+
                             
                             <div style={{ marginBottom: '12px' }}>
                               <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>Status</label>
