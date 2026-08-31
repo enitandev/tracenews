@@ -21,6 +21,7 @@ import AdminPoliticians from './admin/AdminPoliticians';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import AccountSettings from './pages/AccountSettings';
+import Dashboard from './pages/Dashboard';
 
 function HomepagePlaceholder() {
   return (
@@ -65,32 +66,39 @@ export default function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/test-verdict" element={<TestVerdict />} />
-            <Route path="/home" element={<HomepagePlaceholder />} />
-            <Route path="/registry" element={<Registry />} />
-            <Route path="/story/:slug" element={<Story />} />
-            <Route path="/daily-briefing" element={<DailyBriefingRedirect />} />
-            <Route path="/daily-briefing/:slug" element={<DailyBriefingStory />} />
-            {/* New static routes */}
-            <Route path="/outlets" element={<HomepagePlaceholder />} />
-            <Route path="/outlets/:slug" element={<OutletProfile />} />
-            <Route path="/politicians/:slug" element={<PoliticianProfile />} />
-            <Route path="/topics" element={<HomepagePlaceholder />} />
-            <Route path="/topics/:topicSlug" element={<Category />} />
-            <Route path="/methodology" element={<Methodology />} />
-            <Route path="/corrections" element={<Corrections />} />
-            <Route path="/admin/corrections" element={<AdminCorrections />} />
-            <Route path="/admin/monitoring-spirit" element={<MonitoringSpiritAdmin />} />
-            <Route path="/admin/politicians" element={<AdminPoliticians />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/settings" element={<AccountSettings />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          {/* Routes with standard Layout */}
+          <Route path="/*" element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/test-verdict" element={<TestVerdict />} />
+                <Route path="/home" element={<HomepagePlaceholder />} />
+                <Route path="/registry" element={<Registry />} />
+                <Route path="/story/:slug" element={<Story />} />
+                <Route path="/daily-briefing" element={<DailyBriefingRedirect />} />
+                <Route path="/daily-briefing/:slug" element={<DailyBriefingStory />} />
+                <Route path="/outlets" element={<HomepagePlaceholder />} />
+                <Route path="/outlets/:slug" element={<OutletProfile />} />
+                <Route path="/politicians/:slug" element={<PoliticianProfile />} />
+                <Route path="/topics" element={<HomepagePlaceholder />} />
+                <Route path="/topics/:topicSlug" element={<Category />} />
+                <Route path="/methodology" element={<Methodology />} />
+                <Route path="/corrections" element={<Corrections />} />
+                <Route path="/admin/corrections" element={<AdminCorrections />} />
+                <Route path="/admin/monitoring-spirit" element={<MonitoringSpiritAdmin />} />
+                <Route path="/admin/politicians" element={<AdminPoliticians />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/settings" element={<AccountSettings />} />
+              </Routes>
+            </Layout>
+          } />
+          
+          {/* Dashboard route (standalone layout) */}
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
       </BrowserRouter>
     </ThemeProvider>
   );

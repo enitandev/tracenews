@@ -5,6 +5,7 @@ import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info, MapPin } f
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
 import MonitoringSignals from '../components/MonitoringSignals';
+import { supabase } from '../lib/supabase';
 
 const COVERAGE_TIER_COLORS = {
   'pro_establishment': '#6d7f92',
@@ -170,6 +171,37 @@ export default function Story() {
   const [feedbackTier, setFeedbackTier] = useState('Bias Comparison');
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackStatus, setFeedbackStatus] = useState('');
+
+  const handleTrackRead = async (story) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const tierMap = {
+        'pro_establishment': 'govt',
+        'institutional': 'mainstream',
+        'adversarial': 'watchdog'
+      };
+      const mappedTier = tierMap[story.outlet_coverage_tier];
+      if (!mappedTier) return;
+      
+      const verdict = data?.cluster?.monitoring_spirit_live?.verdict;
+      
+      await fetch('https://uvicorn-appmain-production-79c6.up.railway.app/api/reader/track-read', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ 
+          tier: mappedTier,
+          verdict: (verdict === 'clear' || verdict === 'mixed') ? verdict : undefined
+        })
+      });
+    } catch (err) {
+      console.error('Failed to track read', err);
+    }
+  };
 
   // Signal prerender to wait
   if (typeof window !== 'undefined') {
@@ -774,7 +806,7 @@ export default function Story() {
                     <span style={{ color: 'var(--text-muted)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {formatTimeAgo(story.published_at)} {(story.outlets && story.outlets.headquarters_city) ? `· ${story.outlets.headquarters_city}` : ''}
                     </span>
-                    <a href={story.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}>
+                    <a href={story.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }} onClick={() => handleTrackRead(story)}>
                       Read Full Article →
                     </a>
                   </div>
