@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Registry from "./pages/Registry";
 import Story from "./pages/Story";
 import Layout from "./components/Layout";
+import AdminShell from "./admin/AdminShell";
 import Category from "./pages/Category";
 import DailyBriefingStory from "./pages/DailyBriefingStory";
 import Methodology from "./pages/Methodology";
@@ -85,15 +86,23 @@ export default function App() {
                 <Route path="/topics/:topicSlug" element={<Category />} />
                 <Route path="/methodology" element={<Methodology />} />
                 <Route path="/corrections" element={<Corrections />} />
-                <Route path="/admin/corrections" element={<AdminCorrections />} />
-                <Route path="/admin/monitoring-spirit" element={<MonitoringSpiritAdmin />} />
-                <Route path="/admin/politicians" element={<AdminPoliticians />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/settings" element={<AccountSettings />} />
               </Routes>
             </Layout>
+          } />
+
+          {/* Admin routes with AdminShell layout */}
+          <Route path="/admin/*" element={
+            <AdminShell>
+              <Routes>
+                <Route path="corrections" element={<AdminCorrections />} />
+                <Route path="monitoring-spirit" element={<MonitoringSpiritAdmin />} />
+                <Route path="politicians" element={<AdminPoliticians />} />
+              </Routes>
+            </AdminShell>
           } />
           
           {/* Dashboard route (standalone layout) */}
