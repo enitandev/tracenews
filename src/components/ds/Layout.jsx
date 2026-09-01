@@ -26,7 +26,7 @@ export const Masthead = ({ children, brandLink = "/" }) => (
   }}>
     <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'var(--s5)' }}>
       <Link to={brandLink} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-        <Logo height="36px" />
+        <Logo height="66px" />
       </Link>
     </div>
     {children}

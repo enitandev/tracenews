@@ -78,7 +78,7 @@ export default function Header() {
             <Menu size={24} color="var(--text-primary)" style={{ cursor: 'pointer' }} onClick={() => setIsSidebarOpen(true)} />
             <div style={{ marginLeft: 'var(--s5)', fontSize: '32px', fontWeight: 900, letterSpacing: '-0.05em', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <span style={{ borderRight: '1px solid var(--border)', paddingRight: '12px', marginRight: '12px', display: 'flex', alignItems: 'center' }}>
-                 <Logo height="36px" />
+                 <Logo height="66px" />
               </span>
             </div>
             
