@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { AppShell, Masthead, ShellContainer, ContentArea } from '../components/ds/Layout';
+import { ThemeToggle } from '../components/ds/Toggle';
+import { Button } from '../components/ds/Button';
+import { Card } from '../components/ds/Card';
 
 export default function MonitoringSpiritAdmin() {
   const navigate = useNavigate();
@@ -66,7 +70,6 @@ export default function MonitoringSpiritAdmin() {
   }, [navigate]);
 
   const handleDismiss = async (clusterId, originalVerdict) => {
-
     if (!dismissReason.trim()) {
       alert("Reason is required.");
       return;
@@ -106,8 +109,6 @@ export default function MonitoringSpiritAdmin() {
   };
 
   const handleReinstate = async (overrideId) => {
-
-    
     setSubmitting(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -135,135 +136,141 @@ export default function MonitoringSpiritAdmin() {
     }
   };
 
-
-
   const getBadgeColor = (verdict) => {
-    if (verdict === 'mixed') return { bg: '#8f9a6f', color: '#fff' }; // amber replacement (Gate B)
-    if (verdict === 'dark') return { bg: '#6d7f92', color: '#fff' }; // indigo replacement (Gate B)
-    return { bg: '#555', color: '#fff' };
+    if (verdict === 'mixed') return { bg: 'var(--v-mixed)', color: 'var(--on-accent)' };
+    if (verdict === 'dark') return { bg: 'var(--v-dark)', color: 'var(--on-accent)' };
+    return { bg: 'var(--t-sub)', color: 'var(--on-accent)' };
   };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <div>
-          <h2 style={{ margin: '0 0 4px 0' }}>Monitoring Spirit Oversight</h2>
-          {staffName && <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Signed in as {staffName}</div>}
+    <AppShell>
+      <Masthead brandLink="/admin">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s4)' }}>
+          {staffName && <span className="t-muted">Signed in as {staffName}</span>}
+          <Button onClick={() => navigate('/login')} size="sm" variant="secondary">Log Out</Button>
+          <ThemeToggle />
         </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <button onClick={() => navigate('/login')} style={{ padding: '8px 16px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text-primary)', cursor: 'pointer' }}>
-            Log Out
-          </button>
-        </div>
-      </div>
+      </Masthead>
+      
+      <ShellContainer>
+        <ContentArea>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--s6)' }}>
+            <div>
+              <h2 className="t-display" style={{ margin: '0 0 var(--s1) 0' }}>Monitoring Spirit Oversight</h2>
+            </div>
+            <Button onClick={fetchData} size="sm">Refresh</Button>
+          </div>
 
-      {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '20px' }}>{error}</div>}
-      {loading && <p>Loading data...</p>}
+          {error && <div style={{ padding: 'var(--s3)', background: 'var(--danger)', color: 'var(--on-accent)', borderRadius: 'var(--r-sm)', marginBottom: 'var(--s5)' }}>{error}</div>}
+          {loading && <p className="t-muted">Loading data...</p>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-        
-        {/* Active Verdicts Column */}
-        <div>
-          <h3 style={{ marginBottom: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>Live Verdicts</h3>
-          {verdicts.length === 0 && !loading ? <p>No active non-CLEAR verdicts found in the last 72 hours.</p> : null}
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {verdicts.map(v => (
-              <div key={v.cluster_id} style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', background: 'var(--bg-elevated)', opacity: v.has_active_override ? 0.5 : 1 }}>
-                <div style={{ marginBottom: '8px' }}>
-                  <span style={{ 
-                    display: 'inline-block', 
-                    padding: '4px 8px', 
-                    borderRadius: '4px', 
-                    fontSize: '12px', 
-                    fontWeight: 'bold', 
-                    textTransform: 'uppercase',
-                    background: getBadgeColor(v.verdict).bg,
-                    color: getBadgeColor(v.verdict).color,
-                    marginBottom: '8px'
-                  }}>
-                    {v.verdict}
-                  </span>
-                  {v.has_active_override && (
-                    <span style={{ marginLeft: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>(Overridden)</span>
-                  )}
-                </div>
-                <h4 style={{ margin: '0 0 8px 0' }}>{v.headline}</h4>
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '0 0 12px 0' }}>{v.evidence}</p>
-                
-                {!v.has_active_override && expandedVerdict !== v.cluster_id && (
-                  <button 
-                    onClick={() => setExpandedVerdict(v.cluster_id)}
-                    style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '14px' }}
-                  >
-                    Dismiss...
-                  </button>
-                )}
-                
-                {expandedVerdict === v.cluster_id && (
-                  <div style={{ marginTop: '12px', padding: '12px', background: 'var(--bg-default)', borderRadius: '4px', border: '1px solid var(--border)' }}>
-                    <p style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>Dismissal Reason</p>
-                    <textarea 
-                      value={dismissReason}
-                      onChange={(e) => setDismissReason(e.target.value)}
-                      placeholder="Why is this verdict being dismissed?"
-                      style={{ width: '100%', minHeight: '60px', padding: '8px', marginBottom: '8px', borderRadius: '4px', border: '1px solid var(--border)' }}
-                    />
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button 
-                        disabled={submitting}
-                        onClick={() => handleDismiss(v.cluster_id, v.verdict)}
-                        style={{ padding: '6px 12px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px' }}
-                      >
-                        {submitting ? 'Saving...' : 'Confirm Dismissal'}
-                      </button>
-                      <button 
-                        onClick={() => { setExpandedVerdict(null); setDismissReason(''); }}
-                        style={{ padding: '6px 12px', background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px' }}
-                      >
-                        Cancel
-                      </button>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s6)' }}>
+            
+            {/* Active Verdicts Column */}
+            <div>
+              <h3 className="t-primary" style={{ marginBottom: 'var(--s4)', borderBottom: '1px solid var(--border)', paddingBottom: 'var(--s2)' }}>Live Verdicts</h3>
+              {verdicts.length === 0 && !loading ? <p className="t-muted">No active non-CLEAR verdicts found in the last 72 hours.</p> : null}
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
+                {verdicts.map(v => (
+                  <Card key={v.cluster_id} style={{ opacity: v.has_active_override ? 0.5 : 1, padding: 'var(--s4)' }}>
+                    <div style={{ marginBottom: 'var(--s2)' }}>
+                      <span style={{ 
+                        display: 'inline-block', 
+                        padding: 'var(--s1) var(--s2)', 
+                        borderRadius: 'var(--r-sm)', 
+                        fontSize: '12px', 
+                        fontWeight: 'bold', 
+                        textTransform: 'uppercase',
+                        background: getBadgeColor(v.verdict).bg,
+                        color: getBadgeColor(v.verdict).color,
+                        marginBottom: 'var(--s2)'
+                      }}>
+                        {v.verdict}
+                      </span>
+                      {v.has_active_override && (
+                        <span style={{ marginLeft: 'var(--s2)', fontSize: '12px', color: 'var(--t-sub)' }}>(Overridden)</span>
+                      )}
                     </div>
-                  </div>
-                )}
+                    <h4 className="t-primary" style={{ margin: '0 0 var(--s2) 0' }}>{v.headline}</h4>
+                    <p className="t-sub" style={{ fontSize: '14px', margin: '0 0 var(--s3) 0' }}>{v.evidence}</p>
+                    
+                    {!v.has_active_override && expandedVerdict !== v.cluster_id && (
+                      <Button 
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setExpandedVerdict(v.cluster_id)}
+                      >
+                        Dismiss...
+                      </Button>
+                    )}
+                    
+                    {expandedVerdict === v.cluster_id && (
+                      <div style={{ marginTop: 'var(--s4)', paddingTop: 'var(--s4)', borderTop: '1px solid var(--border)' }}>
+                        <label className="t-sub" style={{ display: 'block', marginBottom: 'var(--s2)', fontSize: '12px' }}>Reason for Dismissal</label>
+                        <textarea 
+                          value={dismissReason}
+                          onChange={e => setDismissReason(e.target.value)}
+                          placeholder="Why is this verdict inaccurate?"
+                          style={{ width: '100%', minHeight: '80px', padding: 'var(--s2)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', background: 'var(--raised)', color: 'var(--t-primary)', marginBottom: 'var(--s3)' }}
+                        />
+                        <div style={{ display: 'flex', gap: 'var(--s3)' }}>
+                          <Button 
+                            loading={submitting} 
+                            onClick={() => handleDismiss(v.cluster_id, v.verdict)}
+                          >
+                            Confirm Dismissal
+                          </Button>
+                          <Button 
+                            variant="secondary"
+                            onClick={() => { setExpandedVerdict(null); setDismissReason(''); }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Overrides Column */}
-        <div>
-          <h3 style={{ marginBottom: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>Active Overrides</h3>
-          {overrides.length === 0 && !loading ? <p>No active overrides.</p> : null}
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {overrides.map(o => (
-              <div key={o.id} style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', background: 'var(--bg-elevated)' }}>
-                <div style={{ marginBottom: '8px', fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{new Date(o.created_at).toLocaleString()}</span>
-                  <span>By: {o.actor}</span>
-                </div>
-                <div style={{ marginBottom: '12px' }}>
-                  <strong>Cluster ID:</strong> <span style={{ fontSize: '12px', fontFamily: 'monospace' }}>{o.cluster_id.substring(0,8)}...</span>
-                  <br />
-                  <strong>Original:</strong> {o.original_verdict}
-                </div>
-                <div style={{ padding: '8px', background: 'var(--bg-default)', borderRadius: '4px', fontSize: '14px', marginBottom: '12px' }}>
-                  <strong>Reason:</strong> {o.reason}
-                </div>
-                <button 
-                  disabled={submitting}
-                  onClick={() => handleReinstate(o.id)}
-                  style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '14px' }}
-                >
-                  {submitting ? 'Processing...' : 'Reinstate'}
-                </button>
+            {/* Overrides / Audit Log Column */}
+            <div>
+              <h3 className="t-primary" style={{ marginBottom: 'var(--s4)', borderBottom: '1px solid var(--border)', paddingBottom: 'var(--s2)' }}>Recent Overrides (72h)</h3>
+              {overrides.length === 0 && !loading ? <p className="t-muted">No manual overrides active.</p> : null}
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
+                {overrides.map(o => (
+                  <Card key={o.id} style={{ padding: 'var(--s4)', borderLeft: '4px solid var(--danger)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--s2)' }}>
+                      <div>
+                        <span style={{ fontWeight: 600, color: 'var(--t-primary)' }}>Dismissed: {o.original_verdict}</span>
+                        <div className="t-muted" style={{ fontSize: '12px', marginTop: 'var(--s1)' }}>
+                          By {o.staff_email} at {new Date(o.created_at).toLocaleString()}
+                        </div>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleReinstate(o.id)}
+                        disabled={submitting}
+                      >
+                        Reinstate
+                      </Button>
+                    </div>
+                    <div style={{ background: 'var(--raised)', padding: 'var(--s3)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', marginTop: 'var(--s3)' }}>
+                      <span className="t-sub" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Reason</span>
+                      <p className="t-body" style={{ margin: 'var(--s1) 0 0 0', fontSize: '14px' }}>{o.reason}</p>
+                    </div>
+                  </Card>
+                ))}
               </div>
-            ))}
+            </div>
+
           </div>
-        </div>
-        
-      </div>
-    </div>
+        </ContentArea>
+      </ShellContainer>
+    </AppShell>
   );
 }
