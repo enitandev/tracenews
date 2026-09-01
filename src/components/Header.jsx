@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { Search, Menu } from 'lucide-react';
 import Sidebar from './Sidebar';
@@ -7,6 +7,7 @@ import Logo from './Logo';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -77,15 +78,15 @@ export default function Header() {
             <Menu size={24} color="var(--text-primary)" style={{ cursor: 'pointer' }} onClick={() => setIsSidebarOpen(true)} />
             <div style={{ fontSize: '32px', fontWeight: 900, letterSpacing: '-0.05em', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <span style={{ borderRight: '1px solid var(--border)', paddingRight: '12px', marginRight: '12px', display: 'flex', alignItems: 'center' }}>
-                 <Logo height="80px" />
+                 <Logo height="28px" />
               </span>
             </div>
             
             <nav className="hide-on-mobile" style={{ display: 'flex', gap: '20px', fontWeight: 600, fontSize: '15px' }}>
-              <a href="/" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: '2px solid var(--text-primary)', paddingBottom: '4px' }}>Home</a>
+              <Link to="/" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname === '/' ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Home</Link>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>For You</a>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Local</a>
-              <Link to="/daily-briefing" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Daily Briefing</Link>
+              <Link to="/daily-briefing" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname.startsWith('/daily-briefing') ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Daily Briefing</Link>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Monitoring Spirit</a>
             </nav>
           </div>

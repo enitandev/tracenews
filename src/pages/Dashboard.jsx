@@ -110,12 +110,12 @@ export default function Dashboard() {
     <AppShell>
       <Masthead brandLink="/">
         <nav style={{ display: 'flex', gap: 'var(--s6)' }}>
-          <Link to="/" className="t-body tn-link" style={{ textDecoration: 'none' }}>Home</Link>
-          <span className="t-body" style={{ color: 'var(--t-sub)' }}>For You</span>
-          <span className="t-body" style={{ color: 'var(--t-sub)' }}>Local</span>
-          <Link to="/daily-briefing" className="t-body tn-link" style={{ textDecoration: 'none' }}>Daily Briefing</Link>
-          <span className="t-body" style={{ color: 'var(--t-sub)' }}>Monitoring Spirit</span>
-          <span className="t-body" style={{ color: 'var(--t-primary)', fontWeight: 600 }}>Account</span>
+          <Link to="/" style={{ color: 'var(--t-sub)', textDecoration: 'none' }}>Home</Link>
+          <span style={{ color: 'var(--t-sub)' }}>For You</span>
+          <span style={{ color: 'var(--t-sub)' }}>Local</span>
+          <Link to="/daily-briefing" style={{ color: 'var(--t-sub)', textDecoration: 'none' }}>Daily Briefing</Link>
+          <span style={{ color: 'var(--t-sub)' }}>Monitoring Spirit</span>
+          <span style={{ color: 'var(--t-primary)', fontWeight: 600 }}>Account</span>
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s4)' }}>
           <ThemeToggle />
