@@ -12,6 +12,8 @@ export const AppShell = ({ children }) => {
   );
 };
 
+import Logo from '../Logo';
+
 export const Masthead = ({ children, brandLink = "/" }) => (
   <header style={{
     background: 'var(--shell)',
@@ -22,8 +24,10 @@ export const Masthead = ({ children, brandLink = "/" }) => (
     padding: '0 var(--s5)',
     height: '56px'
   }}>
-    <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--t-primary)' }}>
-      <Link to={brandLink} style={{ color: 'inherit', textDecoration: 'none' }}>Trace<b style={{ color: 'var(--v-clear)' }}>News</b></Link>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Link to={brandLink} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+        <Logo height="26px" />
+      </Link>
     </div>
     {children}
   </header>

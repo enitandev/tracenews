@@ -12,7 +12,7 @@ export const ThemeToggle = ({ className = '' }) => {
   const { theme, toggleTheme } = useTheme();
   
   return (
-    <button className={`theme-tgl ${className}`} onClick={toggleTheme}>
+    <button className={`theme-tgl ${className}`} onClick={() => toggleTheme()}>
       {theme === 'dark' ? 'Light' : 'Dark'}
     </button>
   );

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { Search, Menu } from 'lucide-react';
 import Sidebar from './Sidebar';
+import Logo from './Logo';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -76,12 +77,7 @@ export default function Header() {
             <Menu size={24} color="var(--text-primary)" style={{ cursor: 'pointer' }} onClick={() => setIsSidebarOpen(true)} />
             <div style={{ fontSize: '32px', fontWeight: 900, letterSpacing: '-0.05em', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <span style={{ borderRight: '1px solid var(--border)', paddingRight: '12px', marginRight: '12px', display: 'flex', alignItems: 'center' }}>
-                 {theme === 'dark' ? (
-                   <img src="/tracenews_white_logo.png" alt="TraceNews" style={{ height: '80px' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
-                 ) : (
-                   <img src="/tracenews_black_logo.png" alt="TraceNews" style={{ height: '80px' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
-                 )}
-                 <span style={{ display: 'none' }}>TRACENEWS</span>
+                 <Logo height="80px" />
               </span>
             </div>
             
