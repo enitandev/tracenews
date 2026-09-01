@@ -222,38 +222,17 @@ export default function Dashboard() {
                 
                 <p className="gapline" style={{marginBottom: '12px'}}>
                   <b>Recent stories you read</b> 
-                  {/* Door unwired per instruction, linking home for now */}
-                  <Link to="/" className="seeall">See all {totalDiet} &rarr;</Link>
+                  {totalDiet > 0 && <Link to="/" className="seeall">See all {totalDiet} &rarr;</Link>}
                 </p>
-                <div className="grid">
-                  {feedStories.slice(0, 4).map((story, i) => {
-                    const dist = story.coverage_stats?.coverage_tier_distribution || {};
-                    const total = (dist.pro_establishment || 0) + (dist.institutional || 0) + (dist.adversarial || 0) || 1;
-                    return (
-                      <Link to={`/story/${story.slug}`} className="story" key={i}>
-                        <div className="thumb" style={{backgroundImage: `url(${story.image_url || ''})`}}>
-                          <span className="cat">{story.category}</span>
-                        </div>
-                        <div className="in">
-                          <p className="hl">{story.representative_title}</p>
-                          <div className="sbar">
-                            <i style={{width: `${(dist.pro_establishment || 0)/total*100}%`, background: 'var(--tier-govt)'}}></i>
-                            <i style={{width: `${(dist.institutional || 0)/total*100}%`, background: 'var(--tier-main)'}}></i>
-                            <i style={{width: `${(dist.adversarial || 0)/total*100}%`, background: 'var(--tier-watch)'}}></i>
-                          </div>
-                          <div className="smeta">
-                            <span className="tiers">
-                              <span>G<b>{dist.pro_establishment || 0}</b></span>
-                              <span>M<b>{dist.institutional || 0}</b></span>
-                              <span>W<b>{dist.adversarial || 0}</b></span>
-                            </span>
-                            <span>{formatTimeAgo(story.first_seen_at)}</span>
-                          </div>
-                        </div>
-                      </Link>
-                    )
-                  })}
-                </div>
+                {totalDiet === 0 ? (
+                  <div className="empty-state" style={{ padding: '24px', textAlign: 'center', color: 'var(--t-sub)', background: 'var(--bg-elevated)', borderRadius: '8px', fontSize: '14px' }}>
+                    You haven't read any stories yet.
+                  </div>
+                ) : (
+                  <div className="empty-state" style={{ padding: '24px', textAlign: 'center', color: 'var(--t-sub)', background: 'var(--bg-elevated)', borderRadius: '8px', fontSize: '14px' }}>
+                    We track your aggregate tiers to build your diet, but we explicitly do not save your personal reading history.
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -276,24 +255,15 @@ export default function Dashboard() {
                 </div>
                 <p className="gapline"><b>The {summary.partial} stories with partial coverage</b> &mdash; the coverage you may have missed.</p>
                 
-                <div className="grid">
-                  {/* Stubbed data for UI as actual personal read history is never stored */}
-                  {feedStories.slice(0, 2).map((story, i) => (
-                    <Link to={`/story/${story.slug}`} className="story" key={i}>
-                      <div className="thumb" style={{backgroundImage: `url(${story.image_url || ''})`}}>
-                        <span className="cat">{story.category}</span>
-                      </div>
-                      <div className="in">
-                        <p className="hl">{story.representative_title}</p>
-                        <div className="sbar"><i className="ghost" style={{width: '100%'}}></i></div>
-                        <div className="smeta">
-                          <span className="conc"><span className="d"></span>Partial tier</span>
-                          <span>{formatTimeAgo(story.first_seen_at)}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                {summary.partial === 0 ? (
+                  <div className="empty-state" style={{ padding: '24px', textAlign: 'center', color: 'var(--t-sub)', background: 'var(--bg-elevated)', borderRadius: '8px', fontSize: '14px' }}>
+                    No partial coverage stories opened yet.
+                  </div>
+                ) : (
+                  <div className="empty-state" style={{ padding: '24px', textAlign: 'center', color: 'var(--t-sub)', background: 'var(--bg-elevated)', borderRadius: '8px', fontSize: '14px' }}>
+                    We track your aggregate exposure to divergence, but we explicitly do not save which specific stories you opened.
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -302,18 +272,8 @@ export default function Dashboard() {
             <>
               <h1 className="h1">{activeTab}</h1>
               <p className="lede">Your personal {activeTab.toLowerCase()} lists.</p>
-              <div className="grid">
-                {feedStories.map((story, i) => (
-                  <Link to={`/story/${story.slug}`} className="story" key={i}>
-                    <div className="thumb" style={{backgroundImage: `url(${story.image_url || ''})`}}>
-                      <span className="cat">{story.category}</span>
-                    </div>
-                    <div className="in">
-                      <p className="hl">{story.representative_title}</p>
-                      <div className="sbar"><i className="ghost" style={{width: '100%'}}></i></div>
-                    </div>
-                  </Link>
-                ))}
+              <div className="empty-state" style={{ padding: '40px', textAlign: 'center', color: 'var(--t-sub)', background: 'var(--bg-elevated)', borderRadius: '8px', fontSize: '14px', marginTop: '24px' }}>
+                You have no {activeTab.toLowerCase()} items yet.
               </div>
             </>
           )}
@@ -332,6 +292,19 @@ export default function Dashboard() {
                   style={{ background: '#E74C3C', color: '#fff', border: 'none', padding: '10px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
                 >
                   Delete my counts
+                </button>
+              </div>
+
+              <div className="card" style={{ marginTop: '24px' }}>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', color: 'var(--t-primary)' }}>Session</h3>
+                <button 
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    navigate('/');
+                  }}
+                  style={{ background: 'var(--bg-hover)', color: 'var(--t-primary)', border: '1px solid var(--border)', padding: '10px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  Log Out
                 </button>
               </div>
             </>
