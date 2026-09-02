@@ -85,8 +85,8 @@ export default function Reset() {
     <>
       {view === 'request' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Reset Password</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Reset your password</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             Enter your email and we'll send a link to reset your password.
           </p>
           {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
@@ -105,13 +105,13 @@ export default function Reset() {
               type="submit" 
               variant="primary"
               loading={loading}
-              style={{ width: '100%', marginTop: '8px', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
+              style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}
             >
               Send Reset Link
             </Button>
           </form>
           
-          <div style={{ marginTop: '24px', textAlign: 'left', fontSize: '11.5px' }}>
+          <div style={{ marginTop: '18px', textAlign: 'left', fontSize: '11.5px' }}>
             <Link to="/login" style={{ color: 'var(--t-muted)', textDecoration: 'none' }}>&larr; Back to <span style={{ color: 'var(--v-clear)' }}>Log in</span></Link>
           </div>
         </>
@@ -119,12 +119,12 @@ export default function Reset() {
 
       {view === 'sent' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Check your email</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Check your email</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             We've sent a password reset link to <strong>{email}</strong>.
             Please check your inbox (and spam folder) and click the link to continue.
           </p>
-          <div style={{ textAlign: 'left', marginTop: '24px' }}>
+          <div style={{ textAlign: 'left', marginTop: '18px' }}>
             <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
           </div>
         </>
@@ -132,8 +132,8 @@ export default function Reset() {
 
       {view === 'update' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Set New Password</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Set New Password</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             Please enter your new password below.
           </p>
           {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
@@ -153,7 +153,7 @@ export default function Reset() {
               type="submit" 
               variant="primary"
               loading={loading}
-              style={{ width: '100%', marginTop: '8px', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
+              style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}
             >
               Update Password
             </Button>
@@ -163,14 +163,14 @@ export default function Reset() {
 
       {view === 'expired' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Link Expired or Used</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Link Expired or Used</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             The password reset link is invalid, expired, or has already been used. Please request a new one.
           </p>
-          <Button variant="primary" onClick={() => setView('request')} style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}>
+          <Button variant="primary" onClick={() => setView('request')} style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
             Request New Link
           </Button>
-          <div style={{ textAlign: 'left', marginTop: '24px' }}>
+          <div style={{ textAlign: 'left', marginTop: '18px' }}>
             <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
           </div>
         </>

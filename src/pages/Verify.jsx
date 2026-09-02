@@ -57,8 +57,8 @@ export default function Verify() {
       
       {status === 'pending' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Verifying...</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Verifying...</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             Please wait while we verify your email address.
           </p>
         </>
@@ -66,12 +66,12 @@ export default function Verify() {
 
       {status === 'success' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Email Verified!</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Email Verified!</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             Your email has been successfully verified. You can now sign in to your account.
           </p>
           <Link to="/login?redirect=/settings" style={{ textDecoration: 'none' }}>
-            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}>
+            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Continue to Sign In
             </Button>
           </Link>
@@ -80,12 +80,12 @@ export default function Verify() {
 
       {status === 'already_verified' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Already Verified</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Already Verified</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             Your email is already verified. You can proceed to sign in.
           </p>
           <Link to="/login" style={{ textDecoration: 'none' }}>
-            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}>
+            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Go to Sign In
             </Button>
           </Link>
@@ -94,12 +94,12 @@ export default function Verify() {
 
       {status === 'expired' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Link Expired</h2>
-          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Link Expired</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             The verification link is invalid or has expired.
           </p>
           <Link to="/reset" style={{ textDecoration: 'none' }}>
-            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}>
+            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Request New Link
             </Button>
           </Link>
@@ -108,12 +108,12 @@ export default function Verify() {
 
       {status === 'error' && (
         <>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Verification Failed</h2>
-          <p style={{ color: '#991b1b', fontSize: '14px', lineHeight: '1.5', marginBottom: '32px', background: '#fee2e2', padding: '12px', borderRadius: '4px' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Verification Failed</h2>
+          <p style={{ color: '#991b1b', fontSize: '14px', lineHeight: '1.5', marginBottom: '32px', background: '#fee2e2', padding: '12px', borderRadius: '4px', marginTop: '6px' }}>
             {errorMsg || 'An error occurred during verification.'}
           </p>
           <Link to="/login" style={{ textDecoration: 'none' }}>
-            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}>
+            <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Return to Login
             </Button>
           </Link>

@@ -51,12 +51,12 @@ export default function Signup() {
   if (success) {
     return (
       <>
-        <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Check your email</h2>
-        <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+        <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Check your email</h2>
+        <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
           We've sent a confirmation link to <strong>{email}</strong>. 
           Please click the link to activate your account.
         </p>
-        <div style={{ textAlign: 'left', marginTop: '24px' }}>
+        <div style={{ textAlign: 'left', marginTop: '18px' }}>
           <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
         </div>
       </>
@@ -65,8 +65,8 @@ export default function Signup() {
 
   return (
     <>
-      <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Create an Account</h2>
-      <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>Free. We count the coverage tiers you read — never the stories you opened.</p>
+      <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Create your account</h2>
+      <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>Free. We count the coverage tiers you read — never the stories you opened.</p>
       {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
       
       <form onSubmit={handleSignup}>
@@ -109,13 +109,13 @@ export default function Signup() {
           variant="primary"
           disabled={!ageAssertion}
           loading={loading}
-          style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
+          style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}
         >
           Sign Up
         </Button>
       </form>
       
-      <div style={{ marginTop: '24px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
+      <div style={{ marginTop: '18px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
         Already have an account? <Link to="/login" style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Log in</Link>
       </div>
     </>

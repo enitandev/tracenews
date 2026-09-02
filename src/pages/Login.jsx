@@ -43,8 +43,8 @@ export default function Login() {
 
   return (
     <>
-      <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Log In</h2>
-      <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>Your reading summary and alerts, on this device and any other.</p>
+      <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', margin: 0 }}>Sign in</h2>
+      <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>Your reading summary and alerts, on this device and any other.</p>
       {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
       
       <form onSubmit={handleLogin}>
@@ -76,13 +76,13 @@ export default function Login() {
           type="submit" 
           variant="primary"
           loading={loading}
-          style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
+          style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}
         >
-          Log In
+          Sign in
         </Button>
       </form>
       
-      <div style={{ marginTop: '24px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
+      <div style={{ marginTop: '18px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
         Don't have an account? <Link to="/signup" style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Sign up</Link>
       </div>
     </>
