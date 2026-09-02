@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 import { useTheme } from '../contexts/ThemeContext';
 
 export default function MinimalLayout({ children }) {
@@ -11,15 +12,7 @@ export default function MinimalLayout({ children }) {
           
           <header style={{ paddingTop: '12vh', marginBottom: '16px', textAlign: 'left' }}>
             <Link to="/" style={{ display: 'inline-block', textDecoration: 'none' }}>
-              <div style={{
-                fontFamily: 'var(--f-display)',
-                fontSize: '38px',
-                fontWeight: 700,
-                letterSpacing: '-0.6px',
-                color: 'var(--ink)'
-              }}>
-                Trace<span style={{ color: 'var(--v-clear)' }}>News</span>
-              </div>
+              <Logo height="38px" />
             </Link>
           </header>
           
