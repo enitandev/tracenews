@@ -4,6 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { Search, Menu } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Logo from './Logo';
+import { supabase } from '../lib/supabase';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -13,6 +14,53 @@ export default function Header() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef(null);
+
+  const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        supabase.table('profiles').select('*').eq('id', session.user.id).single()
+          .then(({ data }) => setProfile(data))
+          .catch(console.error);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        supabase.table('profiles').select('*').eq('id', session.user.id).single()
+          .then(({ data }) => setProfile(data))
+          .catch(console.error);
+      } else {
+        setProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchOpen(false);
+      }
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/';
+  };
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -28,27 +76,21 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setIsSearchOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
 
   return (
     <header style={{ width: '100%', fontFamily: 'Montserrat, sans-serif' }}>
       {/* TIER 1: Promo Bar */}
-      <div style={{ background: 'var(--header-promo)', padding: '12px 20px', textAlign: 'center' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>See every side of every news story</span>
-          <button style={{ background: '#1a1a1a', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}>
-            Get Started
-          </button>
+      {!session && (
+        <div style={{ background: 'var(--header-promo)', padding: '12px 20px', textAlign: 'center' }}>
+          <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>See every side of every news story</span>
+            <button style={{ background: '#1a1a1a', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}>
+              Get Started
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* TIER 2: Utility Bar */}
       <div className="hide-on-mobile" style={{ background: 'var(--header-util)', padding: '8px 20px', borderBottom: '1px solid var(--border)' }}>
@@ -122,8 +164,32 @@ export default function Header() {
                 </div>
               )}
             </div>
-            <button className="hide-on-mobile" style={{ background: 'var(--text-primary)', color: 'var(--bg-base)', border: 'none', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Subscribe</button>
-            <button className="hide-on-mobile" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border)', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Login</button>
+            {session ? (
+              <div ref={menuRef} style={{ position: 'relative' }}>
+                <div 
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--text-primary)', color: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, cursor: 'pointer', userSelect: 'none' }}
+                >
+                  {profile?.display_name?.charAt(0)?.toUpperCase() || session.user.email?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+                {isMenuOpen && (
+                  <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', zIndex: 100, minWidth: '200px', boxShadow: '0 10px 20px rgba(0,0,0,0.2)', padding: '8px 0', overflow: 'hidden' }}>
+                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Your dashboard</Link>
+                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Settings</Link>
+                    {profile?.is_staff && (
+                      <Link to="/admin/corrections" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Staff console</Link>
+                    )}
+                    <div style={{ height: '1px', background: 'var(--border)', margin: '8px 0' }}></div>
+                    <button onClick={handleSignOut} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}>Sign out</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <button className="hide-on-mobile" style={{ background: 'var(--text-primary)', color: 'var(--bg-base)', border: 'none', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Subscribe</button>
+                <Link to="/login" className="hide-on-mobile" style={{ display: 'inline-block', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border)', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px', textDecoration: 'none' }}>Login</Link>
+              </>
+            )}
           </div>
 
         </div>
