@@ -24,18 +24,24 @@ export default function Header() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
-        supabase.table('profiles').select('*').eq('id', session.user.id).single()
-          .then(({ data }) => setProfile(data))
-          .catch(console.error);
+        supabase.from('profiles').select('*').eq('id', session.user.id).single()
+          .then(({ data }) => setProfile(data || null))
+          .catch((err) => {
+            console.error('Failed to load user profile:', err);
+            setProfile(null);
+          });
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) {
-        supabase.table('profiles').select('*').eq('id', session.user.id).single()
-          .then(({ data }) => setProfile(data))
-          .catch(console.error);
+        supabase.from('profiles').select('*').eq('id', session.user.id).single()
+          .then(({ data }) => setProfile(data || null))
+          .catch((err) => {
+            console.error('Failed to load user profile:', err);
+            setProfile(null);
+          });
       } else {
         setProfile(null);
       }
