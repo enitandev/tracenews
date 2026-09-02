@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Field, Input } from '../components/ds/Form';
+import { Button } from '../components/ds/Button';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -48,82 +50,72 @@ export default function Signup() {
 
   if (success) {
     return (
-      <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px', background: 'var(--bg-elevated)', borderRadius: '8px', textAlign: 'center' }}>
-        <h2>Check your email</h2>
+      <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}>Check your email</h2>
         <p style={{ marginTop: '16px', color: 'var(--text-secondary)' }}>
           We've sent a confirmation link to <strong>{email}</strong>. 
           Please click the link to activate your account.
         </p>
-        <div style={{ marginTop: '24px' }}>
-          <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none' }}>Return to Login</Link>
+        <div style={{ marginTop: '32px' }}>
+          <Link to="/login" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Return to Login</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px', background: 'var(--bg-elevated)', borderRadius: '8px' }}>
-      <h2 style={{ marginBottom: '20px' }}>Create an Account</h2>
-      {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px' }}>{error}</div>}
+    <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px' }}>
+      <h2 style={{ marginBottom: '24px', textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Create an Account</h2>
+      {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
       
       <form onSubmit={handleSignup}>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>Email</label>
-          <input
+        <Field label="Email">
+          <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
+            autoComplete="email"
           />
-        </div>
+        </Field>
         
-        <div style={{ marginBottom: '24px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>Password</label>
-          <input
+        <Field label="Password">
+          <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
+            autoComplete="new-password"
           />
-        </div>
+        </Field>
 
-        <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+        <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', gap: '12px', marginTop: '16px' }}>
           <input
             type="checkbox"
             id="age_assertion"
             checked={ageAssertion}
             onChange={(e) => setAgeAssertion(e.target.checked)}
-            style={{ marginTop: '4px', width: '18px', height: '18px', cursor: 'pointer' }}
+            style={{ marginTop: '4px', width: '16px', height: '16px', cursor: 'pointer' }}
           />
-          <label htmlFor="age_assertion" style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: '1.4', cursor: 'pointer' }}>
+          <label htmlFor="age_assertion" style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: '1.4', cursor: 'pointer' }}>
             I confirm I am 18 years of age or older.
           </label>
         </div>
 
-        <button 
+        <Button 
           type="submit" 
-          disabled={!ageAssertion || loading}
-          style={{ 
-            width: '100%', 
-            padding: '12px', 
-            background: !ageAssertion || loading ? 'var(--border)' : '#3b82f6', 
-            color: !ageAssertion || loading ? 'var(--text-muted)' : 'white', 
-            border: 'none', 
-            borderRadius: '4px', 
-            cursor: !ageAssertion || loading ? 'not-allowed' : 'pointer',
-            fontWeight: 'bold',
-            transition: 'all 0.2s'
-          }}
+          variant="primary"
+          disabled={!ageAssertion}
+          loading={loading}
+          style={{ width: '100%' }}
         >
-          {loading ? 'Creating Account...' : 'Sign Up'}
-        </button>
+          Sign Up
+        </Button>
       </form>
       
-      <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
-        Already have an account? <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none' }}>Log in</Link>
+      <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
+        Already have an account? <Link to="/login" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Log in</Link>
       </div>
     </div>
   );

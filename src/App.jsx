@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Registry from "./pages/Registry";
 import Story from "./pages/Story";
 import Layout from "./components/Layout";
+import MinimalLayout from "./components/MinimalLayout";
 import AdminShell from "./admin/AdminShell";
 import Category from "./pages/Category";
 import DailyBriefingStory from "./pages/DailyBriefingStory";
@@ -21,6 +22,8 @@ import MonitoringSpiritAdmin from './admin/MonitoringSpiritAdmin';
 import AdminPoliticians from './admin/AdminPoliticians';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
+import Reset from './pages/Reset';
+import Verify from './pages/Verify';
 import AccountSettings from './pages/AccountSettings';
 import Dashboard from './pages/Dashboard';
 
@@ -68,6 +71,12 @@ export default function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
+          {/* Auth routes with Minimal Layout */}
+          <Route path="/login" element={<MinimalLayout><Login /></MinimalLayout>} />
+          <Route path="/signup" element={<MinimalLayout><Signup /></MinimalLayout>} />
+          <Route path="/reset" element={<MinimalLayout><Reset /></MinimalLayout>} />
+          <Route path="/verify" element={<MinimalLayout><Verify /></MinimalLayout>} />
+
           {/* Routes with standard Layout */}
           <Route path="/*" element={
             <Layout>
@@ -87,8 +96,6 @@ export default function App() {
                 <Route path="/methodology" element={<Methodology />} />
                 <Route path="/corrections" element={<Corrections />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
                 <Route path="/settings" element={<AccountSettings />} />
               </Routes>
             </Layout>

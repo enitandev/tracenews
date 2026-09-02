@@ -28,6 +28,7 @@ export default function Header() {
           .then(({ data }) => setProfile(data || null))
           .catch((err) => {
             console.error('Failed to load user profile:', err);
+            supabase.from('admin_audit_log').insert([{ action: 'client_error', target_id: session.user.id, details: { error: err.message, component: 'Header', context: 'profile_fetch_failed' } }]).catch(() => {});
             setProfile(null);
           });
       }
@@ -40,6 +41,7 @@ export default function Header() {
           .then(({ data }) => setProfile(data || null))
           .catch((err) => {
             console.error('Failed to load user profile:', err);
+            supabase.from('admin_audit_log').insert([{ action: 'client_error', target_id: session.user.id, details: { error: err.message, component: 'Header', context: 'profile_fetch_failed' } }]).catch(() => {});
             setProfile(null);
           });
       } else {

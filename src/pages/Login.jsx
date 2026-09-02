@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { Field, Input } from '../components/ds/Form';
+import { Button } from '../components/ds/Button';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -9,6 +11,9 @@ export default function Login() {
   const [error, setError] = useState(null);
   
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTarget = searchParams.get('redirect') || '/settings';
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,8 +29,7 @@ export default function Login() {
       if (authError) throw authError;
       if (!data.user) throw new Error('Login failed');
 
-      // Supabase automatically persists the session.
-      navigate('/settings'); // Or wherever appropriate
+      navigate(redirectTarget);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -34,54 +38,47 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px', background: 'var(--bg-elevated)', borderRadius: '8px' }}>
-      <h2 style={{ marginBottom: '20px' }}>Log In</h2>
-      {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px' }}>{error}</div>}
+    <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px' }}>
+      <h2 style={{ marginBottom: '24px', textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Log In</h2>
+      {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
       
       <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>Email</label>
-          <input
+        <Field label="Email">
+          <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
+            autoComplete="email"
           />
-        </div>
+        </Field>
         
-        <div style={{ marginBottom: '24px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>Password</label>
-          <input
+        <Field label="Password">
+          <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-default)', color: 'var(--text-primary)' }}
+            autoComplete="current-password"
           />
+        </Field>
+        
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px', marginTop: '-8px' }}>
+          <Link to="/reset" style={{ fontSize: '13px', color: 'var(--text-secondary)', textDecoration: 'none' }}>Forgot password?</Link>
         </div>
 
-        <button 
+        <Button 
           type="submit" 
-          disabled={loading}
-          style={{ 
-            width: '100%', 
-            padding: '12px', 
-            background: loading ? 'var(--border)' : '#3b82f6', 
-            color: loading ? 'var(--text-muted)' : 'white', 
-            border: 'none', 
-            borderRadius: '4px', 
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 'bold',
-            transition: 'all 0.2s'
-          }}
+          variant="primary"
+          loading={loading}
+          style={{ width: '100%' }}
         >
-          {loading ? 'Logging in...' : 'Log In'}
-        </button>
+          Log In
+        </Button>
       </form>
       
-      <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
-        Don't have an account? <Link to="/signup" style={{ color: '#3b82f6', textDecoration: 'none' }}>Sign up</Link>
+      <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
+        Don't have an account? <Link to="/signup" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Sign up</Link>
       </div>
     </div>
   );
