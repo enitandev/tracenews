@@ -237,3 +237,44 @@ a.tn-link:hover{border-bottom-color:var(--v-clear)}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:var(--s3);border-bottom:1px solid var(--border)}
 .sec-head .ttl{font-size:12px;font-weight:600;color:var(--t-primary);letter-spacing:.3px}
 .sec-head .ttl span{font-family:var(--f-mono);font-size:10px;color:var(--t-faint);margin-left:9px;font-weight:400}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--t-primary);
+  -webkit-box-shadow: 0 0 0 1000px var(--raised) inset;
+  caret-color: var(--t-primary);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+
+/* Custom Checkbox */
+.checkbox-custom {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--raised);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+}
+.checkbox-custom:checked {
+  background: var(--v-clear);
+  border-color: var(--v-clear);
+}
+.checkbox-custom:checked::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 8px;
+  border: solid var(--on-accent);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+

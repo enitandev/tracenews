@@ -50,22 +50,23 @@ export default function Signup() {
 
   if (success) {
     return (
-      <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}>Check your email</h2>
-        <p style={{ marginTop: '16px', color: 'var(--text-secondary)' }}>
+      <>
+        <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Check your email</h2>
+        <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
           We've sent a confirmation link to <strong>{email}</strong>. 
           Please click the link to activate your account.
         </p>
-        <div style={{ marginTop: '32px' }}>
-          <Link to="/login" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Return to Login</Link>
+        <div style={{ textAlign: 'left', marginTop: '24px' }}>
+          <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px' }}>
-      <h2 style={{ marginBottom: '24px', textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Create an Account</h2>
+    <>
+      <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Create an Account</h2>
+      <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>Free. We count the coverage tiers you read — never the stories you opened.</p>
       {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
       
       <form onSubmit={handleSignup}>
@@ -90,15 +91,15 @@ export default function Signup() {
           />
         </Field>
 
-        <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', gap: '12px', marginTop: '16px' }}>
+        <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '16px' }}>
           <input
             type="checkbox"
             id="age_assertion"
+            className="checkbox-custom"
             checked={ageAssertion}
             onChange={(e) => setAgeAssertion(e.target.checked)}
-            style={{ marginTop: '4px', width: '16px', height: '16px', cursor: 'pointer' }}
           />
-          <label htmlFor="age_assertion" style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: '1.4', cursor: 'pointer' }}>
+          <label htmlFor="age_assertion" style={{ fontSize: '12px', color: 'var(--t-body)', lineHeight: '16px', cursor: 'pointer' }}>
             I confirm I am 18 years of age or older.
           </label>
         </div>
@@ -108,15 +109,15 @@ export default function Signup() {
           variant="primary"
           disabled={!ageAssertion}
           loading={loading}
-          style={{ width: '100%' }}
+          style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
         >
           Sign Up
         </Button>
       </form>
       
-      <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
-        Already have an account? <Link to="/login" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Log in</Link>
+      <div style={{ marginTop: '24px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
+        Already have an account? <Link to="/login" style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Log in</Link>
       </div>
-    </div>
+    </>
   );
 }

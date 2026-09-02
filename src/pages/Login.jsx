@@ -13,7 +13,6 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const redirectTarget = searchParams.get('redirect') || '/settings';
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,7 +28,12 @@ export default function Login() {
       if (authError) throw authError;
       if (!data.user) throw new Error('Login failed');
 
-      navigate(redirectTarget);
+      let finalTarget = searchParams.get('redirect');
+      if (!finalTarget || finalTarget === '/settings') {
+        const { data: profile } = await supabase.from('profiles').select('is_staff').eq('id', data.user.id).single();
+        finalTarget = profile?.is_staff ? '/admin' : '/dashboard';
+      }
+      navigate(finalTarget);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -38,8 +42,9 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px' }}>
-      <h2 style={{ marginBottom: '24px', textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Log In</h2>
+    <>
+      <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Log In</h2>
+      <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>Your reading summary and alerts, on this device and any other.</p>
       {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
       
       <form onSubmit={handleLogin}>
@@ -63,23 +68,23 @@ export default function Login() {
           />
         </Field>
         
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px', marginTop: '-8px' }}>
-          <Link to="/reset" style={{ fontSize: '13px', color: 'var(--text-secondary)', textDecoration: 'none' }}>Forgot password?</Link>
+        <div style={{ textAlign: 'left', marginBottom: '24px', marginTop: '-8px' }}>
+          <Link to="/reset" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Forgot password?</Link>
         </div>
 
         <Button 
           type="submit" 
           variant="primary"
           loading={loading}
-          style={{ width: '100%' }}
+          style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
         >
           Log In
         </Button>
       </form>
       
-      <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
-        Don't have an account? <Link to="/signup" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Sign up</Link>
+      <div style={{ marginTop: '24px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
+        Don't have an account? <Link to="/signup" style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Sign up</Link>
       </div>
-    </div>
+    </>
   );
 }

@@ -19,7 +19,7 @@ export default function Reset() {
     if (hash && hash.includes('error_description')) {
       const params = new URLSearchParams(hash.substring(1));
       const errDesc = params.get('error_description');
-      if (errDesc && errDesc.includes('expired') || errDesc.includes('invalid')) {
+      if (errDesc && (errDesc.includes('expired') || errDesc.includes('invalid'))) {
         setView('expired');
       } else {
         setError(errDesc.replace(/\+/g, ' '));
@@ -82,12 +82,12 @@ export default function Reset() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px' }}>
+    <>
       {view === 'request' && (
         <>
-          <h2 style={{ marginBottom: '16px', textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Reset Password</h2>
-          <p style={{ marginBottom: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
-            Enter your email and we'll send you a link to reset your password.
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Reset Password</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
+            Enter your email and we'll send a link to reset your password.
           </p>
           {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
           
@@ -105,35 +105,35 @@ export default function Reset() {
               type="submit" 
               variant="primary"
               loading={loading}
-              style={{ width: '100%', marginTop: '8px' }}
+              style={{ width: '100%', marginTop: '8px', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
             >
               Send Reset Link
             </Button>
           </form>
           
-          <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px' }}>
-            <Link to="/login" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Back to Log in</Link>
+          <div style={{ marginTop: '24px', textAlign: 'left', fontSize: '11.5px' }}>
+            <Link to="/login" style={{ color: 'var(--t-muted)', textDecoration: 'none' }}>&larr; Back to <span style={{ color: 'var(--v-clear)' }}>Log in</span></Link>
           </div>
         </>
       )}
 
       {view === 'sent' && (
-        <div style={{ textAlign: 'center' }}>
-          <h2 style={{ marginBottom: '16px', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Check your email</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5' }}>
+        <>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Check your email</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
             We've sent a password reset link to <strong>{email}</strong>.
             Please check your inbox (and spam folder) and click the link to continue.
           </p>
-          <div style={{ marginTop: '32px' }}>
-            <Link to="/login" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Return to Login</Link>
+          <div style={{ textAlign: 'left', marginTop: '24px' }}>
+            <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
           </div>
-        </div>
+        </>
       )}
 
       {view === 'update' && (
         <>
-          <h2 style={{ marginBottom: '16px', textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Set New Password</h2>
-          <p style={{ marginBottom: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Set New Password</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
             Please enter your new password below.
           </p>
           {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
@@ -153,7 +153,7 @@ export default function Reset() {
               type="submit" 
               variant="primary"
               loading={loading}
-              style={{ width: '100%', marginTop: '8px' }}
+              style={{ width: '100%', marginTop: '8px', fontSize: '13px', padding: '10px', borderRadius: '6px' }}
             >
               Update Password
             </Button>
@@ -162,19 +162,19 @@ export default function Reset() {
       )}
 
       {view === 'expired' && (
-        <div style={{ textAlign: 'center' }}>
-          <h2 style={{ marginBottom: '16px', fontFamily: 'var(--font-display)', fontWeight: 700 }}>Link Expired or Used</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5', marginBottom: '32px' }}>
+        <>
+          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '19px', fontWeight: 600, color: 'var(--ink, var(--t-primary))', textAlign: 'left', marginBottom: '8px' }}>Link Expired or Used</h2>
+          <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginBottom: '24px', textAlign: 'left' }}>
             The password reset link is invalid, expired, or has already been used. Please request a new one.
           </p>
-          <Button variant="primary" onClick={() => setView('request')} style={{ width: '100%' }}>
+          <Button variant="primary" onClick={() => setView('request')} style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '6px' }}>
             Request New Link
           </Button>
-          <div style={{ marginTop: '24px' }}>
-            <Link to="/login" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>Return to Login</Link>
+          <div style={{ textAlign: 'left', marginTop: '24px' }}>
+            <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 }

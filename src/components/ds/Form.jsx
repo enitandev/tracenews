@@ -3,7 +3,7 @@ import { IconSearch, IconX } from '@tabler/icons-react';
 
 export const Field = ({ label, hint, error, children, className = '' }) => (
   <div className={`field ${className}`}>
-    {label && <label>{label}</label>}
+    {label && <label style={{ fontSize: '11px', color: 'var(--t-sub)', fontWeight: 500, marginBottom: '5px' }}>{label}</label>}
     {children}
     {(hint || error) && (
       <div className={`hint ${error ? 'err' : ''}`}>
