@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import Home from "./pages/Home";
@@ -24,7 +24,6 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Reset from './pages/Reset';
 import Verify from './pages/Verify';
-import AccountSettings from './pages/AccountSettings';
 import Dashboard from './pages/Dashboard';
 
 function HomepagePlaceholder() {
@@ -96,7 +95,7 @@ export default function App() {
                 <Route path="/methodology" element={<Methodology />} />
                 <Route path="/corrections" element={<Corrections />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/settings" element={<AccountSettings />} />
+                <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
               </Routes>
             </Layout>
           } />
@@ -113,7 +112,7 @@ export default function App() {
           } />
           
           {/* Dashboard route (standalone layout) */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/*" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

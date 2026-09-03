@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { supabase } from '../lib/supabase';
 import consentData from '../components/MonitoringSpirit/readerAnalyticsConsent.json';
@@ -9,6 +9,9 @@ import {
   TierBar, TierLabels, Avatar, Card, CardHead,
   H1, Body, Meta, SecHead, Dot
 } from '../components/ds';
+import { Modal } from '../components/ds/Feedback';
+import { Switch } from '../components/ds/Toggle';
+import { Field, Input } from '../components/ds/Form';
 import { 
   IconCircleDot, IconChartPie, IconBell, IconHash, IconBookmark,
   IconCrown, IconSettings, IconChevronDown
@@ -17,15 +20,49 @@ import {
 export default function Dashboard() {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   
-  const [activeTab, setActiveTab] = useState('Coverage Diet');
+  // Initialize from path
+  const [activeTab, setActiveTab] = useState(() => {
+    if (location.pathname === '/dashboard/settings') return 'Settings';
+    return 'Coverage Diet';
+  });
+
+  // Sync path to tab if path changes externally (like back button)
+  useEffect(() => {
+    if (location.pathname === '/dashboard/settings') {
+      setActiveTab('Settings');
+    } else if (activeTab === 'Settings') {
+      setActiveTab('Coverage Diet');
+    }
+  }, [location.pathname]);
+
+  // Sync tab to path
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab === 'Settings') {
+      navigate('/dashboard/settings');
+    } else if (location.pathname === '/dashboard/settings') {
+      navigate('/dashboard');
+    }
+  };
+  
   const [isCountryOpen, setIsCountryOpen] = useState(false);
-  
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [summary, setSummary] = useState({ govt: 0, mainstream: 0, watchdog: 0, broad: 0, partial: 0 });
   const [hasConsent, setHasConsent] = useState(false);
   const [consentLoading, setConsentLoading] = useState(true);
+
+  // Settings states
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isCountsModalOpen, setIsCountsModalOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
   
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -91,7 +128,61 @@ export default function Dashboard() {
         headers: { 'Authorization': `Bearer ${session.access_token}` }
       });
       setSummary({ govt: 0, mainstream: 0, watchdog: 0, broad: 0, partial: 0 });
+      setIsCountsModalOpen(false);
     }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      return;
+    }
+    setPasswordLoading(true);
+    setPasswordError(null);
+    setPasswordSuccess(false);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setPasswordSuccess(true);
+      setNewPassword('');
+    } catch (err) {
+      setPasswordError(err.message);
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true);
+    setDeleteError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("No active session");
+
+      const res = await fetch('https://uvicorn-appmain-production-79c6.up.railway.app/api/auth/account', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || "Failed to delete account");
+      }
+
+      await supabase.auth.signOut();
+      navigate('/');
+    } catch (err) {
+      setDeleteError(err.message);
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
   };
 
   if (loading) {
@@ -145,17 +236,17 @@ export default function Dashboard() {
           </div>
           
           <div className="t-label" style={{ margin: 'var(--s2) var(--s2) var(--s2)' }}>Nigeria</div>
-          <NavItem active={activeTab === 'Coverage Diet'} onClick={() => setActiveTab('Coverage Diet')} icon={IconCircleDot} label="Coverage Diet" />
-          <NavItem active={activeTab === 'Coverage Gaps'} onClick={() => setActiveTab('Coverage Gaps')} icon={IconChartPie} label="Coverage Gaps" />
-          <NavItem active={activeTab === 'Alerts'} onClick={() => setActiveTab('Alerts')} icon={IconBell} label="Alerts" />
-          <NavItem active={activeTab === 'Topics'} onClick={() => setActiveTab('Topics')} icon={IconHash} label="Topics" />
-          <NavItem active={activeTab === 'Saved'} onClick={() => setActiveTab('Saved')} icon={IconBookmark} label="Saved" />
+          <NavItem active={activeTab === 'Coverage Diet'} onClick={() => handleTabChange('Coverage Diet')} icon={IconCircleDot} label="Coverage Diet" />
+          <NavItem active={activeTab === 'Coverage Gaps'} onClick={() => handleTabChange('Coverage Gaps')} icon={IconChartPie} label="Coverage Gaps" />
+          <NavItem active={activeTab === 'Alerts'} onClick={() => handleTabChange('Alerts')} icon={IconBell} label="Alerts" />
+          <NavItem active={activeTab === 'Topics'} onClick={() => handleTabChange('Topics')} icon={IconHash} label="Topics" />
+          <NavItem active={activeTab === 'Saved'} onClick={() => handleTabChange('Saved')} icon={IconBookmark} label="Saved" />
           
           <div style={{ height: '1px', background: 'var(--hair)', margin: 'var(--s4) var(--s2)' }}></div>
           
           <div className="t-label" style={{ margin: 'var(--s2) var(--s2) var(--s2)' }}>Your account</div>
-          <NavItem active={activeTab === 'Subscription'} onClick={() => setActiveTab('Subscription')} icon={IconCrown} label="Subscription" />
-          <NavItem active={activeTab === 'Account'} onClick={() => setActiveTab('Account')} icon={IconSettings} label="Account" />
+          <NavItem active={activeTab === 'Subscription'} onClick={() => handleTabChange('Subscription')} icon={IconCrown} label="Subscription" />
+          <NavItem active={activeTab === 'Settings'} onClick={() => handleTabChange('Settings')} icon={IconSettings} label="Settings" />
         </Rail>
         
         <ContentArea>
@@ -174,7 +265,7 @@ export default function Dashboard() {
                   {hasConsent ? 'Tracking is ON (Manage)' : 'Tracking is OFF (Turn On)'}
                 </a>
                 <Meta>&middot;</Meta> 
-                <a onClick={handleDeleteCounts} className="t-meta" style={{ color: 'var(--v-clear)', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: '1px solid color-mix(in srgb, var(--v-clear) 35%, transparent)' }}>Delete all</a>
+                <a onClick={() => setIsCountsModalOpen(true)} className="t-meta" style={{ color: 'var(--v-clear)', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: '1px solid color-mix(in srgb, var(--v-clear) 35%, transparent)' }}>Delete all</a>
               </div>
 
               <Card>
@@ -243,28 +334,76 @@ export default function Dashboard() {
             </>
           )}
 
-          {activeTab === 'Account' && (
-            <>
-              <H1>Account Settings</H1>
-              <Card style={{ marginTop: 'var(--s5)' }}>
-                <SecHead title="Data Management" style={{ marginBottom: 'var(--s3)' }} />
-                <Body style={{ marginBottom: 'var(--s5)' }}>
-                  TraceNews stores aggregate counters of the editorial tiers you read. 
-                  We never store your personal reading history.
-                </Body>
-                <Button variant="danger" onClick={handleDeleteCounts}>Delete my counts</Button>
-              </Card>
-
-              <Card style={{ marginTop: 'var(--s5)' }}>
-                <SecHead title="Session" style={{ marginBottom: 'var(--s3)' }} />
-                <div style={{ marginTop: 'var(--s3)' }}>
-                  <Button variant="secondary" onClick={async () => {
-                    await supabase.auth.signOut();
-                    navigate('/');
-                  }}>Log Out</Button>
+          {activeTab === 'Settings' && (
+            <div style={{ maxWidth: '600px' }}>
+              <H1>Settings</H1>
+              
+              <div style={{ marginTop: 'var(--s6)' }}>
+                <SecHead title="Profile" />
+                <div style={{ margin: 'var(--s4) 0' }}>
+                  <div style={{ fontSize: '12.5px', color: 'var(--t-body)', marginBottom: 'var(--s4)' }}>
+                    <span style={{ color: 'var(--t-sub)' }}>Email:</span> <span style={{ fontWeight: 500 }}>{user?.email}</span>
+                  </div>
+                  
+                  <form onSubmit={handleChangePassword}>
+                    <Field label="Change Password" error={passwordError}>
+                      <Input 
+                        type="password" 
+                        value={newPassword}
+                        onChange={(e) => { setNewPassword(e.target.value); setPasswordError(null); }}
+                        hasError={!!passwordError}
+                        placeholder="New password"
+                        style={{ maxWidth: '280px' }}
+                      />
+                    </Field>
+                    <Button type="submit" variant="secondary" size="sm" loading={passwordLoading} disabled={!newPassword}>Update Password</Button>
+                    {passwordSuccess && <span style={{ fontSize: '11.5px', color: 'var(--success)', marginLeft: '12px' }}>Password updated.</span>}
+                  </form>
                 </div>
-              </Card>
-            </>
+              </div>
+
+              <div style={{ marginTop: 'var(--s6)' }}>
+                <SecHead title="Data & Privacy" />
+                <div style={{ margin: 'var(--s4) 0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--s4)' }}>
+                    <div style={{ fontSize: '12.5px', color: 'var(--t-body)' }}>
+                      <strong>Reader Analytics</strong>
+                      <p style={{ margin: '4px 0 0', color: 'var(--t-sub)' }}>Allow TraceNews to aggregate your reading diet.</p>
+                    </div>
+                    <Switch checked={hasConsent} onChange={toggleConsent} />
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: 'var(--s3)' }}>
+                    <Button variant="secondary" size="sm">Export my data</Button>
+                    <Button variant="secondary" size="sm" onClick={() => setIsCountsModalOpen(true)}>Delete my counts</Button>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 'var(--s6)' }}>
+                <SecHead title="Notifications" />
+                <div style={{ margin: 'var(--s4) 0' }}>
+                  <EmptyState message="Notification preferences coming soon." />
+                </div>
+              </div>
+
+              <div style={{ marginTop: 'var(--s6)' }}>
+                <SecHead title="Session" />
+                <div style={{ margin: 'var(--s4) 0' }}>
+                  <Button variant="secondary" size="sm" onClick={handleSignOut}>Log Out</Button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 'var(--s6)' }}>
+                <SecHead title="Danger Zone" />
+                <div style={{ margin: 'var(--s4) 0' }}>
+                  <p style={{ fontSize: '12.5px', color: 'var(--t-body)', marginBottom: 'var(--s4)' }}>
+                    Deleting your account is permanent. This removes all your reading data, saved stories, and alerts.
+                  </p>
+                  <Button variant="danger" onClick={() => setIsDeleteModalOpen(true)}>Delete Account</Button>
+                </div>
+              </div>
+            </div>
           )}
           
           {activeTab === 'Subscription' && (
@@ -286,6 +425,31 @@ export default function Dashboard() {
           </div>
         </ContentArea>
       </ShellContainer>
+
+      <Modal
+        isOpen={isCountsModalOpen}
+        onClose={() => setIsCountsModalOpen(false)}
+        title="Delete reading counts?"
+        description="This will reset your Coverage Diet and Coverage Gaps charts. This action cannot be undone."
+        primaryAction={handleDeleteCounts}
+        primaryText="Delete Counts"
+      />
+
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => { setIsDeleteModalOpen(false); setDeleteError(null); }}
+        title="Delete Account?"
+        description="This will permanently delete your TraceNews account and all associated data. This action cannot be undone."
+        primaryAction={handleDeleteAccount}
+        primaryText={deleteLoading ? "Deleting..." : "Delete Account"}
+      >
+        {deleteError && (
+          <div style={{ padding: '8px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginTop: '12px', fontSize: '12px' }}>
+            {deleteError}
+          </div>
+        )}
+      </Modal>
+
     </AppShell>
   );
 }
