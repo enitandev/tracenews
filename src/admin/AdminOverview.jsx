@@ -124,8 +124,8 @@ export default function AdminOverview() {
                     <div className="it" key={req.id}>
                       <span className="mk mk-new">New</span>
                       <div className="bd">
-                        <div className="tt">{req.outlet_slug || 'Unknown source'}</div>
-                        <div className="mt">{req.type}</div>
+                        <div className="tt">{req.subject_id || 'Unknown source'}</div>
+                        <div className="mt">{req.category}</div>
                       </div>
                       <div className="ag">{formatDate(req.created_at)}</div>
                     </div>
