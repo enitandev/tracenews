@@ -10,6 +10,7 @@ export default function Reset() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   
   const navigate = useNavigate();
 
@@ -40,7 +41,6 @@ export default function Reset() {
       if (event === 'PASSWORD_RECOVERY') {
         setView('update');
       } else if (session && view === 'request') {
-        // If they magically logged in during request view, switch to update
         setView('update');
       }
     });
@@ -50,6 +50,12 @@ export default function Reset() {
 
   const handleRequest = async (e) => {
     e.preventDefault();
+    const errs = {};
+    if (!email.trim()) errs.email = 'Email is required.';
+    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = 'Enter a valid email address.';
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
     setLoading(true);
     setError(null);
     try {
@@ -67,12 +73,17 @@ export default function Reset() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    const errs = {};
+    if (!password) errs.password = 'Password is required.';
+    else if (password.length < 6) errs.password = 'Password must be at least 6 characters.';
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
     setLoading(true);
     setError(null);
     try {
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) throw updateError;
-      // Password updated successfully
       navigate('/login?redirect=/settings');
     } catch (err) {
       setError(err.message);
@@ -91,13 +102,13 @@ export default function Reset() {
           </p>
           {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
           
-          <form onSubmit={handleRequest}>
-            <Field label="Email">
+          <form onSubmit={handleRequest} noValidate>
+            <Field label="Email" error={fieldErrors.email}>
               <Input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                onChange={(e) => { setEmail(e.target.value); setFieldErrors(f => ({ ...f, email: undefined })); }}
+                hasError={!!fieldErrors.email}
               />
             </Field>
             
@@ -138,14 +149,13 @@ export default function Reset() {
           </p>
           {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
           
-          <form onSubmit={handleUpdate}>
-            <Field label="New Password">
+          <form onSubmit={handleUpdate} noValidate>
+            <Field label="New Password" error={fieldErrors.password}>
               <Input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
+                onChange={(e) => { setPassword(e.target.value); setFieldErrors(f => ({ ...f, password: undefined })); }}
+                hasError={!!fieldErrors.password}
               />
             </Field>
             
@@ -178,3 +188,4 @@ export default function Reset() {
     </>
   );
 }
+

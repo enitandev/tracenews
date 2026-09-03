@@ -9,16 +9,26 @@ export default function Signup() {
   const [ageAssertion, setAgeAssertion] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
   
   const navigate = useNavigate();
 
+  const validate = () => {
+    const errs = {};
+    if (!email.trim()) errs.email = 'Email is required.';
+    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = 'Enter a valid email address.';
+    if (!password) errs.password = 'Password is required.';
+    else if (password.length < 6) errs.password = 'Password must be at least 6 characters.';
+    if (!ageAssertion) errs.age = 'You must confirm you are 18 or older.';
+    return errs;
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (!ageAssertion) {
-      setError("You must confirm you are 18 or older to create an account.");
-      return;
-    }
+    const errs = validate();
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
 
     setLoading(true);
     setError(null);
@@ -69,24 +79,23 @@ export default function Signup() {
       <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>Free. We count the coverage tiers you read — never the stories you opened.</p>
       {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
       
-      <form onSubmit={handleSignup}>
-        <Field label="Email">
+      <form onSubmit={handleSignup} noValidate>
+        <Field label="Email" error={fieldErrors.email}>
           <Input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            onChange={(e) => { setEmail(e.target.value); setFieldErrors(f => ({ ...f, email: undefined })); }}
+            hasError={!!fieldErrors.email}
             autoComplete="email"
           />
         </Field>
         
-        <Field label="Password">
+        <Field label="Password" error={fieldErrors.password}>
           <Input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
+            onChange={(e) => { setPassword(e.target.value); setFieldErrors(f => ({ ...f, password: undefined })); }}
+            hasError={!!fieldErrors.password}
             autoComplete="new-password"
           />
         </Field>
@@ -97,17 +106,19 @@ export default function Signup() {
             id="age_assertion"
             className="checkbox-custom"
             checked={ageAssertion}
-            onChange={(e) => setAgeAssertion(e.target.checked)}
+            onChange={(e) => { setAgeAssertion(e.target.checked); setFieldErrors(f => ({ ...f, age: undefined })); }}
           />
-          <label htmlFor="age_assertion" style={{ fontSize: '12px', color: 'var(--t-body)', lineHeight: '16px', cursor: 'pointer' }}>
-            I confirm I am 18 years of age or older.
-          </label>
+          <div>
+            <label htmlFor="age_assertion" style={{ fontSize: '12px', color: 'var(--t-body)', lineHeight: '16px', cursor: 'pointer' }}>
+              I confirm I am 18 years of age or older.
+            </label>
+            {fieldErrors.age && <div style={{ fontSize: '10.5px', color: 'var(--danger)', marginTop: '4px' }}>{fieldErrors.age}</div>}
+          </div>
         </div>
 
         <Button 
           type="submit" 
           variant="primary"
-          disabled={!ageAssertion}
           loading={loading}
           style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}
         >
@@ -121,3 +132,4 @@ export default function Signup() {
     </>
   );
 }
+
