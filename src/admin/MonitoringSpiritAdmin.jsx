@@ -144,7 +144,8 @@ export default function MonitoringSpiritAdmin() {
       {error && <div style={{ padding: 'var(--s3)', background: 'var(--danger)', color: 'var(--on-accent)', borderRadius: 'var(--r-sm)', marginBottom: 'var(--s5)' }}>{error}</div>}
       {loading && <p className="t-muted">Loading data...</p>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s6)' }}>
+      {!error && !loading && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s6)' }}>
         
         {/* Active Verdicts Column */}
         <div>
@@ -249,6 +250,7 @@ export default function MonitoringSpiritAdmin() {
         </div>
 
       </div>
+      )}
     </>
   );
 }

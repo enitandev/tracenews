@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { StateCoverage } from '../components/ds/StateCoverage';
-import { API_BASE } from '../config';
 import './desk.css';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
 export default function AdminOverview() {
   const navigate = useNavigate();
