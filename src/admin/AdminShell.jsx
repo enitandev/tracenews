@@ -5,44 +5,49 @@ import { AppShell, Masthead, ShellContainer, Rail, ContentArea } from '../compon
 import { ThemeToggle } from '../components/ds/Toggle';
 import Logo from '../components/Logo';
 import { Button } from '../components/ds/Button';
+import { isStaffRole, hasPermission } from './permissions';
 
 export default function AdminShell({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [staffName, setStaffName] = useState('Loading...');
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate('/login?redirect=' + encodeURIComponent(location.pathname));
         return;
       }
-      const { data: profile } = await supabase
+      const { data: userProfile } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
         .single();
-      if (profile && profile.is_staff) {
-        setStaffName(profile.display_name || profile.email || 'Staff');
+      const isStaff = isStaffRole(userProfile?.role, userProfile?.is_staff);
+      
+      if (userProfile && isStaff) {
+        setProfile(userProfile);
+        setStaffName(userProfile.display_name || userProfile.email || 'Staff');
       } else {
-        navigate('/login');
+        navigate('/login?redirect=' + encodeURIComponent(location.pathname));
       }
     };
     checkAuth();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/login');
+    navigate('/');
   };
 
   const navItems = [
-    { label: 'Corrections Queue', path: '/admin/corrections', active: true },
-    { label: 'Monitoring Spirit', path: '/admin/monitoring-spirit', active: true },
-    { label: 'Politicians Review', path: '/admin/politicians', active: true },
-    { label: 'Content Taxonomy', path: '#', active: false },
-    { label: 'User Management', path: '#', active: false },
+    { id: 'corrections', label: 'Corrections Queue', path: '/admin/corrections', active: true },
+    { id: 'monitoring_spirit', label: 'Monitoring Spirit', path: '/admin/monitoring-spirit', active: true },
+    { id: 'politicians', label: 'Politicians Review', path: '/admin/politicians', active: true },
+    { id: 'reports', label: 'Content Taxonomy', path: '#', active: false },
+    { id: 'staff_management', label: 'User Management', path: '#', active: false },
   ];
 
   return (
@@ -61,6 +66,9 @@ export default function AdminShell({ children }) {
         <Rail>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s2)' }}>
             {navItems.map((item, idx) => {
+              if (profile && !hasPermission(profile.role, profile.is_staff, item.id, 'view')) {
+                return null; // hide rail item if user lacks permission
+              }
               const isActiveRoute = location.pathname === item.path;
               if (!item.active) {
                 return (

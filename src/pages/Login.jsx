@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Field, Input } from '../components/ds/Form';
 import { Button } from '../components/ds/Button';
+import { isStaffRole } from '../admin/permissions';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -43,8 +44,8 @@ export default function Login() {
 
       let finalTarget = searchParams.get('redirect');
       if (!finalTarget || finalTarget === '/settings') {
-        const { data: profile } = await supabase.from('profiles').select('is_staff').eq('id', data.user.id).single();
-        finalTarget = profile?.is_staff ? '/admin' : '/dashboard';
+        const { data: profile } = await supabase.from('profiles').select('role, is_staff').eq('id', data.user.id).single();
+        finalTarget = isStaffRole(profile?.role, profile?.is_staff) ? '/admin' : '/dashboard';
       }
       navigate(finalTarget);
     } catch (err) {

@@ -68,7 +68,7 @@ export default function Dashboard() {
     const fetchUserAndData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate('/login?redirect=' + encodeURIComponent(location.pathname));
         return;
       }
       setUser(session.user);
