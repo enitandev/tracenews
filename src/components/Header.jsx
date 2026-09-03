@@ -183,11 +183,14 @@ export default function Header() {
                 </div>
                 {isMenuOpen && (
                   <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', zIndex: 100, minWidth: '200px', boxShadow: '0 10px 20px rgba(0,0,0,0.2)', padding: '8px 0', overflow: 'hidden' }}>
-                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Your dashboard</Link>
-                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Settings</Link>
-                    {isStaffRole(profile?.role, profile?.is_staff) && (
-                      <Link to="/admin/corrections" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Staff console</Link>
+                    {location.pathname.startsWith('/admin') ? (
+                      <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Your dashboard</Link>
+                    ) : (
+                      isStaffRole(profile?.role, profile?.is_staff) && (
+                        <Link to="/admin" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Staff console</Link>
+                      )
                     )}
+                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Settings</Link>
                     <div style={{ height: '1px', background: 'var(--border)', margin: '8px 0' }}></div>
                     <button onClick={handleSignOut} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}>Sign out</button>
                   </div>

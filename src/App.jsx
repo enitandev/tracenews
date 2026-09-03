@@ -20,6 +20,8 @@ import PoliticianProfile from './pages/PoliticianProfile'
 import AdminCorrections from './admin/AdminCorrections';
 import MonitoringSpiritAdmin from './admin/MonitoringSpiritAdmin';
 import AdminPoliticians from './admin/AdminPoliticians';
+import AdminOverview from './admin/AdminOverview';
+
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Reset from './pages/Reset';
@@ -104,6 +106,8 @@ export default function App() {
           <Route path="/admin/*" element={
             <AdminShell>
               <Routes>
+                <Route index element={<AdminOverview />} />
+
                 <Route path="corrections" element={<AdminCorrections />} />
                 <Route path="monitoring-spirit" element={<MonitoringSpiritAdmin />} />
                 <Route path="politicians" element={<AdminPoliticians />} />

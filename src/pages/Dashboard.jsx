@@ -1,455 +1,245 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import consentData from '../components/MonitoringSpirit/readerAnalyticsConsent.json';
-import {
-  AppShell, Masthead, ShellContainer, Rail, ContentArea,
-  Button, EmptyState, NavItem, ThemeToggle,
-  TierBar, TierLabels, Avatar, Card, CardHead,
-  H1, Body, Meta, SecHead, Dot
-} from '../components/ds';
-import { Modal } from '../components/ds/Feedback';
-import { Switch } from '../components/ds/Toggle';
-import { Field, Input } from '../components/ds/Form';
-import { 
-  IconCircleDot, IconChartPie, IconBell, IconHash, IconBookmark,
-  IconCrown, IconSettings, IconChevronDown
-} from '@tabler/icons-react';
+import { StateCoverage } from '../components/ds/StateCoverage';
+import { API_BASE } from '../config';
+import './dashboard.css';
 
 export default function Dashboard() {
-  const { theme } = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  // Initialize from path
-  const [activeTab, setActiveTab] = useState(() => {
-    if (location.pathname === '/dashboard/settings') return 'Settings';
-    return 'Coverage Diet';
-  });
-
-  // Sync path to tab if path changes externally (like back button)
-  useEffect(() => {
-    if (location.pathname === '/dashboard/settings') {
-      setActiveTab('Settings');
-    } else if (activeTab === 'Settings') {
-      setActiveTab('Coverage Diet');
-    }
-  }, [location.pathname]);
-
-  // Sync tab to path
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    if (tab === 'Settings') {
-      navigate('/dashboard/settings');
-    } else if (location.pathname === '/dashboard/settings') {
-      navigate('/dashboard');
-    }
-  };
-  
-  const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [summary, setSummary] = useState({ govt: 0, mainstream: 0, watchdog: 0, broad: 0, partial: 0 });
-  const [hasConsent, setHasConsent] = useState(false);
-  const [consentLoading, setConsentLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Settings states
-  const [newPassword, setNewPassword] = useState('');
-  const [passwordLoading, setPasswordLoading] = useState(false);
-  const [passwordError, setPasswordError] = useState(null);
-  const [passwordSuccess, setPasswordSuccess] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isCountsModalOpen, setIsCountsModalOpen] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteError, setDeleteError] = useState(null);
-  
-  useEffect(() => {
-    const fetchUserAndData = async () => {
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login?redirect=' + encodeURIComponent(location.pathname));
+        navigate('/login');
         return;
       }
-      setUser(session.user);
       
-      const consentRes = await supabase.from('reader_analytics_consent')
-        .select('granted')
-        .eq('user_id', session.user.id)
-        .order('at', { ascending: false })
-        .limit(1);
-        
-      if (consentRes.data && consentRes.data.length > 0) {
-        setHasConsent(consentRes.data[0].granted);
-      }
-      setConsentLoading(false);
-
-      try {
-        const res = await fetch('https://uvicorn-appmain-production-79c6.up.railway.app/api/reader/summary', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setSummary(data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch summary', err);
+      const res = await fetch(`${API_BASE}/api/reader/summary`, {
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch reader summary');
       }
       
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setLoading(false);
-    };
-    
-    fetchUserAndData();
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, [navigate]);
 
-  const toggleConsent = async () => {
-    if (consentLoading) return;
-    const newConsent = !hasConsent;
-    setHasConsent(newConsent);
+  const composeLede = (data) => {
+    if (!data) return '';
+    if (!data.consent_granted) {
+      return "Opt in to tracking to see your reading patterns.";
+    }
+    const total = data.counters.stories_opened;
+    if (total === 0) {
+      return "You haven't opened any stories yet.";
+    }
+    const dist = data.tier_distribution;
+    let maxCount = 0;
+    let maxTier = 'mainstream';
+    if (dist.govt > maxCount) { maxCount = dist.govt; maxTier = 'government-aligned'; }
+    if (dist.mainstream > maxCount) { maxCount = dist.mainstream; maxTier = 'mainstream'; }
+    if (dist.watchdog > maxCount) { maxCount = dist.watchdog; maxTier = 'watchdog'; }
     
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      fetch('https://uvicorn-appmain-production-79c6.up.railway.app/api/reader/consent', {
+    return `You have opened ${total} stories this week and read <em>mostly ${maxTier}</em> coverage.`;
+  };
+
+  const formatDate = (isoString) => {
+    const d = new Date(isoString);
+    if ((new Date() - d) < 24*60*60*1000) {
+      return 'Today';
+    }
+    return `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })}`;
+  };
+  
+  const handleToggleConsent = async () => {
+    if (!data) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      await fetch(`${API_BASE}/api/reader/consent`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+        headers: { 
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ granted: newConsent })
-      }).catch(err => console.error("Consent update failed", err));
+        body: JSON.stringify({ granted: !data.consent_granted })
+      });
+      fetchData();
+    } catch (e) {
+      console.error("Failed to toggle consent", e);
     }
   };
 
   const handleDeleteCounts = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      await fetch('https://uvicorn-appmain-production-79c6.up.railway.app/api/reader/counts', {
+    if (!window.confirm("Delete your reading counts? This will also turn off tracking.")) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      await fetch(`${API_BASE}/api/reader/counts`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${session.access_token}` }
       });
-      setSummary({ govt: 0, mainstream: 0, watchdog: 0, broad: 0, partial: 0 });
-      setIsCountsModalOpen(false);
+      fetchData();
+    } catch (e) {
+      console.error("Failed to delete counts", e);
     }
   };
-
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters.");
-      return;
-    }
-    setPasswordLoading(true);
-    setPasswordError(null);
-    setPasswordSuccess(false);
-    try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      if (error) throw error;
-      setPasswordSuccess(true);
-      setNewPassword('');
-    } catch (err) {
-      setPasswordError(err.message);
-    } finally {
-      setPasswordLoading(false);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    setDeleteLoading(true);
-    setDeleteError(null);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("No active session");
-
-      const res = await fetch('https://uvicorn-appmain-production-79c6.up.railway.app/api/auth/account', {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`
-        }
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.detail || "Failed to delete account");
-      }
-
-      await supabase.auth.signOut();
-      navigate('/');
-    } catch (err) {
-      setDeleteError(err.message);
-      setDeleteLoading(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-  };
-
-  if (loading) {
-    return (
-      <AppShell>
-        <div style={{ padding: 'var(--s8)', textAlign: 'center' }}>Loading Dashboard...</div>
-      </AppShell>
-    );
-  }
-
-  const totalDiet = summary.govt + summary.mainstream + summary.watchdog;
-  const totalDivergence = summary.broad + summary.partial;
-  const pct = (val, total) => total > 0 ? (val / total) * 100 : 0;
 
   return (
-    <AppShell>
-      <Masthead brandLink="/">
-        <nav style={{ display: 'flex', gap: 'var(--s6)' }}>
-          <Link to="/" style={{ color: 'var(--t-sub)', textDecoration: 'none' }}>Home</Link>
-          <span style={{ color: 'var(--t-sub)' }}>For You</span>
-          <span style={{ color: 'var(--t-sub)' }}>Local</span>
-          <Link to="/daily-briefing" style={{ color: 'var(--t-sub)', textDecoration: 'none' }}>Daily Briefing</Link>
-          <span style={{ color: 'var(--t-sub)' }}>Monitoring Spirit</span>
-          <span style={{ color: 'var(--t-primary)', fontWeight: 600 }}>Account</span>
-        </nav>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s4)' }}>
-          <ThemeToggle />
-          <Avatar initials={user?.email?.substring(0, 2).toUpperCase() || 'TN'} />
+    <div className="ed">
+      <div className="mh">
+        <div className="mh-top">
+          <div className="mh-id">
+            <span className="wm">Trace<i>News</i></span>
+            <span className="lbl">Your Edition</span>
+          </div>
+          <div className="mh-meta">
+            <nav className="nav">
+              <span className="on">Dashboard</span>
+              <span>Saved</span>
+              <span>Settings</span>
+            </nav>
+          </div>
         </div>
-      </Masthead>
+        <div className="mh-rule"></div>
+        <div className="mh-rule2"></div>
+      </div>
       
-      <ShellContainer>
-        <Rail>
-          <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: 'var(--s3)', marginBottom: 'var(--s5)', cursor: 'pointer', position: 'relative' }} onClick={() => setIsCountryOpen(!isCountryOpen)}>
-            <div className="t-label" style={{ marginBottom: 'var(--s1)' }}>Country</div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span className="t-body" style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)', fontWeight: 600, color: 'var(--t-primary)' }}>
-                <span className="outlet-mark">&#127475;&#127468;</span>
-                Nigeria
-              </span>
-              <IconChevronDown size={14} style={{ color: 'var(--t-muted)' }} />
-            </div>
-            {isCountryOpen && (
-              <div className="pop" style={{ display: 'block', position: 'absolute', top: '100%', left: 0, width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: 'var(--s2)', marginTop: 'var(--s2)', zIndex: 10, boxShadow: 'var(--shadow-pop)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)', padding: 'var(--s2)', background: 'var(--active)', borderRadius: 'var(--r-sm)', color: 'var(--t-primary)', fontWeight: 600 }} className="t-body">
-                  <span className="outlet-mark">&#127475;&#127468;</span>
-                  Nigeria
+      <div className="dk">
+        <aside className="rail">
+          <p className="rg">Your reading</p>
+          <div className="ri on">Summary</div>
+          <div className="ri">Coverage gaps</div>
+          <div className="ri">Saved stories</div>
+          <div className="ri soon">History window <span className="n">Paid</span></div>
+          
+          <p className="rg">Following</p>
+          <div className="ri soon">Topics <span className="n">Soon</span></div>
+          <div className="ri soon">Outlets <span className="n">Soon</span></div>
+          <div className="ri soon">Politicians <span className="n">Soon</span></div>
+        </aside>
+        
+        <div className="main">
+          <p className="dateline">Your Edition · {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          
+          <StateCoverage loading={loading} error={error} onRetry={fetchData} isEmpty={false}>
+            {data && (
+              <>
+                <p className="lede" dangerouslySetInnerHTML={{ __html: composeLede(data) }}></p>
+                <div className="byline">
+                  Overview generated by your Coverage Diet. 
+                  <span className="ctl" onClick={handleToggleConsent}>{data.consent_granted ? 'Turn tracking off' : 'Turn tracking on'}</span>
                 </div>
+
+                {data.consent_granted ? (
+                  <>
+                    <div className="figs">
+                      <div className="fig">
+                        <div className="l">Total reads</div>
+                        <div className="v">{data.counters.stories_opened}</div>
+                        <div className="s">Stories opened</div>
+                      </div>
+                      <div className="fig">
+                        <div className="l">Broadly covered</div>
+                        <div className="v">{data.counters.broadly_covered}</div>
+                        <div className="s">All tiers reported</div>
+                      </div>
+                      <div className="fig">
+                        <div className="l">Gaps exposure</div>
+                        <div className="v gap">{data.counters.one_tier_only}</div>
+                        <div className="s">One tier only</div>
+                      </div>
+                      <div className="fig">
+                        <div className="l">Following</div>
+                        <div className="v">{data.counters.following}</div>
+                        <div className="s">Topics and people</div>
+                      </div>
+                    </div>
+
+                    <div className="ds">
+                      <div className="ds-h">
+                        <span className="t">Stories only one tier carried this month</span>
+                        <div className="ln"></div>
+                        <span className="lk">See all →</span>
+                      </div>
+                      
+                      {data.public_one_tier_stories.length === 0 ? (
+                        <p className="t-muted" style={{ fontSize: '13px', padding: 'var(--s3) 0' }}>No stories available.</p>
+                      ) : (
+                        data.public_one_tier_stories.map(s => (
+                          <div className="it" key={s.cluster_id}>
+                            <span className="mk mk-dk">One tier</span>
+                            <div className="bd">
+                              <div className="tt">{s.headline}</div>
+                              <div className="mt">{s.evidence || 'Concentrated coverage'}</div>
+                            </div>
+                            <span className="ag">Live</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ padding: 'var(--s6) var(--s5)', border: '1px solid var(--border)', borderRadius: '3px', marginTop: 'var(--s5)' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 var(--s2)', color: 'var(--ink)' }}>Tracking is off</h3>
+                    <p style={{ fontSize: '13px', color: 'var(--t-muted)', margin: '0 0 var(--s4)', lineHeight: 1.6, maxWidth: '60ch' }}>
+                      We respect your privacy. TraceNews does not track your reading habits unless you explicitly opt in. Enable tracking to see your coverage diet and exposure to coverage gaps.
+                    </p>
+                    <button onClick={handleToggleConsent} style={{ background: 'var(--ink)', color: 'var(--on-accent)', border: 'none', padding: '8px 16px', borderRadius: '3px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
+                      Enable tracking
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </StateCoverage>
+        </div>
+        
+        <aside className="stand">
+          <p className="st-h">Your alerts</p>
+          <StateCoverage loading={loading} error={error} isEmpty={data && data.alerts.length === 0} emptyMessage="No recent alerts.">
+            {data && data.alerts.length > 0 && data.alerts.map((al, i) => (
+              <div className="al" key={i}><b>{al.topic}</b> — {al.message}<span className="ts">{al.time}</span></div>
+            ))}
+          </StateCoverage>
+
+          <p className="st-h" style={{ marginTop: 'var(--s6)' }}>You follow</p>
+          <StateCoverage loading={loading} error={error} isEmpty={data && data.counters.following === 0} emptyMessage="You're not following anything yet">
+            {/* Real list is not returned yet, backend just returns a number for follow_count in Phase 2 */}
+            {data && data.counters.following > 0 && (
+              <div className="fol">
+                <span className="n">No items available.</span>
               </div>
             )}
+          </StateCoverage>
+
+          <div className="privacy">
+            <div className="h">Your data</div>
+            <p className="b">Three numbers, nothing more. We never build a list of the stories you opened.</p>
+            <span className="a" onClick={handleDeleteCounts} style={{ display: 'flex', gap: '8px' }}>
+              <span>Export</span> · 
+              <span style={{ textDecoration: 'underline' }}>Delete</span> · 
+              <span onClick={handleToggleConsent} style={{ textDecoration: 'underline' }}>{data?.consent_granted ? 'Turn off →' : 'Turn on →'}</span>
+            </span>
           </div>
-          
-          <div className="t-label" style={{ margin: 'var(--s2) var(--s2) var(--s2)' }}>Nigeria</div>
-          <NavItem active={activeTab === 'Coverage Diet'} onClick={() => handleTabChange('Coverage Diet')} icon={IconCircleDot} label="Coverage Diet" />
-          <NavItem active={activeTab === 'Coverage Gaps'} onClick={() => handleTabChange('Coverage Gaps')} icon={IconChartPie} label="Coverage Gaps" />
-          <NavItem active={activeTab === 'Alerts'} onClick={() => handleTabChange('Alerts')} icon={IconBell} label="Alerts" />
-          <NavItem active={activeTab === 'Topics'} onClick={() => handleTabChange('Topics')} icon={IconHash} label="Topics" />
-          <NavItem active={activeTab === 'Saved'} onClick={() => handleTabChange('Saved')} icon={IconBookmark} label="Saved" />
-          
-          <div style={{ height: '1px', background: 'var(--hair)', margin: 'var(--s4) var(--s2)' }}></div>
-          
-          <div className="t-label" style={{ margin: 'var(--s2) var(--s2) var(--s2)' }}>Your account</div>
-          <NavItem active={activeTab === 'Subscription'} onClick={() => handleTabChange('Subscription')} icon={IconCrown} label="Subscription" />
-          <NavItem active={activeTab === 'Settings'} onClick={() => handleTabChange('Settings')} icon={IconSettings} label="Settings" />
-        </Rail>
-        
-        <ContentArea>
-          <div className="crumb"><span className="outlet-mark" style={{ marginRight: 'var(--s2)' }}>&#127475;&#127468;</span>Nigeria &middot; {activeTab}</div>
-          
-          {activeTab === 'Coverage Diet' && (
-            <>
-              <H1>Your reading summary</H1>
-              <Body style={{ color: 'var(--t-sub)', margin: '0 0 var(--s5)', lineHeight: 1.5 }}>How you've been reading the news on TraceNews &mdash; the coverage you've seen, and the coverage you haven't.</Body>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)', padding: 'var(--s3) var(--s4)', background: 'var(--sunk)', border: '1px solid var(--border)', borderRadius: 'var(--r-sm)', marginBottom: 'var(--s5)' }}>
-                <Meta style={{ flex: 1 }}>
-                  <b style={{ color: 'var(--t-body)', fontWeight: 600 }}>You control this.</b> {consentData.TOGGLE.promise} &mdash; {consentData.TOGGLE.shortNotice}
-                </Meta>
-                <a onClick={toggleConsent} className="t-meta" style={{ color: 'var(--v-clear)', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: '1px solid color-mix(in srgb, var(--v-clear) 35%, transparent)' }}>
-                  {hasConsent ? 'Tracking is ON (Manage)' : 'Tracking is OFF (Turn On)'}
-                </a>
-                <Meta>&middot;</Meta> 
-                <a onClick={() => setIsCountsModalOpen(true)} className="t-meta" style={{ color: 'var(--v-clear)', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: '1px solid color-mix(in srgb, var(--v-clear) 35%, transparent)' }}>Delete all</a>
-              </div>
-
-              <Card>
-                <SecHead title="Who you've been reading" subtitle="last 30 days" style={{ marginBottom: 'var(--s3)' }} />
-                <div className="t-display" style={{ marginBottom: 'var(--s3)', fontWeight: 600, color: 'var(--t-primary)' }}>
-                  Across {totalDiet} stories, your reading leaned {summary.mainstream > summary.govt ? 'mainstream' : 'government-aligned'} &mdash; with {summary.watchdog} from watchdog coverage.
-                </div>
-                <TierBar govt={summary.govt} main={summary.mainstream} watch={summary.watchdog} total={totalDiet} style={{ marginBottom: 'var(--s3)' }} />
-                <TierLabels govt={summary.govt} main={summary.mainstream} watch={summary.watchdog} />
-                <Meta style={{ marginTop: 'var(--s3)', fontStyle: 'italic' }}>Counts are outlet-visits across the stories you opened. Not a judgment about you &mdash; a log of what you read.</Meta>
-                
-                <div style={{ marginTop: 'var(--s4)', paddingTop: 'var(--s4)', borderTop: '1px solid var(--hair)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--s4)' }}>
-                    <b className="t-body" style={{ color: 'var(--t-primary)' }}>Recent stories you read</b>
-                    {totalDiet > 0 && <span className="t-body" style={{ color: 'var(--v-clear)', cursor: 'pointer' }}>See all {totalDiet} &rarr;</span>}
-                  </div>
-                  {totalDiet === 0 ? (
-                    <EmptyState message="You haven't read any stories yet." />
-                  ) : (
-                    <EmptyState message="We track your aggregate tiers to build your diet, but we explicitly do not save your personal reading history." />
-                  )}
-                </div>
-              </Card>
-            </>
-          )}
-
-          {activeTab === 'Coverage Gaps' && (
-            <>
-              <H1>Coverage Gaps</H1>
-              <Body style={{ color: 'var(--t-sub)', margin: '0 0 var(--s5)', lineHeight: 1.5 }}>Understand how the stories you read vary in coverage across different outlets.</Body>
-              
-              <Card>
-                <SecHead title="Coverage Gaps exposure" subtitle="last 30 days" style={{ marginBottom: 'var(--s3)' }} />
-                <div className="t-display" style={{ marginBottom: 'var(--s3)', fontWeight: 600, color: 'var(--t-primary)' }}>
-                  Of the <em style={{ fontFamily: 'var(--f-mono)', fontStyle: 'normal' }}>{totalDivergence}</em> stories you opened, {summary.broad > summary.partial ? 'most were covered broadly' : 'many had partial coverage'}.
-                </div>
-                <div className="tierbar" style={{ marginBottom: 'var(--s3)' }}>
-                  <i style={{width: `${pct(summary.broad, totalDivergence)}%`, background: 'var(--v-clear)'}}></i>
-                  <i style={{width: `${pct(summary.partial, totalDivergence)}%`, background: 'var(--v-mixed)'}}></i>
-                </div>
-                <div style={{ display: 'flex', gap: 'var(--s4)', fontFamily: 'var(--f-mono)' }} className="t-meta">
-                  <span><Dot variant="v-clear" />Broad<b style={{ color: 'var(--t-body)', fontWeight: 500, marginLeft: 'var(--s1)' }}>{summary.broad}</b></span>
-                  <span><Dot variant="v-mixed" />Partial<b style={{ color: 'var(--t-body)', fontWeight: 500, marginLeft: 'var(--s1)' }}>{summary.partial}</b></span>
-                </div>
-                
-                <div style={{ marginTop: 'var(--s4)', paddingTop: 'var(--s4)', borderTop: '1px solid var(--hair)' }}>
-                  <Body style={{ marginBottom: 'var(--s4)' }}>
-                    <b style={{ color: 'var(--t-primary)' }}>The {summary.partial} stories with partial coverage</b> &mdash; the coverage you may have missed.
-                  </Body>
-                  
-                  {summary.partial === 0 ? (
-                    <EmptyState message="No partial coverage stories opened yet." />
-                  ) : (
-                    <EmptyState message="We track your aggregate exposure to divergence, but we explicitly do not save which specific stories you opened." />
-                  )}
-                </div>
-              </Card>
-            </>
-          )}
-
-          {(activeTab === 'Saved' || activeTab === 'Topics' || activeTab === 'Alerts') && (
-            <>
-              <H1>{activeTab}</H1>
-              <Body style={{ color: 'var(--t-sub)', margin: '0 0 var(--s5)', lineHeight: 1.5 }}>Your personal {activeTab.toLowerCase()} lists.</Body>
-              <EmptyState message={`You have no ${activeTab.toLowerCase()} items yet.`} style={{ marginTop: 'var(--s5)' }} />
-            </>
-          )}
-
-          {activeTab === 'Settings' && (
-            <div style={{ maxWidth: '600px' }}>
-              <H1>Settings</H1>
-              
-              <div style={{ marginTop: 'var(--s6)' }}>
-                <SecHead title="Profile" />
-                <div style={{ margin: 'var(--s4) 0' }}>
-                  <div style={{ fontSize: '12.5px', color: 'var(--t-body)', marginBottom: 'var(--s4)' }}>
-                    <span style={{ color: 'var(--t-sub)' }}>Email:</span> <span style={{ fontWeight: 500 }}>{user?.email}</span>
-                  </div>
-                  
-                  <form onSubmit={handleChangePassword}>
-                    <Field label="Change Password" error={passwordError}>
-                      <Input 
-                        type="password" 
-                        value={newPassword}
-                        onChange={(e) => { setNewPassword(e.target.value); setPasswordError(null); }}
-                        hasError={!!passwordError}
-                        placeholder="New password"
-                        style={{ maxWidth: '280px' }}
-                      />
-                    </Field>
-                    <Button type="submit" variant="secondary" size="sm" loading={passwordLoading} disabled={!newPassword}>Update Password</Button>
-                    {passwordSuccess && <span style={{ fontSize: '11.5px', color: 'var(--success)', marginLeft: '12px' }}>Password updated.</span>}
-                  </form>
-                </div>
-              </div>
-
-              <div style={{ marginTop: 'var(--s6)' }}>
-                <SecHead title="Data & Privacy" />
-                <div style={{ margin: 'var(--s4) 0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--s4)' }}>
-                    <div style={{ fontSize: '12.5px', color: 'var(--t-body)' }}>
-                      <strong>Reader Analytics</strong>
-                      <p style={{ margin: '4px 0 0', color: 'var(--t-sub)' }}>Allow TraceNews to aggregate your reading diet.</p>
-                    </div>
-                    <Switch checked={hasConsent} onChange={toggleConsent} />
-                  </div>
-                  
-                  <div style={{ display: 'flex', gap: 'var(--s3)' }}>
-                    <Button variant="secondary" size="sm">Export my data</Button>
-                    <Button variant="secondary" size="sm" onClick={() => setIsCountsModalOpen(true)}>Delete my counts</Button>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ marginTop: 'var(--s6)' }}>
-                <SecHead title="Notifications" />
-                <div style={{ margin: 'var(--s4) 0' }}>
-                  <EmptyState message="Notification preferences coming soon." />
-                </div>
-              </div>
-
-              <div style={{ marginTop: 'var(--s6)' }}>
-                <SecHead title="Session" />
-                <div style={{ margin: 'var(--s4) 0' }}>
-                  <Button variant="secondary" size="sm" onClick={handleSignOut}>Log Out</Button>
-                </div>
-              </div>
-
-              <div style={{ marginTop: 'var(--s6)' }}>
-                <SecHead title="Danger Zone" />
-                <div style={{ margin: 'var(--s4) 0' }}>
-                  <p style={{ fontSize: '12.5px', color: 'var(--t-body)', marginBottom: 'var(--s4)' }}>
-                    Deleting your account is permanent. This removes all your reading data, saved stories, and alerts.
-                  </p>
-                  <Button variant="danger" onClick={() => setIsDeleteModalOpen(true)}>Delete Account</Button>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {activeTab === 'Subscription' && (
-            <>
-              <H1>Subscription</H1>
-              <EmptyState 
-                title="Subscriptions are coming soon" 
-                message="Manage your TraceNews Premium subscription here once it launches." 
-              />
-            </>
-          )}
-
-          <div style={{ marginTop: 'var(--s6)' }}>
-            <SecHead title="Reference" subtitle="what a “coming soon” country shows" />
-            <EmptyState 
-              title="TraceNews South Africa is coming" 
-              message="We’re building the same coverage instrument for South Africa. Your Coverage Diet here will start the day it goes live." 
-            />
-          </div>
-        </ContentArea>
-      </ShellContainer>
-
-      <Modal
-        isOpen={isCountsModalOpen}
-        onClose={() => setIsCountsModalOpen(false)}
-        title="Delete reading counts?"
-        description="This will reset your Coverage Diet and Coverage Gaps charts. This action cannot be undone."
-        primaryAction={handleDeleteCounts}
-        primaryText="Delete Counts"
-      />
-
-      <Modal
-        isOpen={isDeleteModalOpen}
-        onClose={() => { setIsDeleteModalOpen(false); setDeleteError(null); }}
-        title="Delete Account?"
-        description="This will permanently delete your TraceNews account and all associated data. This action cannot be undone."
-        primaryAction={handleDeleteAccount}
-        primaryText={deleteLoading ? "Deleting..." : "Delete Account"}
-      >
-        {deleteError && (
-          <div style={{ padding: '8px', background: '#fee2e2', color: '#991b1b', borderRadius: '4px', marginTop: '12px', fontSize: '12px' }}>
-            {deleteError}
-          </div>
-        )}
-      </Modal>
-
-    </AppShell>
+        </aside>
+      </div>
+    </div>
   );
 }
