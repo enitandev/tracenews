@@ -25,8 +25,7 @@ const TAB_TO_KEY = {
   'All': 'all',
   'Watchdog': 'adversarial',
   'Mainstream': 'institutional',
-  'Govt': 'pro_establishment',
-  'Bias Comparison': 'comparison'
+  'Govt': 'pro_establishment'
 };
 
 const GOVERNMENT_COLORS = {
@@ -161,14 +160,10 @@ export default function Story() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeSummaryTab, setActiveSummaryTab] = useState('Bias Comparison');
   const [activeFilterTab, setActiveFilterTab] = useState('all');
-  const [framingCache, setFramingCache] = useState({});
-  const [loadingFraming, setLoadingFraming] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [copyTooltip, setCopyTooltip] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [feedbackTier, setFeedbackTier] = useState('Bias Comparison');
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackStatus, setFeedbackStatus] = useState('');
 
@@ -238,26 +233,6 @@ export default function Story() {
         }
       });
   }, [slug]);
-
-  useEffect(() => {
-    if (framingCache[activeSummaryTab]) return;
-    if (!data || !data.cluster) return;
-
-    setLoadingFraming(true);
-    const alignmentQuery = TAB_TO_KEY[activeSummaryTab] || 'all'; // Fallback if somehow not mapped
-    fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/${data.cluster.id}/framing?alignment=${alignmentQuery}`)
-      .then(res => res.json())
-      .then(d => {
-        if (d.bullets && d.bullets.length > 0) {
-          setFramingCache(prev => ({ ...prev, [activeSummaryTab]: d.bullets }));
-        }
-        setLoadingFraming(false);
-      })
-      .catch(e => {
-        console.error(e);
-        setLoadingFraming(false);
-      });
-  }, [activeSummaryTab, data?.cluster?.id]); // Intentionally omitted framingCache
 
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center', fontFamily: 'var(--font-body)', color: 'var(--text-primary)' }}>Loading Story...</div>;
@@ -627,22 +602,7 @@ export default function Story() {
             <CoverageBar variant="compact" coverageStats={stats} liveTotal={Object.values(stats?.coverage_tier_distribution || {}).reduce((a, b) => a + b, 0) || cluster.outlet_count} />
           </div>
 
-          {/* Bias Comparison suppressed —
-              Bridge Chambers ruling 
-              9 Jul 2026. Feature returns 
-              pending redesign with human 
-              verification gate. */}
-          <div style={{
-            padding: '16px',
-            fontSize: '13px',
-            color: 'var(--text-muted)',
-            fontStyle: 'italic',
-            textAlign: 'center'
-          }}>
-            Coverage analysis by tier 
-            is being updated. Check back 
-            shortly.
-          </div>
+
 
           {/* BAR 2: Article Filter Bar */}
           <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #333', marginBottom: '24px', paddingBottom: '0' }}>
