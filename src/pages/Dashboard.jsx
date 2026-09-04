@@ -150,10 +150,19 @@ export default function Dashboard() {
                         <span className="lk">See all →</span>
                       </div>
                       
-                      {data.public_one_tier_stories.length === 0 ? (
-                        <p className="t-muted" style={{ fontSize: '13px', padding: 'var(--s3) 0' }}>No stories available.</p>
-                      ) : (
-                        data.public_one_tier_stories.map(s => (
+                      {(() => {
+                        const computedAt = data.public_one_tier_computed_at ? new Date(data.public_one_tier_computed_at) : null;
+                        const isStale = computedAt ? (new Date() - computedAt) > (2 * 60 * 60 * 1000) : true;
+                        
+                        if (isStale) {
+                          return <p className="t-muted" style={{ fontSize: '13px', padding: 'var(--s3) 0' }}>The public feed is being refreshed. Check back shortly.</p>;
+                        }
+                        
+                        if (!data.public_one_tier_stories || data.public_one_tier_stories.length === 0) {
+                          return <p className="t-muted" style={{ fontSize: '13px', padding: 'var(--s3) 0' }}>No stories available.</p>;
+                        }
+                        
+                        return data.public_one_tier_stories.map(s => (
                           <div className="it" key={s.cluster_id}>
                             <span className="mk mk-dk">One tier</span>
                             <div className="bd">
@@ -162,8 +171,8 @@ export default function Dashboard() {
                             </div>
                             <span className="ag">Live</span>
                           </div>
-                        ))
-                      )}
+                        ));
+                      })()}
                     </div>
                   </>
                 ) : (
@@ -172,7 +181,7 @@ export default function Dashboard() {
                     <p style={{ fontSize: '13px', color: 'var(--t-muted)', margin: '0 0 var(--s4)', lineHeight: 1.6, maxWidth: '60ch' }}>
                       We respect your privacy. TraceNews does not track your reading habits unless you explicitly opt in. Enable tracking to see your coverage diet and exposure to coverage gaps.
                     </p>
-                    <button onClick={handleToggleConsent} style={{ background: 'var(--ink)', color: 'var(--on-accent)', border: 'none', padding: '8px 16px', borderRadius: '3px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
+                    <button onClick={handleToggleConsent} style={{ background: 'var(--t-primary)', color: 'var(--on-accent)', border: 'none', padding: '8px 16px', borderRadius: '3px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
                       Enable tracking
                     </button>
                   </div>

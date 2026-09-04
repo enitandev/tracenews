@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ThemeToggle } from './ds/Toggle';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function DashboardShell({ children }) {
   const location = useLocation();
   const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   // The rail items matching tracenews-dashboard-shell.reference.html
   // Nigeria is the only live country group, others are Soon
@@ -21,7 +22,9 @@ export default function DashboardShell({ children }) {
           <Link to="/dashboard" className="on">Account</Link>
         </nav>
         <div className="right">
-          <ThemeToggle />
+          <button className="toggle" onClick={toggleTheme}>
+            {theme === 'dark' ? '◐ Light' : '◑ Dark'}
+          </button>
           <span className="avatar">EB</span>
         </div>
       </div>
@@ -68,8 +71,15 @@ export default function DashboardShell({ children }) {
           <div className="navitem soon" style={{ opacity: 0.6, cursor: 'default' }}>
             <i className="ti ti-crown"></i>Subscription
           </div>
-          <div className="navitem soon" style={{ opacity: 0.6, cursor: 'default' }}>
+          <Link to="/settings" className="navitem" style={{ textDecoration: 'none' }}>
             <i className="ti ti-settings"></i>Account
+          </Link>
+          <div className="navitem" onClick={async () => {
+            const { supabase } = await import('../lib/supabase');
+            await supabase.auth.signOut();
+            window.location.href = '/login';
+          }}>
+            <i className="ti ti-logout"></i>Sign Out
           </div>
         </aside>
         <main className="content">

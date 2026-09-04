@@ -2,13 +2,13 @@
 .mast { background: var(--shell); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 22px; height: 56px; }
 .mast .brand { font-weight: 700; font-size: 18px; color: var(--t-primary); }
 .mast .brand b { color: var(--v-clear); }
-.mast nav { display: flex; gap: 22px; }
+.mast nav { display: flex; gap: 22px; align-items: center; }
 .mast nav a, .mast nav div.nav-item { font-size: 13px; color: var(--t-sub); text-decoration: none; cursor: pointer; }
 .mast nav a.on { color: var(--t-primary); font-weight: 600; }
 .mast .right { display: flex; align-items: center; gap: 14px; }
 .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--tier-govt); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
 .shell { display: flex; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 56px); }
-.rail { width: 236px; flex: 0 0 236px; border-right: 1px solid var(--border); padding: 20px 14px; background: var(--page); }
+.rail { width: 236px; flex: 0 0 236px; border-right: 1px solid var(--border); padding: 20px 14px; background: var(--page); position: relative; z-index: 10; }
 .cswitch { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px; margin-bottom: 20px; cursor: pointer; position: relative; }
 .cswitch .lab { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--t-muted); font-weight: 600; margin-bottom: 5px; }
 .cswitch .cur { display: flex; align-items: center; justify-content: space-between; }
@@ -21,7 +21,7 @@
 .navitem.on { background: var(--active); color: var(--t-primary); font-weight: 600; }
 .navitem.on i { color: var(--v-clear); }
 .railsep { height: 1px; background: var(--divider); margin: 14px 8px; }
-.content { flex: 1; padding: 0; min-width: 0; }
+.content { flex: 1; padding: 0; min-width: 0; overflow: hidden; }
 .pop { position: absolute; margin-top: 6px; width: 210px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px; box-shadow: 0 12px 30px rgba(0,0,0,.35); z-index: 5; left: 12px; }
 .popitem { display: flex; align-items: center; justify-content: space-between; padding: 8px 9px; border-radius: 7px; font-size: 13px; color: var(--t-body); cursor: pointer; }
 .popitem.on { background: var(--active); color: var(--t-primary); font-weight: 600; }
@@ -30,13 +30,13 @@
 
 
 /* ══ Your Edition Layout (from tracenews-your-edition.html) ══ */
-.dk { display: flex; min-height: 540px; }
+.dk { display: flex; min-height: 540px; min-width: 0; overflow: hidden; }
 .main { flex: 1; padding: var(--s5) var(--s6); min-width: 0; border-right: 1px solid var(--hair); }
 .stand { width: 236px; flex: 0 0 236px; padding: var(--s5); }
 
 /* Content Styles */
 .dateline { font-family: var(--f-m); font-size: 9px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--t-faint); margin-bottom: var(--s3); }
-.lede { font-family: var(--f-d); font-size: 26px; line-height: 1.28; font-weight: 600; color: var(--ink); margin: 0 0 var(--s3); letter-spacing: -.4px; max-width: 21ch; }
+.lede { font-family: var(--f-d); font-size: 26px; line-height: 1.28; font-weight: 600; color: var(--v-dark); margin: 0 0 var(--s3); letter-spacing: -.4px; max-width: 21ch; }
 .lede em { font-style: normal; color: var(--v-dark); }
 .byline { font-size: 11.5px; color: var(--t-muted); padding-bottom: var(--s5); border-bottom: 1px solid var(--border); margin-bottom: var(--s5); display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
 .byline .ctl { color: var(--v-clear); cursor: pointer; }
