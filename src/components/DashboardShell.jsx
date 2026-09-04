@@ -22,7 +22,7 @@ export default function DashboardShell({ children }) {
           <Link to="/dashboard" className="on">Account</Link>
         </nav>
         <div className="right">
-          <button className="toggle" onClick={toggleTheme}>
+          <button className="toggle" onClick={() => toggleTheme()}>
             {theme === 'dark' ? '◐ Light' : '◑ Dark'}
           </button>
           <span className="avatar">EB</span>
