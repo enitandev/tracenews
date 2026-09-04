@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { AppShell, Masthead, ShellContainer, Rail, ContentArea } from '../components/ds/Layout';
-import { ThemeToggle } from '../components/ds/Toggle';
-import Logo from '../components/Logo';
-import { Button } from '../components/ds/Button';
 import { isStaffRole, hasPermission } from './permissions';
+import './desk.css';
 
 export default function AdminShell({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [staffName, setStaffName] = useState('Loading...');
   const [profile, setProfile] = useState(null);
-
+  
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -37,67 +34,61 @@ export default function AdminShell({ children }) {
     checkAuth();
   }, [navigate, location.pathname]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-  };
-
-  const navItems = [
-    { id: 'corrections', label: 'Corrections Queue', path: '/admin/corrections', active: true },
-    { id: 'monitoring_spirit', label: 'Monitoring Spirit', path: '/admin/monitoring-spirit', active: true },
-    { id: 'politicians', label: 'Politicians Review', path: '/admin/politicians', active: true },
-    { id: 'reports', label: 'Content Taxonomy', path: '#', active: false },
-    { id: 'staff_management', label: 'User Management', path: '#', active: false },
-  ];
+  const date = new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
-    <AppShell>
-      <Masthead brandLink="/admin/corrections">
-        <div style={{ display: 'flex', alignItems: 'center', flex: 1, paddingLeft: 'var(--s4)' }}>
-          <span className="t-sub" style={{ fontWeight: 600, fontSize: '14px', marginLeft: 'var(--s3)', borderLeft: '1px solid var(--border)', paddingLeft: 'var(--s3)' }}>Staff Console</span>
+    <div className="pg">
+      <div className="desk">
+        <div className="mh">
+          <div className="mh-top">
+            <div className="mh-id">
+              <span className="wm">Trace<i>News</i></span>
+              <span className="desk-l">The Desk</span>
+            </div>
+            <div className="mh-meta">
+              <span>{date}</span>
+              <span className="who">{staffName} · {profile?.role || 'Super Admin'}</span>
+            </div>
+          </div>
+          <div className="mh-rule"></div><div className="mh-rule2"></div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s4)', marginRight: 'var(--s5)' }}>
-          <span className="t-muted" style={{ fontSize: '13px' }}>Signed in as {staffName}</span>
-          <ThemeToggle />
-          <Button variant="secondary" size="sm" onClick={handleLogout}>Log Out</Button>
-        </div>
-      </Masthead>
-      <ShellContainer>
-        <Rail>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s2)' }}>
-            {navItems.map((item, idx) => {
-              if (profile && !hasPermission(profile.role, profile.is_staff, item.id, 'view')) {
-                return null; // hide rail item if user lacks permission
-              }
-              const isActiveRoute = location.pathname === item.path;
-              if (!item.active) {
-                return (
-                  <div key={idx} style={{ padding: 'var(--s3) var(--s4)', borderRadius: 'var(--r-sm)', color: 'var(--t-faint)', cursor: 'not-allowed', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '14px' }}>{item.label}</span>
-                    <span style={{ fontSize: '10px', textTransform: 'uppercase', background: 'var(--raised)', padding: '2px 6px', borderRadius: '4px' }}>Soon</span>
-                  </div>
-                );
-              }
-              return (
-                <Link key={idx} to={item.path} style={{
-                  padding: 'var(--s3) var(--s4)',
-                  borderRadius: 'var(--r-sm)',
-                  textDecoration: 'none',
-                  fontSize: '14px',
-                  color: isActiveRoute ? 'var(--v-brand)' : 'var(--t-body)',
-                  background: isActiveRoute ? 'var(--raised)' : 'transparent',
-                  fontWeight: isActiveRoute ? 600 : 400
-                }}>
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </Rail>
-        <ContentArea>
+
+        <div className="dk">
+          <aside className="rail">
+            <p className="rg">Desk</p>
+            <Link to="/admin" className={`ri ${location.pathname === '/admin' ? 'on' : ''}`} style={{textDecoration: 'none'}}>Overview</Link>
+            <Link to="/admin/corrections" className={`ri ${location.pathname.includes('/corrections') ? 'on' : ''}`} style={{textDecoration: 'none'}}>Corrections</Link>
+            <div className="ri soon">Data requests <span className="n">Soon</span></div>
+            <div className="ri soon">Audit ledger <span className="n">Soon</span></div>
+
+            <p className="rg">Intelligence</p>
+            <Link to="/admin/monitoring-spirit" className={`ri ${location.pathname.includes('/monitoring-spirit') ? 'on' : ''}`} style={{textDecoration: 'none'}}>Monitoring Spirit</Link>
+            <div className="ri soon">Outlets <span className="n">Soon</span></div>
+            <Link to="/admin/politicians" className={`ri ${location.pathname.includes('/politicians') ? 'on' : ''}`} style={{textDecoration: 'none'}}>Politicians</Link>
+            <div className="ri soon">Stories <span className="n">Soon</span></div>
+            <div className="ri soon">Taxonomy <span className="n">Soon</span></div>
+
+            <p className="rg">Newsroom</p>
+            <div className="ri soon">Reports <span className="n">Soon</span></div>
+            <div className="ri soon">Daily Briefing <span className="n">Soon</span></div>
+            <div className="ri soon">Newsletter <span className="n">Soon</span></div>
+            <div className="ri soon">Site copy <span className="n">Soon</span></div>
+
+            <p className="rg">People</p>
+            <div className="ri soon">Readers <span className="n">Soon</span></div>
+            <div className="ri soon">Staff <span className="n">Soon</span></div>
+            <div className="ri soon">Subscriptions <span className="n">Soon</span></div>
+
+            <p className="rg">Platform</p>
+            <div className="ri soon">Ingestion <span className="n">Soon</span></div>
+            <div className="ri soon">Scorer <span className="n">Soon</span></div>
+            <div className="ri soon">Deploys <span className="n">Soon</span></div>
+            <div className="ri soon">Counsel file <span className="n">Soon</span></div>
+          </aside>
+          
           {children}
-        </ContentArea>
-      </ShellContainer>
-    </AppShell>
+        </div>
+      </div>
+    </div>
   );
 }

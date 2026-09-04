@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { StateCoverage } from '../components/ds/StateCoverage';
+import DashboardShell from '../components/DashboardShell';
 import './dashboard.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
@@ -103,41 +104,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="ed">
-      <div className="mh">
-        <div className="mh-top">
-          <div className="mh-id">
-            <span className="wm">Trace<i>News</i></span>
-            <span className="lbl">Your Edition</span>
-          </div>
-          <div className="mh-meta">
-            <nav className="nav">
-              <span className="on">Dashboard</span>
-              <span>Saved</span>
-              <span>Settings</span>
-            </nav>
-          </div>
-        </div>
-        <div className="mh-rule"></div>
-        <div className="mh-rule2"></div>
-      </div>
-      
+    <DashboardShell>
       <div className="dk">
-        <aside className="rail">
-          <p className="rg">Your reading</p>
-          <div className="ri on">Summary</div>
-          <div className="ri">Coverage gaps</div>
-          <div className="ri">Saved stories</div>
-          <div className="ri soon">History window <span className="n">Paid</span></div>
-          
-          <p className="rg">Following</p>
-          <div className="ri soon">Topics <span className="n">Soon</span></div>
-          <div className="ri soon">Outlets <span className="n">Soon</span></div>
-          <div className="ri soon">Politicians <span className="n">Soon</span></div>
-        </aside>
-        
         <div className="main">
-          <p className="dateline">Your Edition · {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p className="dateline">Your reading · last 30 days</p>
           
           <StateCoverage loading={loading} error={error} onRetry={fetchData} isEmpty={false}>
             {data && (
@@ -241,6 +211,6 @@ export default function Dashboard() {
           </div>
         </aside>
       </div>
-    </div>
+    </DashboardShell>
   );
 }

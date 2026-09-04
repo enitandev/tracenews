@@ -119,7 +119,7 @@ export default function AdminPoliticians() {
   };
 
   return (
-    <>
+    <div className="desk-col" style={{ borderRight: 'none' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--s6)' }}>
         <div>
           <h2 className="t-display" style={{ margin: '0 0 var(--s1) 0' }}>Politicians Review</h2>
@@ -273,6 +273,6 @@ export default function AdminPoliticians() {
           No entities found for this status.
         </div>
       )}
-    </>
+    </div>
   );
 }

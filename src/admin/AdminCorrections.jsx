@@ -83,7 +83,7 @@ export default function AdminCorrections() {
   };
 
   return (
-    <>
+    <div className="desk-col" style={{ borderRight: 'none' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--s6)' }}>
         <div>
           <h2 className="t-display" style={{ margin: '0 0 var(--s1) 0' }}>Corrections Queue</h2>
@@ -205,6 +205,6 @@ export default function AdminCorrections() {
           Queue is empty.
         </div>
       )}
-    </>
+    </div>
   );
 }

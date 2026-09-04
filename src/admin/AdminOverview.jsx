@@ -78,7 +78,7 @@ export default function AdminOverview() {
   };
 
   return (
-    <div className="desk">
+    <>
       <div className="desk-col">
         <p className="dateline">TraceNews Desk · {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
         
@@ -196,6 +196,6 @@ export default function AdminOverview() {
           ))}
         </StateCoverage>
       </aside>
-    </div>
+    </>
   );
 }

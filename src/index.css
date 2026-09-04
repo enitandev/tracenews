@@ -29,6 +29,19 @@
   --header-util-text: #ffffff;
   --header-main: #ffffff;
   --header-ticker: #f9f9f9;
+
+  /* V2 DESIGN SYSTEM TOKENS (LIGHT DEFAULT) */
+  --page: #f2f4f7; --shell: #ffffff; --card: #ffffff; --raised: #f7f9fb; --sunk: #eef1f5;
+  --hair: #eceff3; --track: #e9edf1; --active: #edf1f5;
+  --t-display: #14171b; --t-primary: #242830; --t-body: #454b54; --t-sub: #5d636c; --t-faint: #9aa0a8;
+  --tier-govt: #4d6072; --tier-main: #8c7c68; --tier-watch: #5d7a50; --tier-none: #868b94;
+  --v-clear: #2f9d78; --v-mixed: #a8761c; --v-dark: #5960ab;
+  --on-accent: #ffffff; --on-tier: #ffffff;
+  --skel-a: #e9edf1; --skel-b: #f2f5f8;
+  --shadow-pop: 0 12px 30px rgba(20,30,45,.14);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 26px; --s7: 34px; --s8: 46px;
+  --r-sm: 6px; --r-md: 9px; --r-lg: 13px; --r-pill: 100px;
+  --f-display: 'Spectral', Georgia, serif; --f-ui: 'Montserrat', system-ui, sans-serif; --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 body[data-theme='dark'] {
@@ -53,6 +66,16 @@ body[data-theme='dark'] {
   --header-util-text: #cccccc;
   --header-main: #1a1a1a;
   --header-ticker: #222222;
+
+  /* V2 DESIGN SYSTEM TOKENS (DARK OVERRIDES) */
+  --page: #0d0e10; --shell: #101216; --card: #16181c; --raised: #1b1e23; --sunk: #131518;
+  --hair: #212429; --track: #1e2126; --active: #1d2127;
+  --t-display: #e6e9ed; --t-primary: #d0d4da; --t-body: #aeb3bb; --t-sub: #8f949d; --t-faint: #61666e;
+  --tier-govt: #6d7f92; --tier-main: #a49889; --tier-watch: #8f9a6f; --tier-none: #6b6f78;
+  --v-clear: #63cda8; --v-mixed: #e2ab4d; --v-dark: #9298db;
+  --on-accent: #0d0e10; --on-tier: #12141a;
+  --skel-a: #1b1e23; --skel-b: #22262c;
+  --shadow-pop: 0 14px 34px rgba(0,0,0,.46);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
