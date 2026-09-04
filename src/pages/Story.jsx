@@ -160,6 +160,8 @@ export default function Story() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [summaryData, setSummaryData] = useState(null);
+  const [loadingSummary, setLoadingSummary] = useState(false);
   const [activeFilterTab, setActiveFilterTab] = useState('all');
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [copyTooltip, setCopyTooltip] = useState(false);
@@ -234,6 +236,21 @@ export default function Story() {
       });
   }, [slug]);
 
+  useEffect(() => {
+    if (!data || !data.cluster) return;
+    setLoadingSummary(true);
+    fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/api/clusters/${data.cluster.id}/summary`)
+      .then(res => res.json())
+      .then(d => {
+        setSummaryData(d);
+        setLoadingSummary(false);
+      })
+      .catch(e => {
+        console.error(e);
+        setSummaryData({ status: 'error', bullets: [], message: 'The summary could not be loaded.' });
+        setLoadingSummary(false);
+      });
+  }, [data?.cluster?.id]);
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center', fontFamily: 'var(--font-body)', color: 'var(--text-primary)' }}>Loading Story...</div>;
   if (!data || !data.cluster) return <div style={{ padding: '60px', textAlign: 'center', fontFamily: 'var(--font-body)', color: 'var(--text-primary)' }}>Story not found. Please navigate from the homepage.</div>;
@@ -602,7 +619,48 @@ export default function Story() {
             <CoverageBar variant="compact" coverageStats={stats} liveTotal={Object.values(stats?.coverage_tier_distribution || {}).reduce((a, b) => a + b, 0) || cluster.outlet_count} />
           </div>
 
-
+          {/* Story Event Summary */}
+          <div style={{
+            background: 'var(--bg-elevated)',
+            border: '1px solid var(--border)',
+            borderRadius: '8px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                What happened
+              </h2>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', background: 'var(--bg-surface)', padding: '4px 8px', borderRadius: '4px' }}>
+                AI-generated summary of the sources
+              </span>
+            </div>
+            
+            {loadingSummary ? (
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontStyle: 'italic' }}>A summary of this story is being prepared.</p>
+            ) : summaryData?.status === 'published' && summaryData.bullets.length > 0 ? (
+              <ul style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {summaryData.bullets.map((bullet, idx) => (
+                  <li key={idx} style={{ fontSize: '15px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                {summaryData?.message || 'No summary is available for this story.'}
+              </p>
+            )}
+            
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)', textAlign: 'right' }}>
+              <button 
+                onClick={() => setIsFeedbackModalOpen(true)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Report an error in this summary
+              </button>
+            </div>
+          </div>
 
           {/* BAR 2: Article Filter Bar */}
           <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #333', marginBottom: '24px', paddingBottom: '0' }}>
