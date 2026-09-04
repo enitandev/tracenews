@@ -173,13 +173,13 @@ export default function AdminOverview() {
         </StateCoverage>
 
         <p className="st-h">Platform</p>
-        <StateCoverage loading={loading} error={error} isEmpty={data && Object.keys(data.standing.platform).length === 0} emptyMessage="You're not following anything yet">
+        <StateCoverage loading={loading} error={error} isEmpty={data && Object.keys(data.standing.platform).length === 0} emptyMessage="No platform status available">
           {data && Object.keys(data.standing.platform).length > 0 && (
             <>
               {Object.entries(data.standing.platform).map(([key, value]) => (
                 <div className="hb" key={key}>
                   <span style={{ textTransform: 'capitalize' }}>{key.replace('_', ' ')}</span>
-                  <span className={`v ${value === 'in sync' || value === 'live' ? 'ok' : 'warn'}`}>{value}</span>
+                  <span className={`v ${value === 'in sync' || value === 'live' || value === 'stable' || value === 'OK' ? 'ok' : 'warn'}`}>{value}</span>
                 </div>
               ))}
             </>
@@ -190,7 +190,7 @@ export default function AdminOverview() {
         <StateCoverage loading={loading} error={error} isEmpty={data && data.standing.ledger.length === 0} emptyMessage="No recent ledger entries.">
           {data && data.standing.ledger.length > 0 && data.standing.ledger.map(entry => (
             <div className="led" key={entry.id}>
-              <b>{entry.actor}</b> {entry.action} <b>{entry.target_table}</b> — <q>{entry.target_id}</q>
+              <b>{entry.actor}</b> {entry.action} <b>{entry.subject_name || entry.target_table}</b> — <q>{entry.reason_text}</q>
               <span className="ts">{formatDate(entry.created_at)}</span>
             </div>
           ))}
