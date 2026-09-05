@@ -83,7 +83,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
               >
                 {showAbbrev && (
                   <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, pointerEvents: 'none', textAlign: 'center' }}>
-                    {TIER_FULL_LABELS[tier]} {Math.round(percentage)}%
+                    {TIER_LABELS[tier]} {Math.round(percentage)}%
                   </span>
                 )}
                 {hoveredTier === tier && (

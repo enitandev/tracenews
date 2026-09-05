@@ -254,17 +254,17 @@ export default function PoliticianProfile() {
           {totalDist > 0 && (
             <div style={{ display: 'flex', width: '100%', height: '32px', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
               {(tier_distribution.govt_aligned / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.govt_aligned / totalDist) * 100}%`, background: TIER_COLOR.govt_aligned, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
+                <div style={{ width: `${(tier_distribution.govt_aligned / totalDist) * 100}%`, background: TIER_COLORS.govt_aligned, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
                   {((tier_distribution.govt_aligned / totalDist) * 100) > 15 ? 'Govt-aligned' : ''}
                 </div>
               )}
               {(tier_distribution.mainstream / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.mainstream / totalDist) * 100}%`, background: TIER_COLOR.mainstream, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
+                <div style={{ width: `${(tier_distribution.mainstream / totalDist) * 100}%`, background: TIER_COLORS.mainstream, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
                   {((tier_distribution.mainstream / totalDist) * 100) > 15 ? 'Mainstream' : ''}
                 </div>
               )}
               {(tier_distribution.watchdog / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.watchdog / totalDist) * 100}%`, background: TIER_COLOR.watchdog, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
+                <div style={{ width: `${(tier_distribution.watchdog / totalDist) * 100}%`, background: TIER_COLORS.watchdog, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
                   {((tier_distribution.watchdog / totalDist) * 100) > 15 ? 'Watchdog' : ''}
                 </div>
               )}
@@ -273,13 +273,13 @@ export default function PoliticianProfile() {
           
           <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
             <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.govt_aligned }} /> Govt-aligned
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS.govt_aligned }} /> Govt-aligned
             </Link>
             <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.mainstream }} /> Mainstream
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS.mainstream }} /> Mainstream
             </Link>
             <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.watchdog }} /> Watchdog
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS.watchdog }} /> Watchdog
             </Link>
           </div>
           
