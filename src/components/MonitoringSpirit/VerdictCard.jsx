@@ -89,7 +89,7 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
     return tiers.map(t => {
       const count = liveCounts[t];
       if (count === 0) {
-        return <i key={t} className="ghost" style={{ width: '8%' }} data-testid={`track-ghost-${t}`}></i>;
+        return <i key={t} className="vc-ghost" style={{ width: '8%' }} data-testid={`track-ghost-${t}`}></i>;
       } else {
         const pct = (count / total) * remainingSpace;
         return <i key={t} style={{ width: `${pct}%`, background: TOKENS.tier[t] }} data-testid={`track-bar-${t}`}></i>;
@@ -100,14 +100,14 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
   const renderTimeline = () => {
     const snaps = verdictData.snapshots || [];
     if (snaps.length < 2) {
-      return <p className="hold">{fillTemplate(cardStrings.footerNote)}</p>;
+      return <p className="vc-hold">{fillTemplate(cardStrings.footerNote)}</p>;
     }
     return (
       <>
-        <div className="legend">
-          <span><i className="tdot" style={{background: TOKENS.tier.govt, width: '7px', height: '7px'}}></i>Govt</span>
-          <span><i className="tdot" style={{background: TOKENS.tier.mainstream, width: '7px', height: '7px'}}></i>Mainstream</span>
-          <span><i className="tdot" style={{background: TOKENS.tier.watchdog, width: '7px', height: '7px'}}></i>Watchdog</span>
+        <div className="vc-legend">
+          <span><i className="vc-tdot" style={{background: TOKENS.tier.govt, width: '7px', height: '7px'}}></i>Govt</span>
+          <span><i className="vc-tdot" style={{background: TOKENS.tier.mainstream, width: '7px', height: '7px'}}></i>Mainstream</span>
+          <span><i className="vc-tdot" style={{background: TOKENS.tier.watchdog, width: '7px', height: '7px'}}></i>Watchdog</span>
         </div>
         {snaps.map((snap, i) => {
           const g = snap.coverage_tier_distribution?.govt_aligned || 0;
@@ -135,18 +135,18 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
           }
 
           return (
-            <div className="trow" key={i} data-testid="timeline-row">
-              <span className="ttime">{label}</span>
-              <div className="tbar">
-                {g === 0 ? <i className="ghost" style={{width: `${wG}%`}}></i> : <i style={{width: `${wG}%`, background: TOKENS.tier.govt}}></i>}
-                {m === 0 ? <i className="ghost" style={{width: `${wM}%`}}></i> : <i style={{width: `${wM}%`, background: TOKENS.tier.mainstream}}></i>}
-                {w === 0 ? <i className="ghost" style={{width: `${wW}%`}}></i> : <i style={{width: `${wW}%`, background: TOKENS.tier.watchdog}}></i>}
+            <div className="vc-trow" key={i} data-testid="timeline-row">
+              <span className="vc-ttime">{label}</span>
+              <div className="vc-tbar">
+                {g === 0 ? <i className="vc-ghost" style={{width: `${wG}%`}}></i> : <i style={{width: `${wG}%`, background: TOKENS.tier.govt}}></i>}
+                {m === 0 ? <i className="vc-ghost" style={{width: `${wM}%`}}></i> : <i style={{width: `${wM}%`, background: TOKENS.tier.mainstream}}></i>}
+                {w === 0 ? <i className="vc-ghost" style={{width: `${wW}%`}}></i> : <i style={{width: `${wW}%`, background: TOKENS.tier.watchdog}}></i>}
               </div>
-              <span className="tnums">{g}·{m}·{w}</span>
+              <span className="vc-tnums">{g}·{m}·{w}</span>
             </div>
           );
         })}
-        <p className="hold">{fillTemplate(evidenceStrings.held)}</p>
+        <p className="vc-hold">{fillTemplate(evidenceStrings.held)}</p>
       </>
     );
   };
@@ -157,14 +157,14 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
     if (count === 0) {
       return (
         <React.Fragment key={key}>
-          <div className="tier">
-            <span className="tname" style={{ color: TOKENS.tier[key] }}>
-              <i className="tdot" style={{ background: TOKENS.tier[key] }}></i>
+          <div className="vc-tier">
+            <span className="vc-tname" style={{ color: TOKENS.tier[key] }}>
+              <i className="vc-tdot" style={{ background: TOKENS.tier[key] }}></i>
               {TIER_LABEL_FULL[key]}
             </span>
-            <span className="tcount">0 outlets</span>
+            <span className="vc-tcount">0 outlets</span>
           </div>
-          <p className="rnone">{UI.noneRecordedLong}</p>
+          <p className="vc-rnone">{UI.noneRecordedLong}</p>
         </React.Fragment>
       );
     }
@@ -199,145 +199,145 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
 
     return (
       <React.Fragment key={key}>
-        <div className="tier">
-          <span className="tname" style={{ color: TOKENS.tier[key] }}>
-            <i className="tdot" style={{ background: TOKENS.tier[key] }}></i>
+        <div className="vc-tier">
+          <span className="vc-tname" style={{ color: TOKENS.tier[key] }}>
+            <i className="vc-tdot" style={{ background: TOKENS.tier[key] }}></i>
             {TIER_LABEL_FULL[key]}
           </span>
-          <span className="tcount">{count} {count === 1 ? 'outlet' : 'outlets'}</span>
+          <span className="vc-tcount">{count} {count === 1 ? 'outlet' : 'outlets'}</span>
         </div>
-        <p className="tmeta">{meta}</p>
-        <p className="names">{namesStr}</p>
+        <p className="vc-tmeta">{meta}</p>
+        <p className="vc-names">{namesStr}</p>
       </React.Fragment>
     );
   };
 
   return (
-    <div className="col" data-testid="monitoring-spirit-card">
+    <div className="vc-col" data-testid="monitoring-spirit-card">
       <style dangerouslySetInnerHTML={{__html: `
-        .col{max-width:360px;margin:0 auto;font-family:${TOKENS.font.body}}
-        .card{background:${TOKENS.surface.card};border:1px solid ${TOKENS.surface.border};border-radius:12px;overflow:hidden}
-        .gauge{display:flex;gap:4px;padding:3px 3px 0}
-        .seg{flex:1;height:5px;border-radius:2px;background:${TOKENS.surface.segDim}}
-        .seg.on{background:var(--accent)}
-        .zones{display:flex;padding:6px 6px 0;font-size:11px;font-weight:500}
-        .zones span{flex:1;color:#565b64}.zones .z2{text-align:center}.zones .z3{text-align:right}
-        .zones .on{color:var(--accent)}
-        .body{padding:13px 16px 15px}
-        .eye{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;font-weight:600;margin-bottom:9px;color:var(--accent)}
-        .verdict{font-family:${TOKENS.font.verdict};font-weight:600;font-size:21px;line-height:1.24;margin:0 0 8px;letter-spacing:.1px;color:var(--accent)}
-        .verdict.sm{font-size:20px}
-        .sub{font-size:13px;line-height:1.5;color:${TOKENS.text.sub};margin:0 0 14px}
-        .sub.tight{font-size:12.5px;margin:0}
-        .track{height:8px;border-radius:3px;background:${TOKENS.surface.trackBg};display:flex;overflow:hidden}
-        .track i{display:block;height:100%}
-        .track .ghost{background-image:repeating-linear-gradient(45deg,#2b2e35 0,#2b2e35 3px,#212429 3px,#212429 6px)}
-        .blabels{display:flex;justify-content:space-between;margin-top:8px;font-family:${TOKENS.font.mono};font-size:11px;color:${TOKENS.text.muted}}
-        .blabels b{color:#a4a9b2;font-weight:500}
-        .blabels .none{color:${TOKENS.text.faint};font-family:${TOKENS.font.body};font-size:10.5px}
-        .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
-        .ev{border-top:1px solid ${TOKENS.surface.divider};padding:12px 16px;display:flex;gap:12px}
-        .evl{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#797e88;font-weight:600;flex:0 0 82px;line-height:1.5}
-        .evt{font-size:12.5px;line-height:1.5;color:${TOKENS.text.evidence};margin:0}
-        .evt em{font-family:${TOKENS.font.mono};font-style:normal;color:#d0d4da}
-        .tap{border-top:1px solid ${TOKENS.surface.divider};padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;color:#c4c9d1;font-weight:500}
-        .tap:hover{background:#1c1f24}
-        .tap .chev{font-size:15px;transition:transform .15s}
-        .foot{border-top:1px solid ${TOKENS.surface.divider};padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-        .fnote{font-size:11px;color:${TOKENS.text.faint};font-style:italic}
-        .flink{font-size:11px;color:${TOKENS.text.link};font-weight:500;cursor:pointer;white-space:nowrap}
+        .vc-col{max-width:360px;margin:0 auto;font-family:${TOKENS.font.body}}
+        .vc-card{background:${TOKENS.surface.card};border:1px solid ${TOKENS.surface.border};border-radius:12px;overflow:hidden}
+        .vc-gauge{display:flex;gap:4px;padding:3px 3px 0}
+        .vc-seg{flex:1;height:5px;border-radius:2px;background:${TOKENS.surface.segDim}}
+        .vc-seg.vc-on{background:var(--accent)}
+        .vc-zones{display:flex;padding:6px 6px 0;font-size:11px;font-weight:500}
+        .vc-zones span{flex:1;color:#565b64}.vc-zones .vc-z2{text-align:center}.vc-zones .vc-z3{text-align:right}
+        .vc-zones .vc-on{color:var(--accent)}
+        .vc-body{padding:13px 16px 15px}
+        .vc-eye{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;font-weight:600;margin-bottom:9px;color:var(--accent)}
+        .vc-verdict{font-family:${TOKENS.font.verdict};font-weight:600;font-size:21px;line-height:1.24;margin:0 0 8px;letter-spacing:.1px;color:var(--accent)}
+        .vc-verdict.vc-sm{font-size:20px}
+        .vc-sub{font-size:13px;line-height:1.5;color:${TOKENS.text.sub};margin:0 0 14px}
+        .vc-sub.vc-tight{font-size:12.5px;margin:0}
+        .vc-track{height:8px;border-radius:3px;background:${TOKENS.surface.trackBg};display:flex;overflow:hidden}
+        .vc-track i{display:block;height:100%}
+        .vc-track .vc-ghost{background-image:repeating-linear-gradient(45deg,#2b2e35 0,#2b2e35 3px,#212429 3px,#212429 6px)}
+        .vc-blabels{display:flex;justify-content:space-between;margin-top:8px;font-family:${TOKENS.font.mono};font-size:11px;color:${TOKENS.text.muted}}
+        .vc-blabels b{color:#a4a9b2;font-weight:500}
+        .vc-blabels .vc-none{color:${TOKENS.text.faint};font-family:${TOKENS.font.body};font-size:10.5px}
+        .vc-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+        .vc-ev{border-top:1px solid ${TOKENS.surface.divider};padding:12px 16px;display:flex;gap:12px}
+        .vc-evl{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#797e88;font-weight:600;flex:0 0 82px;line-height:1.5}
+        .vc-evt{font-size:12.5px;line-height:1.5;color:${TOKENS.text.evidence};margin:0}
+        .vc-evt em{font-family:${TOKENS.font.mono};font-style:normal;color:#d0d4da}
+        .vc-tap{border-top:1px solid ${TOKENS.surface.divider};padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;color:#c4c9d1;font-weight:500}
+        .vc-tap:hover{background:#1c1f24}
+        .vc-tap .vc-chev{font-size:15px;transition:transform .15s}
+        .vc-foot{border-top:1px solid ${TOKENS.surface.divider};padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+        .vc-fnote{font-size:11px;color:${TOKENS.text.faint};font-style:italic}
+        .vc-flink{font-size:11px;color:${TOKENS.text.link};font-weight:500;cursor:pointer;white-space:nowrap}
         /* evidence-view specific */
-        .sec{border-top:1px solid ${TOKENS.surface.divider};padding:13px 16px}
-        .sech{font-size:11px;letter-spacing:.9px;text-transform:uppercase;color:#797e88;font-weight:600;margin:0 0 10px}
-        .lead{font-size:12.5px;line-height:1.5;color:${TOKENS.text.evidence};margin:0 0 13px}
-        .lead em{font-family:${TOKENS.font.mono};font-style:normal;color:#d0d4da}
-        .tier{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
-        .tname{font-size:12.5px;font-weight:600;display:flex;align-items:center}
-        .tdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
-        .tcount{font-family:${TOKENS.font.mono};font-size:11px;color:#8a8f98}
-        .tmeta{font-size:11.5px;color:${TOKENS.text.muted};margin:0 0 3px 15px;font-style:italic}
-        .names{font-size:12px;color:${TOKENS.text.names};line-height:1.5;margin:0 0 14px 15px}
-        .names:last-child{margin-bottom:0}
-        .rnone{font-size:12px;color:${TOKENS.text.faint};margin:0 0 0 15px;font-style:italic}
-        .trow{display:grid;grid-template-columns:56px 1fr 68px;gap:9px;align-items:center;margin-bottom:9px}
-        .trow:last-child{margin-bottom:0}
-        .ttime{font-family:${TOKENS.font.mono};font-size:11px;color:${TOKENS.text.muted}}
-        .tbar{height:7px;border-radius:3px;background:${TOKENS.surface.trackBg};display:flex;overflow:hidden}
-        .tbar i{display:block;height:100%}
-        .tnums{font-family:${TOKENS.font.mono};font-size:11px;color:${TOKENS.text.sub};text-align:right}
-        .hold{font-size:11.5px;color:${TOKENS.text.muted};margin:11px 0 0;line-height:1.5}
-        .legend{display:flex;gap:14px;margin:0 0 12px}
-        .legend span{font-size:11px;color:${TOKENS.text.muted};display:flex;align-items:center}
-        .caveat{font-size:11.5px;line-height:1.55;color:${TOKENS.text.muted};margin:0}
-        .links{border-top:1px solid ${TOKENS.surface.divider};padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-        .link-a{font-size:11.5px;font-weight:500;color:${TOKENS.text.link};cursor:pointer;white-space:nowrap}
-        .link-b{font-size:11.5px;font-weight:500;color:var(--accent);cursor:pointer;white-space:nowrap}
+        .vc-sec{border-top:1px solid ${TOKENS.surface.divider};padding:13px 16px}
+        .vc-sech{font-size:11px;letter-spacing:.9px;text-transform:uppercase;color:#797e88;font-weight:600;margin:0 0 10px}
+        .vc-lead{font-size:12.5px;line-height:1.5;color:${TOKENS.text.evidence};margin:0 0 13px}
+        .vc-lead em{font-family:${TOKENS.font.mono};font-style:normal;color:#d0d4da}
+        .vc-tier{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+        .vc-tname{font-size:12.5px;font-weight:600;display:flex;align-items:center}
+        .vc-tdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
+        .vc-tcount{font-family:${TOKENS.font.mono};font-size:11px;color:#8a8f98}
+        .vc-tmeta{font-size:11.5px;color:${TOKENS.text.muted};margin:0 0 3px 15px;font-style:italic}
+        .vc-names{font-size:12px;color:${TOKENS.text.names};line-height:1.5;margin:0 0 14px 15px}
+        .vc-names:last-child{margin-bottom:0}
+        .vc-rnone{font-size:12px;color:${TOKENS.text.faint};margin:0 0 0 15px;font-style:italic}
+        .vc-trow{display:grid;grid-template-columns:56px 1fr 68px;gap:9px;align-items:center;margin-bottom:9px}
+        .vc-trow:last-child{margin-bottom:0}
+        .vc-ttime{font-family:${TOKENS.font.mono};font-size:11px;color:${TOKENS.text.muted}}
+        .vc-tbar{height:7px;border-radius:3px;background:${TOKENS.surface.trackBg};display:flex;overflow:hidden}
+        .vc-tbar i{display:block;height:100%}
+        .vc-tnums{font-family:${TOKENS.font.mono};font-size:11px;color:${TOKENS.text.sub};text-align:right}
+        .vc-hold{font-size:11.5px;color:${TOKENS.text.muted};margin:11px 0 0;line-height:1.5}
+        .vc-legend{display:flex;gap:14px;margin:0 0 12px}
+        .vc-legend span{font-size:11px;color:${TOKENS.text.muted};display:flex;align-items:center}
+        .vc-caveat{font-size:11.5px;line-height:1.55;color:${TOKENS.text.muted};margin:0}
+        .vc-links{border-top:1px solid ${TOKENS.surface.divider};padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+        .vc-link-a{font-size:11.5px;font-weight:500;color:${TOKENS.text.link};cursor:pointer;white-space:nowrap}
+        .vc-link-b{font-size:11.5px;font-weight:500;color:var(--accent);cursor:pointer;white-space:nowrap}
       `}} />
-      <div className="card" style={{ '--accent': accent }}>
-        <div className="gauge">
-          {GAUGE_ZONES.map((_, i) => <div key={i} className={`seg ${i === gaugeActiveIndex ? 'on' : ''}`}></div>)}
+      <div className="vc-card" style={{ '--accent': accent }}>
+        <div className="vc-gauge">
+          {GAUGE_ZONES.map((_, i) => <div key={i} className={`vc-seg ${i === gaugeActiveIndex ? 'vc-on' : ''}`}></div>)}
         </div>
-        <div className="zones">
-          {GAUGE_ZONES.map((z, i) => <span key={i} className={i === gaugeActiveIndex ? 'on' : i===1 ? 'z2' : i===2 ? 'z3' : ''}>{z}</span>)}
+        <div className="vc-zones">
+          {GAUGE_ZONES.map((z, i) => <span key={i} className={i === gaugeActiveIndex ? 'vc-on' : i===1 ? 'vc-z2' : i===2 ? 'vc-z3' : ''}>{z}</span>)}
         </div>
         
         {!isExpanded ? (
           <>
-            <div className="body">
-              <div className="eye"><i className="ti ti-eye"></i>{cardStrings.eyebrow}</div>
-              <p className="verdict">{cardStrings.verdict}</p>
-              <p className="sub">{cardStrings.sub}</p>
-              <div className="track">
+            <div className="vc-body">
+              <div className="vc-eye"><i className="ti ti-eye"></i>{cardStrings.eyebrow}</div>
+              <p className="vc-verdict">{cardStrings.verdict}</p>
+              <p className="vc-sub">{cardStrings.sub}</p>
+              <div className="vc-track">
                 {renderTrack()}
               </div>
-              <div className="blabels">
+              <div className="vc-blabels">
                 {['govt', 'mainstream', 'watchdog'].map(t => (
                   <span key={t}>
-                    <i className="dot" style={{ background: TOKENS.tier[t] }}></i>
-                    {TIER_LABEL[t]} {liveCounts[t] > 0 ? <b>{liveCounts[t].toString()}</b> : <span className="none">{UI.noneRecordedShort}</span>}
+                    <i className="vc-dot" style={{ background: TOKENS.tier[t] }}></i>
+                    {TIER_LABEL[t]} {liveCounts[t] > 0 ? <b>{liveCounts[t].toString()}</b> : <span className="vc-none">{UI.noneRecordedShort}</span>}
                   </span>
                 ))}
               </div>
             </div>
-            <div className="ev">
-              <div className="evl">{cardStrings.evidenceLabel}</div>
-              <p className="evt" dangerouslySetInnerHTML={{ __html: fillTemplate(cardStrings.evidenceText).replace(/([0-9]+)/g, '<em>$1</em>') }}></p>
+            <div className="vc-ev">
+              <div className="vc-evl">{cardStrings.evidenceLabel}</div>
+              <p className="vc-evt" dangerouslySetInnerHTML={{ __html: fillTemplate(cardStrings.evidenceText).replace(/([0-9]+)/g, '<em>$1</em>') }}></p>
             </div>
-            <div className="tap" onClick={() => setIsExpanded(true)}>
-              <span>{UI.tap}</span><i className="ti ti-chevron-down chev"></i>
+            <div className="vc-tap" onClick={() => setIsExpanded(true)}>
+              <span>{UI.tap}</span><i className="ti ti-chevron-down vc-chev"></i>
             </div>
-            <div className="foot">
-              <span className="fnote">{fillTemplate(cardStrings.footerNote)}</span>
-              <span className="flink">{UI.methodologyLink}</span>
+            <div className="vc-foot">
+              <span className="vc-fnote">{fillTemplate(cardStrings.footerNote)}</span>
+              <span className="vc-flink">{UI.methodologyLink}</span>
             </div>
           </>
         ) : (
           <>
-            <div className="body">
-              <div className="eye"><i className="ti ti-eye"></i>{cardStrings.eyebrow}</div>
-              <p className="verdict sm">{cardStrings.verdict}</p>
-              <p className="sub tight">{cardStrings.sub}</p>
+            <div className="vc-body">
+              <div className="vc-eye"><i className="ti ti-eye"></i>{cardStrings.eyebrow}</div>
+              <p className="vc-verdict vc-sm">{cardStrings.verdict}</p>
+              <p className="vc-sub vc-tight">{cardStrings.sub}</p>
             </div>
-            <div className="sec">
-              <p className="sech">{evidenceStrings.sectionHeader}</p>
-              {evidenceStrings.lead && <p className="lead" dangerouslySetInnerHTML={{ __html: fillTemplate(evidenceStrings.lead).replace(/([0-9]+)/g, '<em>$1</em>') }}></p>}
+            <div className="vc-sec">
+              <p className="vc-sech">{evidenceStrings.sectionHeader}</p>
+              {evidenceStrings.lead && <p className="vc-lead" dangerouslySetInnerHTML={{ __html: fillTemplate(evidenceStrings.lead).replace(/([0-9]+)/g, '<em>$1</em>') }}></p>}
               {['mainstream', 'watchdog', 'govt']
                 .sort((a, b) => liveCounts[b] - liveCounts[a])
                 .map(t => renderRosterTier(t))}
             </div>
-            <div className="sec">
-              <p className="sech">{evidenceStrings.timelineHeader}</p>
+            <div className="vc-sec">
+              <p className="vc-sech">{evidenceStrings.timelineHeader}</p>
               {renderTimeline()}
             </div>
-            <div className="sec">
-              <p className="caveat">{evidenceStrings.caveat}</p>
+            <div className="vc-sec">
+              <p className="vc-caveat">{evidenceStrings.caveat}</p>
             </div>
-            <div className="tap" onClick={() => setIsExpanded(false)} style={{ borderTop: 0 }}>
-              <span>{UI.tapOpen}</span><i className="ti ti-chevron-up chev" style={{transform: 'rotate(180deg)'}}></i>
+            <div className="vc-tap" onClick={() => setIsExpanded(false)} style={{ borderTop: 0 }}>
+              <span>{UI.tapOpen}</span><i className="ti ti-chevron-up vc-chev" style={{transform: 'rotate(180deg)'}}></i>
             </div>
-            <div className="links">
-              <span className="link-a">{UI.methodologyLink}</span>
-              <span className="link-b">{UI.correctionLink}</span>
+            <div className="vc-links">
+              <span className="vc-link-a">{UI.methodologyLink}</span>
+              <span className="vc-link-b">{UI.correctionLink}</span>
             </div>
           </>
         )}

@@ -234,9 +234,13 @@ a.tn-link:hover{border-bottom-color:var(--v-clear)}
 .nav-item .ic{width:15px;text-align:center;opacity:.75;font-size:14px;display:flex;align-items:center;justify-content:center}
 .nav-item.on .ic{opacity:1;color:var(--v-clear)}
 .nav-item .count{margin-left:auto}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:var(--s3);border-bottom:1px solid var(--border)}
-.sec-head .ttl{font-size:12px;font-weight:600;color:var(--t-primary);letter-spacing:.3px}
-.sec-head .ttl span{font-family:var(--f-mono);font-size:10px;color:var(--t-faint);margin-left:9px;font-weight:400}
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.sec-head h2 { font-family: Spectral, Georgia, serif; font-size: 22px; font-weight: 600; color: var(--ink); margin: 0; letter-spacing: -0.3px; }
+.sec-head .acts { display: flex; gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--t-faint); }
+.sec-head .acts span { cursor: pointer; transition: color 0.2s; }
+.sec-head .acts span:hover { color: var(--v-clear); }
+.sec-rule { height: 2px; background: var(--ink); opacity: 0.8; margin-bottom: 2px; }
+.sec-rule2 { height: 1px; background: var(--border); margin-bottom: 20px; }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

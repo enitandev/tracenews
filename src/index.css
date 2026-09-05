@@ -195,14 +195,7 @@ body {
 /* ═══════════════ HOMEPAGE RHYTHM & SECTION TREATMENTS ═══════════════════════════════════════════════ */
 
 /* ═══ SECTION HEADING — broadsheet. This one change unifies the page. ═══ */
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--s2)}
-.sec-head h2{font-family:var(--f-display);font-size:22px;font-weight:600;color:var(--t-display);margin:0;letter-spacing:-.3px}
-.sec-head .acts{display:flex;gap:var(--s3);font-family:var(--f-mono);font-size:9.5px;
-  letter-spacing:1.2px;text-transform:uppercase;color:var(--t-faint)}
-.sec-head .acts span{cursor:pointer;text-transform:uppercase}
-.sec-head .acts span:hover{color:var(--v-clear)}
-.sec-rule{height:2px;background:var(--t-display);opacity:.8;margin-bottom:2px}
-.sec-rule2{height:1px;background:var(--border);margin-bottom:20px}
+
 .section{margin-bottom:var(--s8)}
 
 /* ═══ TREATMENT 1 — LEAD (unchanged from current) ═══ */
@@ -271,50 +264,7 @@ body {
 .bc-count .num{font-family:var(--f-m);font-size:30px;line-height:.85;letter-spacing:-1.6px;
   color:var(--ink);font-variant-numeric:tabular-nums}
 
-/* ==========================================================================
-   4. SECTION HEADINGS
-   ========================================================================== */
-.sec-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 8px;
-}
-.sec-head h2 {
-  font-family: Spectral, Georgia, serif;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -0.3px;
-  margin: 0;
-}
-.sec-head .acts {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9.5px;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--t-faint);
-  display: flex;
-  gap: 12px;
-}
-.sec-head .acts span {
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.sec-head .acts span:hover {
-  color: var(--v-clear);
-}
-.sec-rule {
-  height: 2px;
-  background: var(--ink);
-  opacity: 0.8;
-  margin-bottom: 2px;
-}
-.sec-rule2 {
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 20px;
-}
+
 .bc-count .unit{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;
   color:var(--t-faint);padding-bottom:2px}
 
