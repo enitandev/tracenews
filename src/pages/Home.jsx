@@ -311,7 +311,7 @@ export default function Home() {
         const remaining = validCategories.filter(c => !explicitList.includes(c)).map(c => ({ cat: c, type: 'STANDARD' }));
         const fullOrder = [...ordered, ...remaining];
 
-        return fullOrder.filter(section => validCategories.includes(section.cat)).map((section, idx) => (
+        return fullOrder.filter(section => section.type === 'COMPACT' || validCategories.includes(section.cat)).map((section, idx) => (
           <CategorySection 
             key={`${section.cat}-${idx}`} 
             catName={section.cat} 
