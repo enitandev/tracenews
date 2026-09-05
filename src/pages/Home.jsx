@@ -151,7 +151,7 @@ export default function Home() {
       </Helmet>
       
       {/* PHASE 1: THE TOP FOLD */}
-      <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', marginBottom: '60px', alignItems: 'flex-start' }}>
+      <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', marginBottom: '60px', alignItems: 'flex-start', marginTop: '26px' }}>
         
         {/* LEFT COLUMN: Daily Briefing & Top News */}
         <div style={{ width: '28%', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid var(--border)' }}>

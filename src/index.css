@@ -196,39 +196,39 @@ body {
 
 /* ═══ SECTION HEADING — broadsheet. This one change unifies the page. ═══ */
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--s2)}
-.sec-head h2{font-family:var(--f-d);font-size:22px;font-weight:600;color:var(--ink);margin:0;letter-spacing:-.3px}
-.sec-head .acts{display:flex;gap:var(--s3);font-family:var(--f-m);font-size:9.5px;
+.sec-head h2{font-family:var(--f-display);font-size:22px;font-weight:600;color:var(--t-display);margin:0;letter-spacing:-.3px}
+.sec-head .acts{display:flex;gap:var(--s3);font-family:var(--f-mono);font-size:9.5px;
   letter-spacing:1.2px;text-transform:uppercase;color:var(--t-faint)}
 .sec-head .acts span{cursor:pointer;text-transform:uppercase}
 .sec-head .acts span:hover{color:var(--v-clear)}
-.sec-rule{height:2px;background:var(--ink);opacity:.8;margin-bottom:2px}
-.sec-rule2{height:1px;background:var(--border);margin-bottom:var(--s5)}
+.sec-rule{height:2px;background:var(--t-display);opacity:.8;margin-bottom:2px}
+.sec-rule2{height:1px;background:var(--border);margin-bottom:20px}
 .section{margin-bottom:var(--s8)}
 
 /* ═══ TREATMENT 1 — LEAD (unchanged from current) ═══ */
-.lead{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+.lead{display:grid;grid-template-columns:1fr 340px;gap:34px}
 .lead .hero{position:relative;border-radius:9px;overflow:hidden;background:var(--track);height:250px;margin-bottom:var(--s4)}
 .lead .hero .cap{position:absolute;left:0;right:0;bottom:0;padding:var(--s5);
   background:linear-gradient(transparent,rgba(0,0,0,.85))}
-.lead .hero .cap h3{font-family:var(--f-d);font-size:22px;line-height:1.28;font-weight:600;color:#fff;margin:0}
-.lead .hero .cap .m{font-family:var(--f-m);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
+.lead .hero .cap h3{font-family:var(--f-display);font-size:22px;line-height:1.28;font-weight:600;color:#fff;margin:0}
+.lead .hero .cap .m{font-family:var(--f-mono);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
   color:rgba(255,255,255,.7);margin-top:var(--s2)}
 
 /* ═══ TREATMENT 2 — STANDARD (no hero, ruled list) ═══ */
-.standard{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+.standard{display:grid;grid-template-columns:1fr 340px;gap:34px}
 
 /* ═══ TREATMENT 3 — COMPACT (headlines + counts, full width, no rail) ═══ */
 .compact{display:grid;grid-template-columns:1fr 1fr;gap:0 var(--s7)}
 .compact .ci{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
-.compact .ci .n{font-family:var(--f-m);font-size:11px;color:var(--t-faint);flex:0 0 26px;
+.compact .ci .n{font-family:var(--f-mono);font-size:11px;color:var(--t-faint);flex:0 0 26px;
   font-variant-numeric:tabular-nums;text-align:right}
 .compact .ci .mb{flex:0 0 40px;height:4px;border-radius:2px;background:var(--track);
   display:flex;overflow:hidden;align-self:center}
 .compact .ci .mb i{display:block;height:100%}
 .compact .ci .mb .ghost{background-image:repeating-linear-gradient(45deg,var(--track) 0,var(--track) 3px,var(--border) 3px,var(--border) 6px)}
 .compact .ci .t{font-size:13px;line-height:1.4;color:var(--t-primary);font-weight:500;flex:1}
-.compact .ci:hover .t{color:var(--ink)}
-.compact .ci .ag{font-family:var(--f-m);font-size:9px;color:var(--t-faint);white-space:nowrap}
+.compact .ci:hover .t{color:var(--t-display)}
+.compact .ci .ag{font-family:var(--f-mono);font-size:9px;color:var(--t-faint);white-space:nowrap}
 
 /* ═══ shared story row (used by LEAD and STANDARD) ═══ */
 .srow{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
@@ -237,8 +237,8 @@ body {
 .srow .thumb img{width:100%;height:100%;object-fit:cover}
 .srow .b{flex:1;min-width:0}
 .srow .t{font-size:13.5px;line-height:1.4;color:var(--t-primary);font-weight:500}
-.srow:hover .t{color:var(--ink)}
-.srow .m{font-family:var(--f-m);font-size:9px;letter-spacing:.8px;color:var(--t-faint);margin-top:5px}
+.srow:hover .t{color:var(--t-display)}
+.srow .m{font-family:var(--f-mono);font-size:9px;letter-spacing:.8px;color:var(--t-faint);margin-top:5px}
 .srow .tb{height:4px;border-radius:2px;background:var(--track);display:flex;overflow:hidden;margin-top:7px;max-width:180px}
 .srow .tb i{display:block;height:100%}
 
@@ -326,53 +326,12 @@ body {
 .tb{height:5px;border-radius:3px;background:var(--track);display:flex;overflow:hidden;margin-bottom:7px}
 .tb i{display:block;height:100%}
 .tb .ghost{background-image:repeating-linear-gradient(45deg,var(--track) 0,var(--track) 3px,var(--border) 3px,var(--border) 6px)}
-.tl{display:flex;gap:var(--s3);font-family:var(--f-m);font-size:9.5px;color:var(--t-muted);flex-wrap:wrap}
+.tl{display:flex;gap:var(--s3);font-family:var(--f-mono);font-size:9.5px;color:var(--t-muted);flex-wrap:wrap}
 .tl b{color:var(--t-body);font-weight:500;margin-left:3px}
 .tl .none{font-family:var(--f-u);font-size:9px;font-style:italic;color:var(--t-faint);margin-left:3px}
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px}
 .d-g{background:var(--tier-govt)}.d-m{background:var(--tier-main)}.d-w{background:var(--tier-watch)}
 
 .bc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s3);
-  font-family:var(--f-m);font-size:9.5px;color:var(--t-faint)}
+  font-family:var(--f-mono);font-size:9.5px;color:var(--t-faint)}
 
-/* ==========================================================================
-   5. SECTION RHYTHM TREATMENTS
-   ========================================================================== */
-.lead{display:grid;grid-template-columns:1fr 340px;gap:var(--s7)}
-.lead .hero{position:relative;border-radius:9px;overflow:hidden;background:var(--track);height:250px;margin-bottom:var(--s4)}
-.lead .hero .cap{position:absolute;left:0;right:0;bottom:0;padding:var(--s5);
-  background:linear-gradient(transparent,rgba(0,0,0,.85))}
-.lead .hero .cap h3{font-family:var(--f-d);font-size:22px;line-height:1.28;font-weight:600;color:#fff;margin:0}
-.lead .hero .cap .m{font-family:var(--f-m);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
-  color:rgba(255,255,255,.7);margin-top:var(--s2)}
-
-.standard{display:grid;grid-template-columns:1fr 340px;gap:var(--s7)}
-
-.compact{display:grid;grid-template-columns:1fr 1fr;gap:0 var(--s7)}
-.compact .ci{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
-.compact .ci .n{font-family:var(--f-m);font-size:11px;color:var(--t-faint);flex:0 0 26px;
-  font-variant-numeric:tabular-nums;text-align:right}
-.compact .ci .mb{flex:0 0 40px;height:4px;border-radius:2px;background:var(--track);
-  display:flex;overflow:hidden;align-self:center}
-.compact .ci .mb i{display:block;height:100%}
-.compact .ci .mb .ghost{background-image:repeating-linear-gradient(45deg,var(--track) 0,var(--track) 3px,var(--border) 3px,var(--border) 6px)}
-.compact .ci .t{font-size:13px;line-height:1.4;color:var(--t-primary);font-weight:500;flex:1}
-.compact .ci:hover .t{color:var(--ink)}
-.compact .ci .ag{font-family:var(--f-m);font-size:9px;color:var(--t-faint);white-space:nowrap}
-
-.srow{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
-.srow:last-child{border-bottom:none}
-.srow .thumb{width:76px;height:54px;background:var(--track);border-radius:5px;flex:0 0 76px;overflow:hidden}
-.srow .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.srow .b{flex:1;min-width:0}
-.srow .t{font-size:13.5px;line-height:1.4;color:var(--t-primary);font-weight:500}
-.srow:hover .t{color:var(--ink)}
-.srow .m{font-family:var(--f-m);font-size:9px;letter-spacing:.8px;color:var(--t-faint);margin-top:5px}
-.srow .tb{height:4px;border-radius:2px;background:var(--track);display:flex;overflow:hidden;margin-top:7px;max-width:180px}
-.srow .tb i{display:block;height:100%}
-
-.rail-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--s2)}
-.rail-head .lbl{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--t-sub)}
-.rail-head .n{font-family:var(--f-m);font-size:9px;color:var(--t-faint)}
-.rail-rule{height:1px;background:var(--ink);opacity:.55;margin-bottom:var(--s2)}
-.rail-sub{font-size:10.5px;color:var(--t-faint);line-height:1.5;margin:0 0 var(--s4);font-style:italic}
