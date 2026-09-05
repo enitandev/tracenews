@@ -294,7 +294,7 @@ export default function Home() {
       {/* PHASE 2: SECTION RHYTHM */}
       {(() => {
         const leads = ['Politics', 'Security'];
-        const compacts = ['Technology', 'Religion', 'Niger Delta'];
+        const compacts = ['Technology', 'Religion', 'Judiciary'];
         
         const availableLeads = validCategories.filter(c => leads.includes(c));
         const availableCompacts = validCategories.filter(c => compacts.includes(c));
