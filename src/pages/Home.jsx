@@ -279,9 +279,7 @@ export default function Home() {
               )}
             </div>
           ) : null}
-          
-          <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '24px', marginBottom: '16px', color: 'var(--text-primary)' }}>Top News Stories</h2>
-          {topNews.map((c, i) => c ? <CompactStoryItem key={c.id} cluster={c} /> : <SkeletonCompactStoryItem key={i} />)}
+
         </div>
 
         {/* CENTER COLUMN: Hero & Standard Feed */}

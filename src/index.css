@@ -263,6 +263,51 @@ body {
 .bc-count{display:flex;align-items:baseline;gap:var(--s2);margin-bottom:var(--s2)}
 .bc-count .num{font-family:var(--f-m);font-size:30px;line-height:.85;letter-spacing:-1.6px;
   color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* ==========================================================================
+   4. SECTION HEADINGS
+   ========================================================================== */
+.sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.sec-head h2 {
+  font-family: Spectral, Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+.sec-head .acts {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--t-faint);
+  display: flex;
+  gap: 12px;
+}
+.sec-head .acts span {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.sec-head .acts span:hover {
+  color: var(--v-clear);
+}
+.sec-rule {
+  height: 2px;
+  background: var(--ink);
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+.sec-rule2 {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 20px;
+}
 .bc-count .unit{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;
   color:var(--t-faint);padding-bottom:2px}
 
@@ -284,3 +329,44 @@ body {
 .bc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s3);
   font-family:var(--f-m);font-size:9.5px;color:var(--t-faint)}
 
+/* ==========================================================================
+   5. SECTION RHYTHM TREATMENTS
+   ========================================================================== */
+.lead{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+.lead .hero{position:relative;border-radius:9px;overflow:hidden;background:var(--track);height:250px;margin-bottom:var(--s4)}
+.lead .hero .cap{position:absolute;left:0;right:0;bottom:0;padding:var(--s5);
+  background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.lead .hero .cap h3{font-family:var(--f-d);font-size:22px;line-height:1.28;font-weight:600;color:#fff;margin:0}
+.lead .hero .cap .m{font-family:var(--f-m);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
+  color:rgba(255,255,255,.7);margin-top:var(--s2)}
+
+.standard{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+
+.compact{display:grid;grid-template-columns:1fr 1fr;gap:0 var(--s7)}
+.compact .ci{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
+.compact .ci .n{font-family:var(--f-m);font-size:11px;color:var(--t-faint);flex:0 0 26px;
+  font-variant-numeric:tabular-nums;text-align:right}
+.compact .ci .mb{flex:0 0 40px;height:4px;border-radius:2px;background:var(--track);
+  display:flex;overflow:hidden;align-self:center}
+.compact .ci .mb i{display:block;height:100%}
+.compact .ci .mb .ghost{background-image:repeating-linear-gradient(45deg,var(--track) 0,var(--track) 3px,var(--border) 3px,var(--border) 6px)}
+.compact .ci .t{font-size:13px;line-height:1.4;color:var(--t-primary);font-weight:500;flex:1}
+.compact .ci:hover .t{color:var(--ink)}
+.compact .ci .ag{font-family:var(--f-m);font-size:9px;color:var(--t-faint);white-space:nowrap}
+
+.srow{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
+.srow:last-child{border-bottom:none}
+.srow .thumb{width:76px;height:54px;background:var(--track);border-radius:5px;flex:0 0 76px;overflow:hidden}
+.srow .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.srow .b{flex:1;min-width:0}
+.srow .t{font-size:13.5px;line-height:1.4;color:var(--t-primary);font-weight:500}
+.srow:hover .t{color:var(--ink)}
+.srow .m{font-family:var(--f-m);font-size:9px;letter-spacing:.8px;color:var(--t-faint);margin-top:5px}
+.srow .tb{height:4px;border-radius:2px;background:var(--track);display:flex;overflow:hidden;margin-top:7px;max-width:180px}
+.srow .tb i{display:block;height:100%}
+
+.rail-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--s2)}
+.rail-head .lbl{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--t-sub)}
+.rail-head .n{font-family:var(--f-m);font-size:9px;color:var(--t-faint)}
+.rail-rule{height:1px;background:var(--ink);opacity:.55;margin-bottom:var(--s2)}
+.rail-sub{font-size:10.5px;color:var(--t-faint);line-height:1.5;margin:0 0 var(--s4);font-style:italic}
