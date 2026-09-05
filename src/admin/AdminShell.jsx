@@ -37,7 +37,7 @@ export default function AdminShell({ children }) {
   const date = new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
-    <div className="pg">
+    <div className="pg desk-scope">
       <div className="desk">
         <div className="mh">
           <div className="mh-top">

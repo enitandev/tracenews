@@ -10,7 +10,7 @@ export default function DashboardShell({ children }) {
   // The rail items matching tracenews-dashboard-shell.reference.html
   // Nigeria is the only live country group, others are Soon
   return (
-    <>
+    <div className="dashboard-scope">
       <div className="mast">
         <div className="brand">Trace<b>News</b></div>
         <nav>
@@ -86,6 +86,6 @@ export default function DashboardShell({ children }) {
           {children}
         </main>
       </div>
-    </>
+    </div>
   );
 }

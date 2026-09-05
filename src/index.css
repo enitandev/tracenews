@@ -246,10 +246,11 @@ body {
   .lead, .standard, .compact {
     grid-template-columns: 1fr;
   }
-  .rail { width: 100%; margin-top: var(--s6); }
+  .category-rail { width: 100%; margin-top: var(--s6); }
 }
 
 /* ═══════════════ THE RAIL ═══════════════════════════════════════════════ */
+.category-rail { width: 100%; background: none; }
 
 
 

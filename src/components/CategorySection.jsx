@@ -57,7 +57,7 @@ export default function CategorySection({ catName, treatment, stories }) {
             {activeStories[0] && <HeroStoryCard cluster={activeStories[0]} />}
             {activeStories.slice(1, 4).map(c => <StandardStoryItem key={c.id} cluster={c} />)}
           </div>
-          <aside className="rail">
+          <aside className="category-rail">
             {railClusters.length > 0 && (
               <>
                 <div className="rail-head"><span className="lbl">Most widely carried</span><span className="n">{catName}</span></div>
@@ -74,7 +74,7 @@ export default function CategorySection({ catName, treatment, stories }) {
           <div>
             {activeStories.slice(0, 5).map(c => <StandardStoryItem key={c.id} cluster={c} />)}
           </div>
-          <aside className="rail">
+          <aside className="category-rail">
             {railClusters.length > 0 && (
               <>
                 <div className="rail-head"><span className="lbl">Most widely carried</span><span className="n">{catName}</span></div>

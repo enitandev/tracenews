@@ -60,7 +60,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
           {displayedTiers.map((tier, index) => {
             const count = dist[tier] || 0;
             const percentage = (count / total) * 100;
-            const labelText = `${TIER_LABELS[tier]} ${Math.round(percentage)}%`;
+            const labelText = `${TIER_LABELS[tier]} ${count}`;
             const isLast = index === displayedTiers.length - 1;
             const showAbbrev = percentage >= 15;
             // using imported TIER_LABELS
@@ -83,7 +83,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
               >
                 {showAbbrev && (
                   <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, pointerEvents: 'none', textAlign: 'center' }}>
-                    {TIER_LABELS[tier]} {Math.round(percentage)}%
+                    {TIER_LABELS[tier]} {count}
                   </span>
                 )}
                 {hoveredTier === tier && (
@@ -151,7 +151,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
         })}
       </div>
       <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>
-        {dominantPercentage}% {dominantLabel} · {total} sources
+        {dominantCount} {dominantLabel} · {total} sources
       </span>
     </div>
   );

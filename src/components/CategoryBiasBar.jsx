@@ -47,7 +47,7 @@ export default function CategoryBiasBar({ coverageStats }) {
             >
               {showAbbrev && (
                 <span style={{ color: '#fff', fontSize: '11px', fontWeight: 700, textAlign: 'center', pointerEvents: 'none' }}>
-                  {TIER_FULL_NAMES[tier]} {Math.round(percentage)}%
+                  {TIER_FULL_NAMES[tier]} {count}
                 </span>
               )}
             </div>
@@ -61,7 +61,7 @@ export default function CategoryBiasBar({ coverageStats }) {
         
         const count = rawDist[tier] || 0;
         const percentage = (count / total) * 100;
-        const labelText = `${TIER_FULL_NAMES[tier]} ${Math.round(percentage)}%`;
+        const labelText = `${TIER_FULL_NAMES[tier]} ${count}`;
         
         // Calculate left offset for tooltip positioning
         let leftOffsetPct = 0;

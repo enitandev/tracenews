@@ -1,3 +1,4 @@
+.desk-scope {
 /* ═══════════ THE DESK — console design ═══════════ */
 .desk{background:var(--page);border:1px solid var(--border);border-radius:3px;overflow:hidden}
 /* masthead */
@@ -79,3 +80,5 @@
 .hb:last-child{border-bottom:none}
 .hb .v{font-family:var(--f-mono);font-size:10px;color:var(--t-sub)}
 .hb .ok{color:var(--v-clear)} .hb .warn{color:var(--v-mixed)}
+
+}

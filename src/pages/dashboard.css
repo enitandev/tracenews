@@ -1,3 +1,4 @@
+.dashboard-scope {
 /* ══ Dashboard Shell (from tracenews-dashboard-shell.reference.html) ══ */
 .mast { background: var(--shell); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 22px; height: 56px; }
 .mast .brand { font-weight: 700; font-size: 18px; color: var(--t-primary); }
@@ -88,3 +89,5 @@
 .privacy .h { font-family: var(--f-m); font-size: 8.5px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--t-faint); margin-bottom: var(--s2); }
 .privacy .b { font-size: 11px; line-height: 1.55; color: var(--t-muted); margin-bottom: var(--s2); }
 .privacy .a { font-size: 10.5px; color: var(--v-clear); cursor: pointer; }
+
+}
