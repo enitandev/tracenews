@@ -9,6 +9,7 @@ import CoverageBreadthCard from '../components/CoverageBreadthCard';
 import HeroStoryCard from '../components/HeroStoryCard';
 import StandardStoryItem from '../components/StandardStoryItem';
 import CompactStoryItem from '../components/CompactStoryItem';
+import CategorySection from '../components/CategorySection';
 
 // --- SKELETON COMPONENTS ---
 
@@ -292,127 +293,40 @@ export default function Home() {
         </div>
       </div>
 
-      {/* PHASE 2: INTERWOVEN CATEGORIES */}
-      {validCategories.map((cat, index) => {
-        const catStories = categories[cat];
-        const catHero = catStories[0];
-        const catStandard = catStories.slice(1, 4);
+      {/* PHASE 2: SECTION RHYTHM */}
+      {(() => {
+        const leads = ['Politics', 'Security'];
+        const compacts = ['Technology', 'Religion', 'Niger Delta'];
         
-        const scoredStories = catStories.filter(c => {
-          const dist = c.coverage_stats?.coverage_tier_distribution || {};
-          const scored = (dist.govt_aligned || 0) + (dist.mainstream || 0) + (dist.watchdog || 0);
-          return scored >= 8;
-        }).sort((a, b) => {
-          const distA = a.coverage_stats?.coverage_tier_distribution || {};
-          const scoredA = (distA.govt_aligned || 0) + (distA.mainstream || 0) + (distA.watchdog || 0);
-          const distB = b.coverage_stats?.coverage_tier_distribution || {};
-          const scoredB = (distB.govt_aligned || 0) + (distB.mainstream || 0) + (distB.watchdog || 0);
-          return scoredB - scoredA;
-        });
-        const breadthCards = scoredStories.slice(0, 2);
+        const availableLeads = validCategories.filter(c => leads.includes(c));
+        const availableCompacts = validCategories.filter(c => compacts.includes(c));
+        const availableStandards = validCategories.filter(c => !leads.includes(c) && !compacts.includes(c));
+        
+        const ordered = [];
+        if (availableLeads.length > 0) ordered.push({ cat: availableLeads.shift(), type: 'LEAD' });
+        for (let i=0; i<3; i++) { if (availableStandards.length > 0) ordered.push({ cat: availableStandards.shift(), type: 'STANDARD' }); }
+        if (availableLeads.length > 0) ordered.push({ cat: availableLeads.shift(), type: 'LEAD' });
+        for (let i=0; i<3; i++) { if (availableStandards.length > 0) ordered.push({ cat: availableStandards.shift(), type: 'STANDARD' }); }
+        for (let i=0; i<2; i++) { if (availableCompacts.length > 0) ordered.push({ cat: availableCompacts.shift(), type: 'COMPACT' }); }
 
-        const allRemaining = clusters.slice(14).filter(c => !validCategories.includes(c.category || 'General'));
-        const isFirstInterstitial = index === 0;
-        const feedCount = isFirstInterstitial ? 6 : 5;
-        const feedStartIndex = isFirstInterstitial ? 0 : 6 + (index - 1) * 5;
-        const interstitialStories = allRemaining.slice(feedStartIndex, feedStartIndex + feedCount);
-
-        return (
-          <React.Fragment key={cat}>
-            {/* CATEGORY BLOCK */}
-            <div style={{ marginBottom: '60px', borderTop: '1px solid var(--border)', paddingTop: '32px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '28px', margin: 0, color: 'var(--text-primary)' }}>{cat} News</h2>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <button style={{ padding: '8px 16px', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--text-primary)', borderRadius: '4px', fontWeight: 600, cursor: 'pointer' }}>Follow</button>
-                  <button style={{ padding: '8px 16px', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--text-primary)', borderRadius: '4px', fontWeight: 600, cursor: 'pointer' }}>Read More</button>
-                </div>
-              </div>
-              
-              <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex' }}>
-                {/* Left: Latest Category News */}
-                <div style={{ width: breadthCards.length > 0 ? '60%' : '100%', paddingRight: breadthCards.length > 0 ? '32px' : '0', borderRight: breadthCards.length > 0 ? '1px solid var(--border)' : 'none' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>Latest {cat} News</h3>
-                  {catHero && <HeroStoryCard cluster={catHero} />}
-                  
-                  <div style={{ marginTop: '24px' }}>
-                    {catStandard.map(c => <StandardStoryItem key={c.id} cluster={c} />)}
-                  </div>
-                </div>
-                
-                {/* Right: Category Top Stories */}
-                {breadthCards.length > 0 && (
-                <div style={{ width: '40%', paddingLeft: '32px' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>Top {cat} Stories</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {breadthCards.map(c => (
-                      <CoverageBreadthCard key={c.id} cluster={c} />
-                    ))}
-                  </div>
-                </div>
-                )}
-              </div>
-            </div>
-
-            {/* INTERSTITIAL BLOCK */}
-            {interstitialStories.length > 0 && (
-              <div style={{ marginBottom: '60px', borderTop: '2px solid var(--border-bright)', paddingTop: '32px' }}>
-                <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', gap: '48px' }}>
-                  
-                  {/* Left Column: Feed */}
-                  <div style={{ width: isFirstInterstitial ? '65%' : '100%' }}>
-                    <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '28px', marginBottom: '32px', color: 'var(--text-primary)' }}>
-                      {isFirstInterstitial ? 'Latest Stories' : 'Latest News Stories'}
-                    </h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {interstitialStories.map(c => <StandardStoryItem key={c.id} cluster={c} />)}
-                    </div>
-                    {!isFirstInterstitial && (
-                      <button style={{ marginTop: '24px', padding: '10px 24px', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--text-primary)', borderRadius: '4px', fontWeight: 600, cursor: 'pointer' }}>
-                        View More
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Right Column: Similar News Topics */}
-                  {isFirstInterstitial && (
-                    <div style={{ width: '35%' }}>
-                      <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '24px', marginBottom: '32px', color: 'var(--text-primary)' }}>Similar News Topics</h2>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {validCategories.slice(1, 8).map(topicCat => {
-                          const catHeroImage = categories[topicCat][0]?.image_url;
-                          return (
-                            <div key={topicCat} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--bg-hover)', overflow: 'hidden', flexShrink: 0 }}>
-                                  {catHeroImage && <img src={catHeroImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={topicCat} />}
-                                </div>
-                                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>{topicCat}</span>
-                              </div>
-                              <span style={{ fontSize: '20px', fontWeight: 400, color: 'var(--text-primary)' }}>+</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                </div>
-              </div>
-            )}
-          </React.Fragment>
-        );
-      })}
+        return ordered.map((section, idx) => (
+          <CategorySection 
+            key={`${section.cat}-${idx}`} 
+            catName={section.cat} 
+            treatment={section.type} 
+            stories={categories[section.cat]} 
+          />
+        ));
+      })()}
 
       <div style={{ margin: '60px auto', maxWidth: '600px', background: '#2a2a2a', padding: '32px', borderRadius: '6px', color: '#fff', textAlign: 'center' }}>
         <h4 style={{ margin: '0 0 8px 0', fontSize: '24px' }}>The Watchdog Report</h4>
-        <p style={{ fontSize: '15px', color: '#ccc', marginBottom: '24px' }}>Get the weekly Watchdog report sent to your inbox.</p>
+        <p style={{ fontSize: '15px', color: '#ccc', margin: '0 0 24px 0' }}>Get the weekly Watchdog report sent to your inbox.</p>
         <div style={{ display: 'flex', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
           <input type="email" placeholder="Email address" style={{ flexGrow: 1, padding: '12px', background: '#444', border: '1px solid #555', color: '#fff', borderRadius: '4px' }} />
           <button style={{ padding: '12px 24px', background: '#777', border: 'none', color: '#fff', fontWeight: 600, borderRadius: '4px', cursor: 'pointer' }}>Subscribe</button>
         </div>
       </div>
-
     </div>
   );
 }

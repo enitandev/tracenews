@@ -1,0 +1,203 @@
+<!doctype html>
+<!--
+================================================================================
+ TRACENEWS — HOMEPAGE CATEGORY RAIL · COVERAGE BREADTH
+================================================================================
+ PORT THIS. Do not reinterpret it.
+
+ WHAT WENT WRONG
+ The old rail had a heading ("Politics Spirit Alerts"), a distinct panel, and card
+ styling that differed from the story list. It read as a sidebar. The new one has
+ none of those, so the rail reads as a third column of stories rather than a
+ designed panel — and it duplicates stories already shown in the left column.
+
+ WHAT THIS FIXES
+   1. The rail has a MASTHEAD — a mono label with a rule, matching the broadsheet
+      language used on The Desk and Your Edition.
+   2. Breadth cards are VISUALLY DISTINCT from story cards: no large image, the
+      outlet count set large in mono, a tier bar with counts, ruled separation.
+   3. THE NUMBER IS THE POINT. The outlet count is the largest element on the card
+      after the headline, not a grey caption.
+   4. The rail never duplicates a story already rendered in the section's left
+      column. See the exclusion rule below.
+
+ SELECTION RULES — enforce these in code
+   - Rank ALL clusters in the category by scored outlet count, descending.
+   - EXCLUDE any cluster already rendered in that section's left column.
+   - Floor: 8 or more scored outlets. (1,392 clusters in the last 30 days meet
+     this — roughly 46 a day — so every rail fills.)
+   - Take the top 2.
+   - If fewer than 2 qualify after exclusion, render 1. If none, render no rail and
+     let the section span full width. No placeholder, no fallback card.
+
+ LANGUAGE RULES — do not relax
+   - NO VERDICT LANGUAGE. No CLEAR, no MIXED, no badge asserting anything. This
+     panel reports coverage shape; it does not judge it.
+   - Counts, never percentages.
+   - A zero tier reads "none recorded", never "0".
+   - Canonical tier colours only: steel / taupe / sage.
+
+ Tokens are from tracenews-design-system-v2.reference.html. Nothing here invents a
+ colour, a size, or a spacing value.
+================================================================================
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceNews — Category Rail</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --page:#0b0c0e; --card:#141619; --raised:#191c20; --sunk:#101215;
+  --border:#25282e; --hair:#1c1f24; --track:#1a1d21; --active:#191d22;
+  --ink:#eef1f4; --t-primary:#cfd4da; --t-body:#a8adb5; --t-sub:#8a8f98; --t-muted:#6f747d; --t-faint:#585d65;
+  --tier-govt:#6d7f92; --tier-main:#a49889; --tier-watch:#8f9a6f; --tier-none:#6b6f78;
+  --v-clear:#63cda8;
+}
+[data-theme="light"]{
+  --page:#f4f2ee; --card:#fffefb; --raised:#f7f5f1; --sunk:#eeece7;
+  --border:#dcd8d0; --hair:#e8e5df; --track:#e6e3dd; --active:#eeebe5;
+  --ink:#14161a; --t-primary:#23272d; --t-body:#43484f; --t-sub:#5b6068; --t-muted:#787d85; --t-faint:#9a9ea6;
+  --tier-govt:#4d6072; --tier-main:#8c7c68; --tier-watch:#5d7a50; --tier-none:#868b94;
+  --v-clear:#2c8f6d;
+}
+:root{--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:26px;--s7:34px;
+  --f-d:'Spectral',Georgia,serif;--f-u:'Montserrat',system-ui,sans-serif;--f-m:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{background:var(--page);margin:0;font-family:var(--f-u);color:var(--t-body);-webkit-font-smoothing:antialiased}
+
+/* ═══════════════ THE RAIL ═══════════════════════════════════════════════ */
+
+.rail{width:320px}
+
+/* MASTHEAD — this is what makes it a panel and not a third column.
+   Mono label, letter-spaced, with a rule beneath. Same gesture as The Desk. */
+.rail-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--s2)}
+.rail-head .lbl{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--t-sub)}
+.rail-head .n{font-family:var(--f-m);font-size:9px;color:var(--t-faint)}
+.rail-rule{height:1px;background:var(--ink);opacity:.55;margin-bottom:var(--s2)}
+.rail-sub{font-size:10.5px;color:var(--t-faint);line-height:1.5;margin:0 0 var(--s4);font-style:italic}
+
+/* CARD — deliberately NOT a story card. No hero image. The count leads. */
+.bc{padding:var(--s4) 0;border-bottom:1px solid var(--hair)}
+.bc:last-of-type{border-bottom:none}
+
+/* the number: the largest thing on the card after the headline */
+.bc-count{display:flex;align-items:baseline;gap:var(--s2);margin-bottom:var(--s2)}
+.bc-count .num{font-family:var(--f-m);font-size:30px;line-height:.85;letter-spacing:-1.6px;
+  color:var(--ink);font-variant-numeric:tabular-nums}
+.bc-count .unit{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--t-faint);padding-bottom:2px}
+
+.bc-hl{font-family:var(--f-d);font-size:15px;line-height:1.32;font-weight:600;color:var(--t-primary);
+  margin:0 0 var(--s3);letter-spacing:-.15px;cursor:pointer;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.bc:hover .bc-hl{color:var(--ink)}
+
+/* tier bar — counts beneath, never percentages */
+.tb{height:5px;border-radius:3px;background:var(--track);display:flex;overflow:hidden;margin-bottom:7px}
+.tb i{display:block;height:100%}
+.tb .ghost{background-image:repeating-linear-gradient(45deg,var(--track) 0,var(--track) 3px,var(--border) 3px,var(--border) 6px)}
+.tl{display:flex;gap:var(--s3);font-family:var(--f-m);font-size:9.5px;color:var(--t-muted);flex-wrap:wrap}
+.tl b{color:var(--t-body);font-weight:500;margin-left:3px}
+.tl .none{font-family:var(--f-u);font-size:9px;font-style:italic;color:var(--t-faint);margin-left:3px}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px}
+.d-g{background:var(--tier-govt)}.d-m{background:var(--tier-main)}.d-w{background:var(--tier-watch)}
+
+.bc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s3);
+  font-family:var(--f-m);font-size:9.5px;color:var(--t-faint)}
+
+/* ═══════════════ demo scaffold — NOT part of the component ═════════════ */
+.page{max-width:1180px;margin:0 auto;padding:var(--s7) var(--s6)}
+.doc-h{font-family:var(--f-d);font-size:26px;font-weight:600;color:var(--ink);margin:0 0 var(--s2)}
+.doc-s{font-size:12.5px;color:var(--t-muted);max-width:70ch;line-height:1.7;margin:0 0 var(--s7)}
+.section{display:grid;grid-template-columns:1fr 320px;gap:var(--s7);padding-top:var(--s6);border-top:1px solid var(--border);margin-bottom:var(--s7)}
+.sec-h{font-family:var(--f-d);font-size:21px;font-weight:600;color:var(--ink);margin:0 0 var(--s4);grid-column:1/-1}
+.storycol .s{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
+.storycol .s .thumb{width:74px;height:52px;background:var(--track);border-radius:5px;flex:0 0 74px}
+.storycol .s .t{font-size:13px;line-height:1.4;color:var(--t-primary);font-weight:500}
+.storycol .s .m{font-family:var(--f-m);font-size:9px;color:var(--t-faint);margin-top:5px}
+.note{font-size:11.5px;color:var(--t-faint);font-style:italic;line-height:1.6;margin-top:var(--s5);max-width:60ch}
+.tgl{font-size:10.5px;color:var(--t-muted);background:none;border:1px solid var(--border);border-radius:100px;padding:5px 13px;cursor:pointer;font-family:var(--f-u);float:right}
+</style>
+</head>
+<body><div class="page">
+
+<button class="tgl" onclick="var h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';this.textContent=h.dataset.theme==='dark'?'Light':'Dark';">Light</button>
+<h1 class="doc-h">Homepage category rail</h1>
+<p class="doc-s">The rail reads as a panel, not a third column of stories. Three things do that: a mono masthead with a rule, cards with no hero image, and the outlet count set large in mono as the leading element. The rail never repeats a story already shown in the left column.</p>
+
+<!-- ═══ SECTION EXAMPLE ═══ -->
+<section class="section">
+  <h2 class="sec-h">Politics News</h2>
+
+  <div class="storycol">
+    <div class="s"><div class="thumb"></div><div><div class="t">Gombe PDP youth leader resigns position, party's membership</div><div class="m">Politics · 4h</div></div></div>
+    <div class="s"><div class="thumb"></div><div><div class="t">Tinubu to address UN General Assembly on September 23</div><div class="m">Politics · 6h</div></div></div>
+    <div class="s"><div class="thumb"></div><div><div class="t">Bello holds first Lagos town hall since ICT initiative launch</div><div class="m">Politics · 9h</div></div></div>
+    <div class="s"><div class="thumb"></div><div><div class="t">Emir of Gumel's death, loss to Nigeria — VP Shettima</div><div class="m">Politics · 11h</div></div></div>
+  </div>
+
+  <aside class="rail">
+    <div class="rail-head"><span class="lbl">Most widely carried</span><span class="n">Politics</span></div>
+    <div class="rail-rule"></div>
+    <p class="rail-sub">The stories the most outlets are covering, and who is covering them.</p>
+
+    <article class="bc">
+      <div class="bc-count"><span class="num">18</span><span class="unit">outlets</span></div>
+      <h3 class="bc-hl">Tinubu constitutes APC 2027 presidential campaign council, names Yari DG</h3>
+      <div class="tb"><i style="width:28%;background:var(--tier-govt)"></i><i style="width:50%;background:var(--tier-main)"></i><i style="width:22%;background:var(--tier-watch)"></i></div>
+      <div class="tl">
+        <span><i class="dot d-g"></i>Govt<b>5</b></span>
+        <span><i class="dot d-m"></i>Mainstream<b>9</b></span>
+        <span><i class="dot d-w"></i>Watchdog<b>4</b></span>
+      </div>
+      <div class="bc-foot"><span>2h ago</span><span>Read →</span></div>
+    </article>
+
+    <article class="bc">
+      <div class="bc-count"><span class="num">11</span><span class="unit">outlets</span></div>
+      <h3 class="bc-hl">Osun decides: Atiku congratulates Adeleke on re-election</h3>
+      <div class="tb"><i class="ghost" style="width:10%"></i><i style="width:64%;background:var(--tier-main)"></i><i style="width:26%;background:var(--tier-watch)"></i></div>
+      <div class="tl">
+        <span><i class="dot d-g"></i>Govt<span class="none">none recorded</span></span>
+        <span><i class="dot d-m"></i>Mainstream<b>8</b></span>
+        <span><i class="dot d-w"></i>Watchdog<b>3</b></span>
+      </div>
+      <div class="bc-foot"><span>7h ago</span><span>Read →</span></div>
+    </article>
+  </aside>
+</section>
+
+<!-- ═══ SECOND EXAMPLE — one card only ═══ -->
+<section class="section">
+  <h2 class="sec-h">Judiciary News</h2>
+
+  <div class="storycol">
+    <div class="s"><div class="thumb"></div><div><div class="t">'Your case was dead on arrival' — Lizzy Anjorin mocks Priscilla Ojo over court order</div><div class="m">Judiciary · 5h</div></div></div>
+    <div class="s"><div class="thumb"></div><div><div class="t">Lindsay Clancy murder trial heads for mistrial as jury remains divided</div><div class="m">Judiciary · 8h</div></div></div>
+    <div class="s"><div class="thumb"></div><div><div class="t">Firm jailed for seven years, ordered to repay N117.7m in restitution to company</div><div class="m">Judiciary · 12h</div></div></div>
+  </div>
+
+  <aside class="rail">
+    <div class="rail-head"><span class="lbl">Most widely carried</span><span class="n">Judiciary</span></div>
+    <div class="rail-rule"></div>
+    <p class="rail-sub">The stories the most outlets are covering, and who is covering them.</p>
+
+    <article class="bc">
+      <div class="bc-count"><span class="num">9</span><span class="unit">outlets</span></div>
+      <h3 class="bc-hl">EFCC secures 10,872 convictions, recovers over ₦1trn since 2023</h3>
+      <div class="tb"><i style="width:22%;background:var(--tier-govt)"></i><i style="width:56%;background:var(--tier-main)"></i><i style="width:22%;background:var(--tier-watch)"></i></div>
+      <div class="tl">
+        <span><i class="dot d-g"></i>Govt<b>2</b></span>
+        <span><i class="dot d-m"></i>Mainstream<b>5</b></span>
+        <span><i class="dot d-w"></i>Watchdog<b>2</b></span>
+      </div>
+      <div class="bc-foot"><span>1d ago</span><span>Read →</span></div>
+    </article>
+  </aside>
+</section>
+
+<p class="note">If no cluster in a category clears the 8-outlet floor after excluding stories already shown, the rail does not render and the section spans full width. No placeholder, no fallback card, no signup form.</p>
+
+</div></body></html>

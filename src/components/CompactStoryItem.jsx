@@ -1,24 +1,42 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
-import CoverageBar from './CoverageBar';
+import { formatTimeAgo } from '../utils/helpers';
 
 export default function CompactStoryItem({ cluster }) {
-  const hasAlerts = cluster.monitoring_flags?.length > 0;
+  if (!cluster) return null;
+
+  const dist = cluster.coverage_stats?.coverage_tier_distribution || {};
+  const g = dist.govt_aligned || 0;
+  const m = dist.mainstream || 0;
+  const w = dist.watchdog || 0;
+  const scoredOutlets = g + m + w;
+  const totalOutlets = cluster.outlet_count || scoredOutlets;
+
+  let zeros = 0;
+  if (g === 0) zeros++;
+  if (m === 0) zeros++;
+  if (w === 0) zeros++;
+
+  const ghostWidthPct = 12;
+  const availablePct = 100 - (zeros * ghostWidthPct);
+
+  const getWidth = (val) => {
+    if (val === 0) return `${ghostWidthPct}%`;
+    return `${(val / scoredOutlets) * availablePct}%`;
+  };
 
   return (
-    <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-        <div style={{ flexGrow: 1 }}>
-          <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 8px 0', lineHeight: 1.3 }}>
-            {cluster.representative_title}
-          </h4>
-          <div style={{ marginTop: '12px' }}>
-            <CoverageBar variant="compact" coverageStats={cluster.coverage_stats} />
-          </div>
-        </div>
-        {hasAlerts && <AlertTriangle size={14} color="#8f9a6f" style={{ flexShrink: 0, marginTop: '2px' }} />}
-      </div>
+    <Link to={`/story/${cluster.slug || cluster.id}`} style={{ textDecoration: 'none' }} className="ci">
+      <span className="n">{totalOutlets}</span>
+      <span className="mb">
+        {g === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(g), background: 'var(--tier-govt)' }} />}
+        {m === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(m), background: 'var(--tier-main)' }} />}
+        {w === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(w), background: 'var(--tier-watch)' }} />}
+      </span>
+      <span className="t">{cluster.representative_title}</span>
+      <span className="ag">
+        {cluster.first_seen_at ? formatTimeAgo(cluster.first_seen_at).replace(' ago', '') : 'now'}
+      </span>
     </Link>
   );
 }

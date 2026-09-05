@@ -1,0 +1,269 @@
+<!doctype html>
+<!--
+================================================================================
+ TRACENEWS — HOMEPAGE SECTION RHYTHM
+================================================================================
+ PORT THIS. Do not reinterpret it.
+
+ WHAT THIS IS NOT
+ This is NOT a homepage redesign. The story cards and the featured-image treatment
+ stay exactly as they are — they work. Nothing about them changes.
+
+ WHAT THIS FIXES
+ The homepage runs ONE rhythm ten times. Health, Education, Entertainment, Economy,
+ Security, General, International, Politics, Sports, Judiciary — identical structure
+ each time: featured image left, three stories beneath, rail right. A reader learns
+ the pattern in two sections and stops looking. That is what reads as generated
+ rather than edited.
+
+ There is also a language mismatch. The new category rail speaks broadsheet — mono
+ labels, rules, Spectral, large tabular numerals — while the section headings around
+ it are plain sans-serif. One premium component in a conventional page reads as
+ inconsistent, not premium.
+
+ TWO CHANGES ONLY
+
+   1. SECTION HEADINGS become broadsheet. Spectral, with a rule. Same gesture as
+      The Desk and Your Edition, so the homepage speaks the product's language.
+
+   2. THREE SECTION TREATMENTS instead of one, assigned by position and weight.
+      Same components throughout — only the arrangement varies.
+
+ THE THREE TREATMENTS
+
+   LEAD      (2 sections max, highest up: Politics, Security)
+             Featured image, large. Three stories beneath. Rail.
+             This is the current treatment, unchanged. It is the heaviest and
+             should therefore be rare.
+
+   STANDARD  (most sections)
+             No featured image. A ruled list of five stories with small thumbs.
+             Rail. Lighter, faster to scan, and it lets the LEAD sections stand out.
+
+   COMPACT   (2-3 sections, lower down: Technology, Religion, Niger Delta)
+             A ruled list of headlines with outlet counts. No images at all. No rail.
+             Full width. This is the "brief" register — it says these sections are
+             smaller without pretending otherwise.
+
+ ORDER ON THE PAGE
+   Daily Briefing (unchanged) -> LEAD -> STANDARD x3 -> LEAD -> STANDARD x3
+   -> COMPACT x2 -> Watchdog Report signup (once, at the foot)
+
+ Tokens from tracenews-design-system-v2.reference.html. Nothing here invents a
+ colour, a size, or a spacing value.
+================================================================================
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceNews — Section Rhythm</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --page:#0b0c0e; --card:#141619; --raised:#191c20; --sunk:#101215;
+  --border:#25282e; --hair:#1c1f24; --track:#1a1d21;
+  --ink:#eef1f4; --t-primary:#cfd4da; --t-body:#a8adb5; --t-sub:#8a8f98; --t-muted:#6f747d; --t-faint:#585d65;
+  --tier-govt:#6d7f92; --tier-main:#a49889; --tier-watch:#8f9a6f;
+  --v-clear:#63cda8;
+}
+[data-theme="light"]{
+  --page:#f4f2ee; --card:#fffefb; --raised:#f7f5f1; --sunk:#eeece7;
+  --border:#dcd8d0; --hair:#e8e5df; --track:#e6e3dd;
+  --ink:#14161a; --t-primary:#23272d; --t-body:#43484f; --t-sub:#5b6068; --t-muted:#787d85; --t-faint:#9a9ea6;
+  --tier-govt:#4d6072; --tier-main:#8c7c68; --tier-watch:#5d7a50;
+  --v-clear:#2c8f6d;
+}
+:root{--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:26px;--s7:34px;--s8:48px;
+  --f-d:'Spectral',Georgia,serif;--f-u:'Montserrat',system-ui,sans-serif;--f-m:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{background:var(--page);margin:0;font-family:var(--f-u);color:var(--t-body);-webkit-font-smoothing:antialiased}
+.page{max-width:1180px;margin:0 auto;padding:var(--s7) var(--s6) var(--s8)}
+
+/* ═══ SECTION HEADING — broadsheet. This one change unifies the page. ═══ */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--s2)}
+.sec-head h2{font-family:var(--f-d);font-size:22px;font-weight:600;color:var(--ink);margin:0;letter-spacing:-.3px}
+.sec-head .acts{display:flex;gap:var(--s3);font-family:var(--f-m);font-size:9.5px;
+  letter-spacing:1.2px;text-transform:uppercase;color:var(--t-faint)}
+.sec-head .acts span{cursor:pointer}
+.sec-head .acts span:hover{color:var(--v-clear)}
+.sec-rule{height:2px;background:var(--ink);opacity:.8;margin-bottom:2px}
+.sec-rule2{height:1px;background:var(--border);margin-bottom:var(--s5)}
+.section{margin-bottom:var(--s8)}
+
+/* ═══ TREATMENT 1 — LEAD (unchanged from current) ═══ */
+.lead{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+.lead .hero{position:relative;border-radius:9px;overflow:hidden;background:var(--track);height:250px;margin-bottom:var(--s4)}
+.lead .hero .cap{position:absolute;left:0;right:0;bottom:0;padding:var(--s5);
+  background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.lead .hero .cap h3{font-family:var(--f-d);font-size:22px;line-height:1.28;font-weight:600;color:#fff;margin:0}
+.lead .hero .cap .m{font-family:var(--f-m);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
+  color:rgba(255,255,255,.7);margin-top:var(--s2)}
+
+/* ═══ TREATMENT 2 — STANDARD (no hero, ruled list) ═══ */
+.standard{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+
+/* ═══ TREATMENT 3 — COMPACT (headlines + counts, full width, no rail) ═══ */
+.compact{display:grid;grid-template-columns:1fr 1fr;gap:0 var(--s7)}
+.compact .ci{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
+.compact .ci .n{font-family:var(--f-m);font-size:11px;color:var(--t-faint);flex:0 0 26px;
+  font-variant-numeric:tabular-nums;text-align:right}
+/* micro tier bar — same steel/taupe/sage grammar as everywhere else, at 40px.
+   NO percentage, NO dominant-tier label. Counts never percentages is a standing
+   rule (the "Govt 0%" finding). At small N a percentage misleads: 3 of 5 outlets
+   reads as 60%, which sounds like a measurement when it is three articles. */
+.compact .ci .mb{flex:0 0 40px;height:4px;border-radius:2px;background:var(--track);
+  display:flex;overflow:hidden;align-self:center}
+.compact .ci .mb i{display:block;height:100%}
+.compact .ci .mb .ghost{background-image:repeating-linear-gradient(45deg,var(--track) 0,var(--track) 3px,var(--border) 3px,var(--border) 6px)}
+.compact .ci .t{font-size:13px;line-height:1.4;color:var(--t-primary);font-weight:500;flex:1}
+.compact .ci:hover .t{color:var(--ink)}
+.compact .ci .ag{font-family:var(--f-m);font-size:9px;color:var(--t-faint);white-space:nowrap}
+
+/* ═══ shared story row (used by LEAD and STANDARD) ═══ */
+.srow{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
+.srow:last-child{border-bottom:none}
+.srow .thumb{width:76px;height:54px;background:var(--track);border-radius:5px;flex:0 0 76px}
+.srow .b{flex:1;min-width:0}
+.srow .t{font-size:13.5px;line-height:1.4;color:var(--t-primary);font-weight:500}
+.srow:hover .t{color:var(--ink)}
+.srow .m{font-family:var(--f-m);font-size:9px;letter-spacing:.8px;color:var(--t-faint);margin-top:5px}
+.srow .tb{height:4px;border-radius:2px;background:var(--track);display:flex;overflow:hidden;margin-top:7px;max-width:180px}
+.srow .tb i{display:block;height:100%}
+
+/* ═══ THE RAIL — as specified in tracenews-category-rail.reference.html ═══ */
+.rail-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--s2)}
+.rail-head .lbl{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--t-sub)}
+.rail-head .n{font-family:var(--f-m);font-size:9px;color:var(--t-faint)}
+.rail-rule{height:1px;background:var(--ink);opacity:.55;margin-bottom:var(--s2)}
+.rail-sub{font-size:10.5px;color:var(--t-faint);line-height:1.5;margin:0 0 var(--s4);font-style:italic}
+.bc{padding:var(--s4) 0;border-bottom:1px solid var(--hair)}
+.bc:last-of-type{border-bottom:none}
+.bc-count{display:flex;align-items:baseline;gap:var(--s2);margin-bottom:var(--s2)}
+.bc-count .num{font-family:var(--f-m);font-size:30px;line-height:.85;letter-spacing:-1.6px;color:var(--ink);font-variant-numeric:tabular-nums}
+.bc-count .unit{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t-faint);padding-bottom:2px}
+.bc-hl{font-family:var(--f-d);font-size:15px;line-height:1.32;font-weight:600;color:var(--t-primary);margin:0 0 var(--s3);letter-spacing:-.15px}
+.tb2{height:5px;border-radius:3px;background:var(--track);display:flex;overflow:hidden;margin-bottom:7px}
+.tb2 i{display:block;height:100%}
+.tl{display:flex;gap:var(--s3);font-family:var(--f-m);font-size:9.5px;color:var(--t-muted);flex-wrap:wrap}
+.tl b{color:var(--t-body);font-weight:500;margin-left:3px}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px}
+.d-g{background:var(--tier-govt)}.d-m{background:var(--tier-main)}.d-w{background:var(--tier-watch)}
+.bc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s3);font-family:var(--f-m);font-size:9.5px;color:var(--t-faint)}
+
+/* demo scaffold */
+.doc-h{font-family:var(--f-d);font-size:26px;font-weight:600;color:var(--ink);margin:0 0 var(--s2)}
+.doc-s{font-size:12.5px;color:var(--t-muted);max-width:72ch;line-height:1.7;margin:0 0 var(--s7)}
+.tag{font-family:var(--f-m);font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--v-clear);
+  margin-bottom:var(--s2);display:block}
+.tgl{font-size:10.5px;color:var(--t-muted);background:none;border:1px solid var(--border);border-radius:100px;padding:5px 13px;cursor:pointer;font-family:var(--f-u);float:right}
+</style>
+</head>
+<body><div class="page">
+
+<button class="tgl" onclick="var h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';this.textContent=h.dataset.theme==='dark'?'Light':'Dark';">Light</button>
+<h1 class="doc-h">Homepage section rhythm</h1>
+<p class="doc-s">Not a redesign. The story cards and featured images stay exactly as they are. Two changes: section headings become broadsheet, so the page speaks the same language as the rail and the rest of the product; and three section treatments replace one, so a reader does not learn the pattern in two sections and stop looking.</p>
+
+<!-- ══════════ LEAD ══════════ -->
+<section class="section">
+  <span class="tag">Treatment 1 · Lead — max 2 per page, highest up</span>
+  <div class="sec-head"><h2>Politics</h2><div class="acts"><span>Follow</span><span>Read more</span></div></div>
+  <div class="sec-rule"></div><div class="sec-rule2"></div>
+
+  <div class="lead">
+    <div>
+      <div class="hero"><div class="cap">
+        <h3>Tinubu constitutes APC 2027 presidential campaign council, names Yari DG</h3>
+        <div class="m">Politics · 18 outlets · 2h ago</div>
+      </div></div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">Gombe PDP youth leader resigns position, party's membership</div><div class="m">4h ago</div>
+        <div class="tb"><i style="width:20%;background:var(--tier-govt)"></i><i style="width:55%;background:var(--tier-main)"></i><i style="width:25%;background:var(--tier-watch)"></i></div></div></div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">Tinubu to address UN General Assembly on September 23</div><div class="m">6h ago</div>
+        <div class="tb"><i style="width:35%;background:var(--tier-govt)"></i><i style="width:50%;background:var(--tier-main)"></i><i style="width:15%;background:var(--tier-watch)"></i></div></div></div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">Emir of Gumel's death, loss to Nigeria — VP Shettima</div><div class="m">11h ago</div>
+        <div class="tb"><i style="width:28%;background:var(--tier-govt)"></i><i style="width:60%;background:var(--tier-main)"></i><i style="width:12%;background:var(--tier-watch)"></i></div></div></div>
+    </div>
+
+    <aside>
+      <div class="rail-head"><span class="lbl">Most widely carried</span><span class="n">Politics</span></div>
+      <div class="rail-rule"></div>
+      <p class="rail-sub">The stories the most outlets are covering, and who is covering them.</p>
+      <article class="bc">
+        <div class="bc-count"><span class="num">14</span><span class="unit">outlets</span></div>
+        <h3 class="bc-hl">Osun decides: Atiku congratulates Adeleke on re-election</h3>
+        <div class="tb2"><i style="width:21%;background:var(--tier-govt)"></i><i style="width:57%;background:var(--tier-main)"></i><i style="width:22%;background:var(--tier-watch)"></i></div>
+        <div class="tl"><span><i class="dot d-g"></i>Govt<b>3</b></span><span><i class="dot d-m"></i>Mainstream<b>8</b></span><span><i class="dot d-w"></i>Watchdog<b>3</b></span></div>
+        <div class="bc-foot"><span>7h ago</span><span>Read →</span></div>
+      </article>
+      <article class="bc">
+        <div class="bc-count"><span class="num">11</span><span class="unit">outlets</span></div>
+        <h3 class="bc-hl">2027: I'll return fuel subsidy if elected President — Atiku</h3>
+        <div class="tb2"><i style="width:18%;background:var(--tier-govt)"></i><i style="width:55%;background:var(--tier-main)"></i><i style="width:27%;background:var(--tier-watch)"></i></div>
+        <div class="tl"><span><i class="dot d-g"></i>Govt<b>2</b></span><span><i class="dot d-m"></i>Mainstream<b>6</b></span><span><i class="dot d-w"></i>Watchdog<b>3</b></span></div>
+        <div class="bc-foot"><span>1d ago</span><span>Read →</span></div>
+      </article>
+    </aside>
+  </div>
+</section>
+
+<!-- ══════════ STANDARD ══════════ -->
+<section class="section">
+  <span class="tag">Treatment 2 · Standard — most sections. No hero; lighter, faster to scan.</span>
+  <div class="sec-head"><h2>Economy</h2><div class="acts"><span>Follow</span><span>Read more</span></div></div>
+  <div class="sec-rule"></div><div class="sec-rule2"></div>
+
+  <div class="standard">
+    <div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">Nigeria's external reserves cross $54 billion, highest level in 18 years</div><div class="m">3h ago</div>
+        <div class="tb"><i style="width:25%;background:var(--tier-govt)"></i><i style="width:55%;background:var(--tier-main)"></i><i style="width:20%;background:var(--tier-watch)"></i></div></div></div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">TCN announces 9-hour power disruption for Katampe maintenance</div><div class="m">5h ago</div>
+        <div class="tb"><i style="width:40%;background:var(--tier-govt)"></i><i style="width:45%;background:var(--tier-main)"></i><i style="width:15%;background:var(--tier-watch)"></i></div></div></div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">Stock market closes week with ₦455 billion gain</div><div class="m">8h ago</div>
+        <div class="tb"><i style="width:15%;background:var(--tier-govt)"></i><i style="width:65%;background:var(--tier-main)"></i><i style="width:20%;background:var(--tier-watch)"></i></div></div></div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">Coran calls for urgent presidential intervention on domestic refining</div><div class="m">11h ago</div>
+        <div class="tb"><i style="width:22%;background:var(--tier-govt)"></i><i style="width:50%;background:var(--tier-main)"></i><i style="width:28%;background:var(--tier-watch)"></i></div></div></div>
+      <div class="srow"><div class="thumb"></div><div class="b"><div class="t">Fuel subsidy: Nigeria's pricing model must change — Gov Makinde</div><div class="m">14h ago</div>
+        <div class="tb"><i style="width:30%;background:var(--tier-govt)"></i><i style="width:52%;background:var(--tier-main)"></i><i style="width:18%;background:var(--tier-watch)"></i></div></div></div>
+    </div>
+
+    <aside>
+      <div class="rail-head"><span class="lbl">Most widely carried</span><span class="n">Economy</span></div>
+      <div class="rail-rule"></div>
+      <p class="rail-sub">The stories the most outlets are covering, and who is covering them.</p>
+      <article class="bc">
+        <div class="bc-count"><span class="num">12</span><span class="unit">outlets</span></div>
+        <h3 class="bc-hl">Nigeria's GDP grows by 4.43% in Q2 2026</h3>
+        <div class="tb2"><i style="width:33%;background:var(--tier-govt)"></i><i style="width:50%;background:var(--tier-main)"></i><i style="width:17%;background:var(--tier-watch)"></i></div>
+        <div class="tl"><span><i class="dot d-g"></i>Govt<b>4</b></span><span><i class="dot d-m"></i>Mainstream<b>6</b></span><span><i class="dot d-w"></i>Watchdog<b>2</b></span></div>
+        <div class="bc-foot"><span>2d ago</span><span>Read →</span></div>
+      </article>
+      <article class="bc">
+        <div class="bc-count"><span class="num">9</span><span class="unit">outlets</span></div>
+        <h3 class="bc-hl">Ride-hailing giant Uber winds down Nigerian operations after 12 years</h3>
+        <div class="tb2"><i style="width:11%;background:var(--tier-govt)"></i><i style="width:67%;background:var(--tier-main)"></i><i style="width:22%;background:var(--tier-watch)"></i></div>
+        <div class="tl"><span><i class="dot d-g"></i>Govt<b>1</b></span><span><i class="dot d-m"></i>Mainstream<b>6</b></span><span><i class="dot d-w"></i>Watchdog<b>2</b></span></div>
+        <div class="bc-foot"><span>3d ago</span><span>Read →</span></div>
+      </article>
+    </aside>
+  </div>
+</section>
+
+<!-- ══════════ COMPACT ══════════ -->
+<section class="section">
+  <span class="tag">Treatment 3 · Compact — smaller sections. Count, micro tier bar, headline. No images, no rail, full width.</span>
+  <div class="sec-head"><h2>Technology</h2><div class="acts"><span>Follow</span><span>Read more</span></div></div>
+  <div class="sec-rule"></div><div class="sec-rule2"></div>
+
+  <div class="compact">
+    <div class="ci"><span class="n">7</span><span class="mb"><i style="width:14%;background:var(--tier-govt)"></i><i style="width:58%;background:var(--tier-main)"></i><i style="width:28%;background:var(--tier-watch)"></i></span><span class="t">MTN Nigeria completes 5G rollout across six additional states</span><span class="ag">3h</span></div>
+    <div class="ci"><span class="n">5</span><span class="mb"><i style="width:40%;background:var(--tier-govt)"></i><i style="width:40%;background:var(--tier-main)"></i><i style="width:20%;background:var(--tier-watch)"></i></span><span class="t">CBN opens applications for third cohort of fintech regulatory sandbox</span><span class="ag">6h</span></div>
+    <div class="ci"><span class="n">4</span><span class="mb"><i class="ghost" style="width:12%"></i><i style="width:75%;background:var(--tier-main)"></i><i style="width:25%;background:var(--tier-watch)"></i></span><span class="t">Nigerian startups raised $412m in H1 2026, report finds</span><span class="ag">9h</span></div>
+    <div class="ci"><span class="n">4</span><span class="mb"><i style="width:50%;background:var(--tier-govt)"></i><i style="width:50%;background:var(--tier-main)"></i><i class="ghost" style="width:12%"></i></span><span class="t">NITDA issues draft guidelines on public sector cloud adoption</span><span class="ag">14h</span></div>
+    <div class="ci"><span class="n">6</span><span class="mb"><i style="width:17%;background:var(--tier-govt)"></i><i style="width:66%;background:var(--tier-main)"></i><i style="width:17%;background:var(--tier-watch)"></i></span><span class="t">Airtel Africa reports 18% growth in data subscribers</span><span class="ag">4h</span></div>
+    <div class="ci"><span class="n">3</span><span class="mb"><i style="width:33%;background:var(--tier-govt)"></i><i style="width:67%;background:var(--tier-main)"></i><i class="ghost" style="width:12%"></i></span><span class="t">Lagos launches digital skills programme for 10,000 young people</span><span class="ag">7h</span></div>
+    <div class="ci"><span class="n">3</span><span class="mb"><i class="ghost" style="width:12%"></i><i style="width:67%;background:var(--tier-main)"></i><i style="width:33%;background:var(--tier-watch)"></i></span><span class="t">Flutterwave secures payment licence in two new markets</span><span class="ag">11h</span></div>
+    <div class="ci"><span class="n">3</span><span class="mb"><i class="ghost" style="width:12%"></i><i style="width:100%;background:var(--tier-main)"></i><i class="ghost" style="width:12%"></i></span><span class="t">Undersea cable repair restores full capacity to West African route</span><span class="ag">1d</span></div>
+  </div>
+</section>
+
+</div></body></html>

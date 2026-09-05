@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { formatTimeAgo, COVERAGE_TIER_COLORS } from '../utils/helpers';
+import { formatTimeAgo } from '../utils/helpers';
 
 export default function CoverageBreadthCard({ cluster }) {
   if (!cluster) return null;
@@ -12,74 +12,55 @@ export default function CoverageBreadthCard({ cluster }) {
   const scoredOutlets = g + m + w;
   const totalOutlets = cluster.outlet_count || scoredOutlets;
 
-  // Build breadth text string
-  const parts = [];
-  if (m > 0) parts.push(`${m} mainstream`);
-  if (g > 0) parts.push(`${g} government-aligned`);
-  if (w > 0) parts.push(`${w} watchdog`);
-  
-  const breadthText = parts.length > 0 
-    ? `Carried by ${scoredOutlets} outlets — ${parts.join(', ')}`
-    : `Carried by ${totalOutlets} outlets`;
+  // Calculate widths for the tier bar
+  let zeros = 0;
+  if (g === 0) zeros++;
+  if (m === 0) zeros++;
+  if (w === 0) zeros++;
+
+  const ghostWidthPct = 12;
+  const availablePct = 100 - (zeros * ghostWidthPct);
+
+  const getWidth = (val) => {
+    if (val === 0) return `${ghostWidthPct}%`;
+    return `${(val / scoredOutlets) * availablePct}%`;
+  };
 
   return (
-    <Link 
-      to={`/story/${cluster.slug || cluster.id}`} 
-      style={{ 
-        display: 'block', 
-        textDecoration: 'none', 
-        background: 'var(--bg-surface)', 
-        border: '1px solid var(--border)', 
-        borderRadius: '8px',
-        overflow: 'hidden',
-        marginBottom: '16px',
-        transition: 'border-color 0.2s ease',
-      }}
-      onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--border-bright)'}
-      onMouseOut={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
-    >
-      {cluster.image_url && (
-        <div style={{ width: '100%', height: '140px', overflow: 'hidden' }}>
-          <img 
-            src={cluster.image_url} 
-            alt="" 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-          />
+    <Link to={`/story/${cluster.slug || cluster.id}`} className="bc">
+      <div className="bc-count">
+        <span className="num">{totalOutlets}</span>
+        <span className="unit">outlets</span>
+      </div>
+      
+      <h3 className="bc-hl">{cluster.representative_title}</h3>
+      
+      {scoredOutlets > 0 && (
+        <div className="tb">
+          {g === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(g), background: 'var(--tier-govt)' }} />}
+          {m === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(m), background: 'var(--tier-main)' }} />}
+          {w === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(w), background: 'var(--tier-watch)' }} />}
         </div>
       )}
       
-      <div style={{ padding: '16px' }}>
-        <h3 style={{ 
-          fontFamily: 'var(--font-body)', 
-          fontWeight: 700, 
-          fontSize: '16px', 
-          lineHeight: 1.4,
-          color: 'var(--text-primary)', 
-          margin: '0 0 12px 0' 
-        }}>
-          {cluster.representative_title}
-        </h3>
-        
-        <p style={{ 
-          fontSize: '13px', 
-          color: 'var(--text-secondary)', 
-          margin: '0 0 12px 0',
-          lineHeight: 1.4
-        }}>
-          {breadthText}
-        </p>
-        
-        {scoredOutlets > 0 && (
-          <div style={{ width: '100%', height: '6px', display: 'flex', borderRadius: '3px', overflow: 'hidden' }}>
-            {g > 0 && <div style={{ width: `${(g/scoredOutlets)*100}%`, background: COVERAGE_TIER_COLORS['govt_aligned'] }} />}
-            {m > 0 && <div style={{ width: `${(m/scoredOutlets)*100}%`, background: COVERAGE_TIER_COLORS['mainstream'] }} />}
-            {w > 0 && <div style={{ width: `${(w/scoredOutlets)*100}%`, background: COVERAGE_TIER_COLORS['watchdog'] }} />}
-          </div>
-        )}
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', fontSize: '12px', color: 'var(--text-muted)' }}>
-          {cluster.first_seen_at && <span>{formatTimeAgo(cluster.first_seen_at)}</span>}
-        </div>
+      <div className="tl">
+        <span>
+          <i className="dot d-g"></i>Govt
+          {g === 0 ? <span className="none">none recorded</span> : <b>{g}</b>}
+        </span>
+        <span>
+          <i className="dot d-m"></i>Mainstream
+          {m === 0 ? <span className="none">none recorded</span> : <b>{m}</b>}
+        </span>
+        <span>
+          <i className="dot d-w"></i>Watchdog
+          {w === 0 ? <span className="none">none recorded</span> : <b>{w}</b>}
+        </span>
+      </div>
+      
+      <div className="bc-foot">
+        <span>{cluster.first_seen_at ? formatTimeAgo(cluster.first_seen_at) : 'recently'}</span>
+        <span>Read →</span>
       </div>
     </Link>
   );
