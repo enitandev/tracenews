@@ -28,7 +28,7 @@ export default function CategorySection({ catName, treatment, stories }) {
   return (
     <section className="section">
       <div className="sec-head">
-        <h2>{catName === 'General' ? 'General News' : catName}</h2>
+        <h2>{catName}</h2>
         <div className="acts">
           <span>Follow</span>
           <span>Read more</span>
@@ -38,35 +38,37 @@ export default function CategorySection({ catName, treatment, stories }) {
       <div className="sec-rule2"></div>
 
       {treatment === 'LEAD' && (
-        <div className={railClusters.length > 0 ? "lead" : ""} style={railClusters.length === 0 ? { display: 'block' } : {}}>
+        <div className="lead">
           <div>
             {stories[0] && <HeroStoryCard cluster={stories[0]} />}
             {stories.slice(1, 4).map(c => <StandardStoryItem key={c.id} cluster={c} />)}
           </div>
-          {railClusters.length > 0 && (
-            <aside className="rail">
-              <div className="rail-head"><span className="lbl">Most widely carried</span><span className="n">{catName}</span></div>
-              <div className="rail-rule"></div>
-              <p className="rail-sub">The stories the most outlets are covering, and who is covering them.</p>
-              {railClusters.map(c => <CoverageBreadthCard key={c.id} cluster={c} />)}
-            </aside>
-          )}
+          <aside className="rail">
+            {railClusters.length > 0 && (
+              <>
+                <div className="rail-head"><span className="lbl">Most widely carried</span><span className="n">{catName}</span></div>
+                <div className="rail-rule"></div>
+                {railClusters.map(c => <CoverageBreadthCard key={c.id} cluster={c} />)}
+              </>
+            )}
+          </aside>
         </div>
       )}
 
       {treatment === 'STANDARD' && (
-        <div className={railClusters.length > 0 ? "standard" : ""} style={railClusters.length === 0 ? { display: 'block' } : {}}>
+        <div className="standard">
           <div>
             {stories.slice(0, 5).map(c => <StandardStoryItem key={c.id} cluster={c} />)}
           </div>
-          {railClusters.length > 0 && (
-            <aside className="rail">
-              <div className="rail-head"><span className="lbl">Most widely carried</span><span className="n">{catName}</span></div>
-              <div className="rail-rule"></div>
-              <p className="rail-sub">The stories the most outlets are covering, and who is covering them.</p>
-              {railClusters.map(c => <CoverageBreadthCard key={c.id} cluster={c} />)}
-            </aside>
-          )}
+          <aside className="rail">
+            {railClusters.length > 0 && (
+              <>
+                <div className="rail-head"><span className="lbl">Most widely carried</span><span className="n">{catName}</span></div>
+                <div className="rail-rule"></div>
+                {railClusters.map(c => <CoverageBreadthCard key={c.id} cluster={c} />)}
+              </>
+            )}
+          </aside>
         </div>
       )}
 

@@ -131,7 +131,7 @@ export default function Home() {
   };
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>
+    <div className="page">
       <Helmet>
         <title>TraceNews — Nigerian Media Intelligence</title>
         <meta name="description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
@@ -157,7 +157,7 @@ export default function Home() {
         <div style={{ width: '28%', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
           <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '24px', marginBottom: '16px', color: 'var(--text-primary)' }}>Daily Briefing</h2>
           {loadingBriefing ? (
-            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', marginBottom: '32px', height: '350px' }}>
+            <div style={{ border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', marginBottom: '32px', height: '350px' }}>
               <div style={{ width: '100%', height: '160px', background: 'var(--bg-hover)' }}></div>
               <div style={{ padding: '16px' }}>
                 <div style={{ width: '40%', height: '12px', background: 'var(--bg-hover)', borderRadius: '4px', marginBottom: '16px' }}></div>
@@ -177,7 +177,6 @@ export default function Home() {
                 }}
               >
                 <div style={{ 
-                  background: 'var(--bg-surface)', 
                   border: '1px solid var(--border)', 
                   borderRadius: '6px', 
                   overflow: 'hidden',
@@ -293,21 +292,26 @@ export default function Home() {
 
       {/* PHASE 2: SECTION RHYTHM */}
       {(() => {
-        const leads = ['Politics', 'Security'];
-        const compacts = ['Technology', 'Religion', 'Judiciary'];
+        const ordered = [
+          { cat: 'Politics', type: 'LEAD' },
+          { cat: 'Economy', type: 'STANDARD' },
+          { cat: 'Sports', type: 'STANDARD' },
+          { cat: 'Entertainment', type: 'STANDARD' },
+          { cat: 'Security', type: 'LEAD' },
+          { cat: 'Health', type: 'STANDARD' },
+          { cat: 'Education', type: 'STANDARD' },
+          { cat: 'International', type: 'STANDARD' },
+          { cat: 'Technology', type: 'COMPACT' },
+          { cat: 'Religion', type: 'COMPACT' },
+          { cat: 'Judiciary', type: 'STANDARD' },
+          { cat: 'General', type: 'STANDARD' }
+        ];
         
-        const availableLeads = validCategories.filter(c => leads.includes(c));
-        const availableCompacts = validCategories.filter(c => compacts.includes(c));
-        const availableStandards = validCategories.filter(c => !leads.includes(c) && !compacts.includes(c));
-        
-        const ordered = [];
-        if (availableLeads.length > 0) ordered.push({ cat: availableLeads.shift(), type: 'LEAD' });
-        for (let i=0; i<3; i++) { if (availableStandards.length > 0) ordered.push({ cat: availableStandards.shift(), type: 'STANDARD' }); }
-        if (availableLeads.length > 0) ordered.push({ cat: availableLeads.shift(), type: 'LEAD' });
-        for (let i=0; i<3; i++) { if (availableStandards.length > 0) ordered.push({ cat: availableStandards.shift(), type: 'STANDARD' }); }
-        for (let i=0; i<2; i++) { if (availableCompacts.length > 0) ordered.push({ cat: availableCompacts.shift(), type: 'COMPACT' }); }
+        const explicitList = ordered.map(o => o.cat);
+        const remaining = validCategories.filter(c => !explicitList.includes(c)).map(c => ({ cat: c, type: 'STANDARD' }));
+        const fullOrder = [...ordered, ...remaining];
 
-        return ordered.map((section, idx) => (
+        return fullOrder.filter(section => validCategories.includes(section.cat)).map((section, idx) => (
           <CategorySection 
             key={`${section.cat}-${idx}`} 
             catName={section.cat} 
@@ -316,15 +320,6 @@ export default function Home() {
           />
         ));
       })()}
-
-      <div style={{ margin: '60px auto', maxWidth: '600px', background: '#2a2a2a', padding: '32px', borderRadius: '6px', color: '#fff', textAlign: 'center' }}>
-        <h4 style={{ margin: '0 0 8px 0', fontSize: '24px' }}>The Watchdog Report</h4>
-        <p style={{ fontSize: '15px', color: '#ccc', margin: '0 0 24px 0' }}>Get the weekly Watchdog report sent to your inbox.</p>
-        <div style={{ display: 'flex', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
-          <input type="email" placeholder="Email address" style={{ flexGrow: 1, padding: '12px', background: '#444', border: '1px solid #555', color: '#fff', borderRadius: '4px' }} />
-          <button style={{ padding: '12px 24px', background: '#777', border: 'none', color: '#fff', fontWeight: 600, borderRadius: '4px', cursor: 'pointer' }}>Subscribe</button>
-        </div>
-      </div>
     </div>
   );
 }

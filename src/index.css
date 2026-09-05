@@ -85,13 +85,19 @@ html, body {
 }
 
 body {
-  background: var(--bg-base);
+  background: var(--page);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.6;
   min-height: 100vh;
   transition: background-color 0.2s, color 0.2s;
+}
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 26px;
 }
 
 /* Custom scrollbar hiding utility */
@@ -332,7 +338,7 @@ body {
 /* ==========================================================================
    5. SECTION RHYTHM TREATMENTS
    ========================================================================== */
-.lead{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+.lead{display:grid;grid-template-columns:1fr 340px;gap:var(--s7)}
 .lead .hero{position:relative;border-radius:9px;overflow:hidden;background:var(--track);height:250px;margin-bottom:var(--s4)}
 .lead .hero .cap{position:absolute;left:0;right:0;bottom:0;padding:var(--s5);
   background:linear-gradient(transparent,rgba(0,0,0,.85))}
@@ -340,7 +346,7 @@ body {
 .lead .hero .cap .m{font-family:var(--f-m);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
   color:rgba(255,255,255,.7);margin-top:var(--s2)}
 
-.standard{display:grid;grid-template-columns:1fr 320px;gap:var(--s7)}
+.standard{display:grid;grid-template-columns:1fr 340px;gap:var(--s7)}
 
 .compact{display:grid;grid-template-columns:1fr 1fr;gap:0 var(--s7)}
 .compact .ci{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
