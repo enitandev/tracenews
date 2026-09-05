@@ -55,9 +55,9 @@ export const StoryCard = ({
   isPartial = false,
   className = '' 
 }) => {
-  const govt = distribution.pro_establishment || 0;
-  const main = distribution.institutional || 0;
-  const watch = distribution.adversarial || 0;
+  const govt = distribution.govt_aligned || 0;
+  const main = distribution.mainstream || 0;
+  const watch = distribution.watchdog || 0;
   const total = govt + main + watch || 1;
 
   return (

@@ -65,15 +65,18 @@ export const TOKENS = {
 /** Gauge zones — left→right. The active zone (by state) takes the accent colour;
  *  the other two stay muted. Position: clear=0, mixed=1, dark=2. */
 export const GAUGE_ZONES = ["Broad", "Partial"] as const;
+import { TIER_LABELS } from '../../utils/constants';
+
 export const TIER_LABEL: Record<TierKey, string> = {
-  govt: "Govt",                    // face bar label
-  mainstream: "Mainstream",
-  watchdog: "Watchdog",
+  govt_aligned: 'government-aligned outlets',
+  mainstream: 'mainstream outlets',
+  watchdog: 'watchdog outlets'
 };
+
 export const TIER_LABEL_FULL: Record<TierKey, string> = {
-  govt: "Government-aligned",      // evidence-view roster label
-  mainstream: "Mainstream",
-  watchdog: "Watchdog",
+  govt_aligned: 'Government',
+  mainstream: 'Mainstream',
+  watchdog: 'Watchdog'
 };
 /* ------------------------- FROZEN VERDICT STRINGS ------------------------- */
 /* Templated tokens in {braces} are filled with LIVE counts at render time.

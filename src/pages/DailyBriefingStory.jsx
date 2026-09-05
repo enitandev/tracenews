@@ -223,13 +223,13 @@ export default function DailyBriefingStory() {
     if (out.credibility_tier === 'blog') return 'blog';
     const score = out.independence_score;
     if (score === null || score === undefined) return 'unscored';
-    if (score < 35) return 'pro_establishment';
-    if (score < 60) return 'institutional';
-    return 'adversarial';
+    if (score < 35) return 'govt_aligned';
+    if (score < 60) return 'mainstream';
+    return 'watchdog';
   };
 
   const groupOutlets = () => {
-    const groups = { 'pro_establishment': [], 'institutional': [], 'adversarial': [], 'blog': [], 'unscored': [] };
+    const groups = { 'govt_aligned': [], 'mainstream': [], 'watchdog': [], 'blog': [], 'unscored': [] };
     const seenOutlets = new Set();
     stories.forEach(s => {
       const out = s.outlets || {};

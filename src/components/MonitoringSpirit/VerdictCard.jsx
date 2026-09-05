@@ -110,9 +110,9 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
           <span><i className="tdot" style={{background: TOKENS.tier.watchdog, width: '7px', height: '7px'}}></i>Watchdog</span>
         </div>
         {snaps.map((snap, i) => {
-          const g = snap.coverage_tier_distribution?.pro_establishment || 0;
-          const m = snap.coverage_tier_distribution?.institutional || 0;
-          const w = snap.coverage_tier_distribution?.adversarial || 0;
+          const g = snap.coverage_tier_distribution?.govt_aligned || 0;
+          const m = snap.coverage_tier_distribution?.mainstream || 0;
+          const w = snap.coverage_tier_distribution?.watchdog || 0;
           const tot = g + m + w;
           
           let wG = 0, wM = 0, wW = 0;

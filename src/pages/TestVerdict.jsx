@@ -5,30 +5,30 @@ export default function TestVerdict() {
   const clearData = {
     verdict: 'clear',
     snapshots: [
-      { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { pro_establishment: 2, institutional: 4, adversarial: 3 } },
-      { snapshot_at: new Date(Date.now() - 3600000 * 24).toISOString(), coverage_tier_distribution: { pro_establishment: 3, institutional: 6, adversarial: 4 } },
-      { snapshot_at: new Date(Date.now() - 3600000 * 12).toISOString(), coverage_tier_distribution: { pro_establishment: 3, institutional: 7, adversarial: 5 } },
-      { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { pro_establishment: 4, institutional: 8, adversarial: 6 } }
+      { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { govt_aligned: 2, mainstream: 4, watchdog: 3 } },
+      { snapshot_at: new Date(Date.now() - 3600000 * 24).toISOString(), coverage_tier_distribution: { govt_aligned: 3, mainstream: 6, watchdog: 4 } },
+      { snapshot_at: new Date(Date.now() - 3600000 * 12).toISOString(), coverage_tier_distribution: { govt_aligned: 3, mainstream: 7, watchdog: 5 } },
+      { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { govt_aligned: 4, mainstream: 8, watchdog: 6 } }
     ]
   };
 
   const mixedData = {
     verdict: 'mixed',
     snapshots: [
-      { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { pro_establishment: 1, institutional: 3, adversarial: 1 } },
-      { snapshot_at: new Date(Date.now() - 3600000 * 24).toISOString(), coverage_tier_distribution: { pro_establishment: 2, institutional: 5, adversarial: 2 } },
-      { snapshot_at: new Date(Date.now() - 3600000 * 12).toISOString(), coverage_tier_distribution: { pro_establishment: 3, institutional: 7, adversarial: 3 } },
-      { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { pro_establishment: 3, institutional: 8, adversarial: 3 } }
+      { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { govt_aligned: 1, mainstream: 3, watchdog: 1 } },
+      { snapshot_at: new Date(Date.now() - 3600000 * 24).toISOString(), coverage_tier_distribution: { govt_aligned: 2, mainstream: 5, watchdog: 2 } },
+      { snapshot_at: new Date(Date.now() - 3600000 * 12).toISOString(), coverage_tier_distribution: { govt_aligned: 3, mainstream: 7, watchdog: 3 } },
+      { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { govt_aligned: 3, mainstream: 8, watchdog: 3 } }
     ]
   };
 
   const darkData = {
     verdict: 'dark',
     snapshots: [
-      { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { pro_establishment: 0, institutional: 0, adversarial: 4 } },
-      { snapshot_at: new Date(Date.now() - 3600000 * 24).toISOString(), coverage_tier_distribution: { pro_establishment: 0, institutional: 0, adversarial: 5 } },
-      { snapshot_at: new Date(Date.now() - 3600000 * 12).toISOString(), coverage_tier_distribution: { pro_establishment: 0, institutional: 1, adversarial: 6 } },
-      { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { pro_establishment: 0, institutional: 1, adversarial: 7 } }
+      { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { govt_aligned: 0, mainstream: 0, watchdog: 4 } },
+      { snapshot_at: new Date(Date.now() - 3600000 * 24).toISOString(), coverage_tier_distribution: { govt_aligned: 0, mainstream: 0, watchdog: 5 } },
+      { snapshot_at: new Date(Date.now() - 3600000 * 12).toISOString(), coverage_tier_distribution: { govt_aligned: 0, mainstream: 1, watchdog: 6 } },
+      { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { govt_aligned: 0, mainstream: 1, watchdog: 7 } }
     ]
   };
 

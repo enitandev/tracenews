@@ -6,9 +6,9 @@ export default function CompactStoryItem({ cluster }) {
   if (!cluster) return null;
 
   const dist = cluster.coverage_stats?.coverage_tier_distribution || {};
-  const g = dist.pro_establishment || dist.govt_aligned || 0;
-  const m = dist.institutional || dist.mainstream || 0;
-  const w = dist.adversarial || dist.watchdog || 0;
+  const g = dist.govt_aligned || dist.govt_aligned || 0;
+  const m = dist.mainstream || dist.mainstream || 0;
+  const w = dist.watchdog || dist.watchdog || 0;
   const scoredOutlets = g + m + w;
   const totalOutlets = cluster.outlet_count || scoredOutlets;
 

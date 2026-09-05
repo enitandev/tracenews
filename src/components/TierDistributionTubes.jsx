@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { COVERAGE_TIER_COLORS, COVERAGE_TIER_BG_COLORS } from '../utils/helpers';
 
 export default function TierDistributionTubes({ groups }) {
-  const [expandedTiers, setExpandedTiers] = useState({ pro_establishment: false, institutional: false, adversarial: false });
+  const [expandedTiers, setExpandedTiers] = useState({ govt_aligned: false, mainstream: false, watchdog: false });
 
   const toggleExpanded = (tier) => {
     setExpandedTiers(prev => ({ ...prev, [tier]: !prev[tier] }));
@@ -93,9 +93,9 @@ export default function TierDistributionTubes({ groups }) {
 
   return (
     <div style={{ display: 'flex', gap: '12px' }}>
-      {renderLogoPill('pro_establishment')}
-      {renderLogoPill('institutional')}
-      {renderLogoPill('adversarial')}
+      {renderLogoPill('govt_aligned')}
+      {renderLogoPill('mainstream')}
+      {renderLogoPill('watchdog')}
     </div>
   );
 }

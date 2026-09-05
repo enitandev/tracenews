@@ -142,22 +142,22 @@ export default function Category() {
   const top_stories = data ? data.top_stories : null;
   const stories = data ? data.stories : null;
   const covered_most_by = data ? data.covered_most_by : [];
-  const bias_breakdown = data ? data.bias_breakdown : { pro_establishment: 0, institutional: 0, adversarial: 0, total: 1 };
+  const bias_breakdown = data ? data.bias_breakdown : { govt_aligned: 0, mainstream: 0, watchdog: 0, total: 1 };
 
   // FIX 4: synthCoverageStats total mismatch
-  const tierSum = (bias_breakdown.pro_establishment || 0) + (bias_breakdown.institutional || 0) + (bias_breakdown.adversarial || 0);
+  const tierSum = (bias_breakdown.govt_aligned || 0) + (bias_breakdown.mainstream || 0) + (bias_breakdown.watchdog || 0);
   const synthCoverageStats = {
     coverage_tier_distribution: {
-      pro_establishment: bias_breakdown.pro_establishment || 0,
-      institutional: bias_breakdown.institutional || 0,
-      adversarial: bias_breakdown.adversarial || 0
+      govt_aligned: bias_breakdown.govt_aligned || 0,
+      mainstream: bias_breakdown.mainstream || 0,
+      watchdog: bias_breakdown.watchdog || 0
     },
     total_coverage: tierSum || 1
   };
 
   let biasSummary = '';
   if (data && tierSum > 0) {
-    const tiers = ['pro_establishment', 'institutional', 'adversarial'];
+    const tiers = ['govt_aligned', 'mainstream', 'watchdog'];
     const dominant = tiers.reduce((a,b) => (bias_breakdown[a] || 0) > (bias_breakdown[b] || 0) ? a : b);
     const pct = Math.round(((bias_breakdown[dominant] || 0) / tierSum) * 100);
     biasSummary = pct > 50 ? 
@@ -326,7 +326,7 @@ export default function Category() {
                   covered_most_by.map((outlet, idx) => {
                     const tierColor = COVERAGE_TIER_COLORS[outlet.tier] || 'var(--border)';
                     const tierTextColor = outlet.tier === 'unscored' ? 'var(--text-muted)' : tierColor;
-                    const tierLabel = outlet.tier === 'pro_establishment' ? 'Govt' : outlet.tier === 'institutional' ? 'Mainstream' : outlet.tier === 'adversarial' ? 'Watchdog' : 'Unscored';
+                    const tierLabel = outlet.tier === 'govt_aligned' ? 'Govt' : outlet.tier === 'mainstream' ? 'Mainstream' : outlet.tier === 'watchdog' ? 'Watchdog' : 'Unscored';
                     
                     return (
                       <div key={idx} style={{ 

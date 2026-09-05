@@ -76,8 +76,8 @@ describe('VerdictCard Invariants', () => {
     const mockData = { 
       verdict: 'clear', 
       snapshots: [
-        { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { pro_establishment: 2, institutional: 4, adversarial: 3 } },
-        { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { pro_establishment: 4, institutional: 8, adversarial: 6 } }
+        { snapshot_at: new Date(Date.now() - 3600000 * 36).toISOString(), coverage_tier_distribution: { govt_aligned: 2, mainstream: 4, watchdog: 3 } },
+        { snapshot_at: new Date().toISOString(), coverage_tier_distribution: { govt_aligned: 4, mainstream: 8, watchdog: 6 } }
       ] 
     };
     render(<VerdictCard verdictData={mockData} clusterStories={[]} />);

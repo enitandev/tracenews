@@ -20,10 +20,10 @@ export default function MonitoringSignals({
   const signals = []
   
   // --- SIGNAL 1: One-Sided Coverage ---
-  const govt = dist.pro_establishment || 0
+  const govt = dist.govt_aligned || 0
   const mainstream = 
-    dist.institutional || 0
-  const watchdog = dist.adversarial || 0
+    dist.mainstream || 0
+  const watchdog = dist.watchdog || 0
   
   const govtPct = total > 0 
     ? (govt / total) * 100 : 0

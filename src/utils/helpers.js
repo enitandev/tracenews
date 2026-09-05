@@ -15,19 +15,7 @@ export const SEVERITY_COLORS = {
   'low': '#2471a3'
 };
 
-export const COVERAGE_TIER_COLORS = {
-  'govt_aligned': '#6d7f92',
-  'mainstream': '#a49889',
-  'watchdog': '#8f9a6f',
-  'unscored': '#999999'
-};
-
-export const TIER_LABELS = {
-  'govt_aligned': 'Govt',
-  'mainstream': 'Mainstream',
-  'watchdog': 'Watchdog',
-  'unscored': 'Unscored'
-};
+export { TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS } from './constants';
 
 export function formatTimeAgo(dateStr) {
   if (!dateStr) return '';
@@ -39,9 +27,4 @@ export function formatTimeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-export const COVERAGE_TIER_BG_COLORS = {
-  govt_aligned: 'rgba(41, 128, 185, 0.12)',
-  mainstream: 'rgba(230, 126, 34, 0.12)',
-  watchdog: 'rgba(192, 57, 43, 0.12)',
-  unscored: 'rgba(153, 153, 153, 0.12)'
-};
+export { TIER_BG_COLORS as COVERAGE_TIER_BG_COLORS } from './constants';

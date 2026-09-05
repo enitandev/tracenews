@@ -25,17 +25,7 @@ const ALIGNMENT_COLORS = {
   'opposition': '#8f9a6f'
 };
 
-const TIER_MAP = {
-  'adversarial': 'Watchdog',
-  'institutional': 'Mainstream',
-  'pro_establishment': 'Govt'
-};
-
-const TIER_COLORS = {
-  'adversarial': '#8f9a6f',
-  'institutional': '#a49889',
-  'pro_establishment': '#6d7f92'
-};
+import { TIERS, TIER_COLORS, TIER_LABELS } from '../utils/constants';
 
 const TRANSPARENCY_COLORS = {
   'high': '#27B060',
@@ -90,7 +80,7 @@ export default function OutletProfile() {
 
   let rawTier = (outlet.credibility_tier || 'unscored').toLowerCase();
 
-  const tierLabel = TIER_MAP[rawTier] || (rawTier.charAt(0).toUpperCase() + rawTier.slice(1));
+  const tierLabel = TIER_LABELS[rawTier] || (rawTier.charAt(0).toUpperCase() + rawTier.slice(1));
   const tierColor = TIER_COLORS[rawTier] || 'var(--text-secondary)';
 
   const getInterpretation = () => {
@@ -99,7 +89,7 @@ export default function OutletProfile() {
     } else if (score >= 50) {
       return "placing it at the upper end of Nigeria's commercial press — close to Watchdog but not yet showing the consistent accountability pattern that would push it above 60.";
     } else if (score >= 35) {
-      return "placing it in the middle of Nigeria's commercial press, with editorial choices that balance independent reporting and institutional constraints.";
+      return "placing it in the middle of Nigeria's commercial press, with editorial choices that balance independent reporting and mainstream constraints.";
     } else {
       return "placing it among outlets whose editorial choices consistently defer to government or aligned interests.";
     }
@@ -205,13 +195,13 @@ export default function OutletProfile() {
           
           {/* Bar */}
           <div style={{ display: 'flex', height: '32px', borderRadius: '6px', overflow: 'hidden', marginBottom: '12px' }}>
-            <div style={{ width: '35%', background: TIER_COLORS['pro_establishment'], display: 'flex', alignItems: 'center', paddingLeft: '8px', color: '#fff', fontSize: '10px', fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}>
+            <div style={{ width: '35%', background: TIER_COLORS['govt_aligned'], display: 'flex', alignItems: 'center', paddingLeft: '8px', color: '#fff', fontSize: '10px', fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}>
               Govt · 0–34
             </div>
-            <div style={{ width: '40%', background: TIER_COLORS['institutional'], display: 'flex', alignItems: 'center', paddingLeft: '8px', color: '#fff', fontSize: '10px', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", borderLeft: '1px solid rgba(255,255,255,0.2)', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+            <div style={{ width: '40%', background: TIER_COLORS['mainstream'], display: 'flex', alignItems: 'center', paddingLeft: '8px', color: '#fff', fontSize: '10px', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", borderLeft: '1px solid rgba(255,255,255,0.2)', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
               Mainstream · 35–59
             </div>
-            <div style={{ width: '25%', background: TIER_COLORS['adversarial'], display: 'flex', alignItems: 'center', paddingLeft: '8px', color: '#fff', fontSize: '10px', fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}>
+            <div style={{ width: '25%', background: TIER_COLORS['watchdog'], display: 'flex', alignItems: 'center', paddingLeft: '8px', color: '#fff', fontSize: '10px', fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}>
               Watchdog · 60+
             </div>
           </div>

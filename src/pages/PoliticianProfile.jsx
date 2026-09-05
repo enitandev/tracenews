@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { TIERS, TIER_COLORS, TIER_LABELS } from '../utils/constants';
 
 const DATA_SINCE = "22 June 2026";
 const SMALL_N_THRESHOLD = 25;
-
-const TIER_LABEL = {
-  pro_establishment: "government-aligned outlets",
-  institutional: "mainstream outlets",
-  adversarial: "watchdog outlets"
-};
-
-const TIER_COLOR = {
-  pro_establishment: "#6d7f92",
-  institutional: "#a49889",
-  adversarial: "#8f9a6f"
-};
 
 const CATEGORY_DISPLAY = {
   Legislature: "Legislator",
@@ -71,16 +60,16 @@ function getInitials(name) {
 
 function tierDistributionText(name, dist, total) {
   if (total < SMALL_N_THRESHOLD) {
-    const g = dist.pro_establishment || 0;
-    const m = dist.institutional || 0;
-    const w = dist.adversarial || 0;
+    const g = dist.govt_aligned || 0;
+    const m = dist.mainstream || 0;
+    const w = dist.watchdog || 0;
     return assertNoForbiddenTokens(
       `Of ${total} stories mentioning ${name} since ${DATA_SINCE}, ${g} appeared in government-aligned outlets, ${m} in mainstream outlets, and ${w} in watchdog outlets.`
     );
   }
-  const g = dist.pro_establishment || 0;
-  const m = dist.institutional || 0;
-  const w = dist.adversarial || 0;
+  const g = dist.govt_aligned || 0;
+  const m = dist.mainstream || 0;
+  const w = dist.watchdog || 0;
   const pct = (n) => Math.round((n / total) * 100);
   return assertNoForbiddenTokens(
     `Of ${total} stories mentioning ${name} since ${DATA_SINCE}, ${pct(g)}% appeared in government-aligned outlets, ${pct(m)}% in mainstream outlets, and ${pct(w)}% in watchdog outlets.`
@@ -188,7 +177,7 @@ export default function PoliticianProfile() {
     `How Nigerian media has covered stories mentioning ${name}: ${total} stories tracked and how that coverage was distributed across editorial tiers, as recorded by TraceNews since ${DATA_SINCE}. This page describes coverage behaviour, not the person.`
   );
 
-  const totalDist = (tier_distribution?.pro_establishment || 0) + (tier_distribution?.institutional || 0) + (tier_distribution?.adversarial || 0);
+  const totalDist = (tier_distribution?.govt_aligned || 0) + (tier_distribution?.mainstream || 0) + (tier_distribution?.watchdog || 0);
 
   // Compute most common category
   let topCategory = '—';
@@ -264,19 +253,19 @@ export default function PoliticianProfile() {
           
           {totalDist > 0 && (
             <div style={{ display: 'flex', width: '100%', height: '32px', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
-              {(tier_distribution.pro_establishment / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.pro_establishment / totalDist) * 100}%`, background: TIER_COLOR.pro_establishment, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
-                  {((tier_distribution.pro_establishment / totalDist) * 100) > 15 ? 'Govt-aligned' : ''}
+              {(tier_distribution.govt_aligned / totalDist) * 100 > 0 && (
+                <div style={{ width: `${(tier_distribution.govt_aligned / totalDist) * 100}%`, background: TIER_COLOR.govt_aligned, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
+                  {((tier_distribution.govt_aligned / totalDist) * 100) > 15 ? 'Govt-aligned' : ''}
                 </div>
               )}
-              {(tier_distribution.institutional / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.institutional / totalDist) * 100}%`, background: TIER_COLOR.institutional, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
-                  {((tier_distribution.institutional / totalDist) * 100) > 15 ? 'Mainstream' : ''}
+              {(tier_distribution.mainstream / totalDist) * 100 > 0 && (
+                <div style={{ width: `${(tier_distribution.mainstream / totalDist) * 100}%`, background: TIER_COLOR.mainstream, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
+                  {((tier_distribution.mainstream / totalDist) * 100) > 15 ? 'Mainstream' : ''}
                 </div>
               )}
-              {(tier_distribution.adversarial / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.adversarial / totalDist) * 100}%`, background: TIER_COLOR.adversarial, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
-                  {((tier_distribution.adversarial / totalDist) * 100) > 15 ? 'Watchdog' : ''}
+              {(tier_distribution.watchdog / totalDist) * 100 > 0 && (
+                <div style={{ width: `${(tier_distribution.watchdog / totalDist) * 100}%`, background: TIER_COLOR.watchdog, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
+                  {((tier_distribution.watchdog / totalDist) * 100) > 15 ? 'Watchdog' : ''}
                 </div>
               )}
             </div>
@@ -284,13 +273,13 @@ export default function PoliticianProfile() {
           
           <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
             <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.pro_establishment }} /> Govt-aligned
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.govt_aligned }} /> Govt-aligned
             </Link>
             <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.institutional }} /> Mainstream
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.mainstream }} /> Mainstream
             </Link>
             <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.adversarial }} /> Watchdog
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLOR.watchdog }} /> Watchdog
             </Link>
           </div>
           

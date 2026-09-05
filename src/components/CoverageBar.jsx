@@ -1,23 +1,10 @@
 import React, { useState } from 'react';
-
-const COVERAGE_TIER_COLORS = {
-  'pro_establishment': '#6d7f92',
-  'institutional': '#a49889',
-  'adversarial': '#8f9a6f',
-  'unscored': '#999999'
-};
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS } from '../utils/constants';
 
 const LEGACY_MAP = {
-  'captured': 'pro_establishment',
-  'deferential': 'institutional',
-  'independent': 'adversarial'
-};
-
-const TIER_LABELS = {
-  'pro_establishment': 'Govt',
-  'institutional': 'Mainstream',
-  'adversarial': 'Watchdog',
-  'unscored': 'Unscored'
+  'captured': 'govt_aligned',
+  'deferential': 'mainstream',
+  'independent': 'watchdog'
 };
 
 export function getDominantTier(dist) {
@@ -48,7 +35,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
   }
   
   const dominant = getDominantTier(dist);
-  const tiers = ['pro_establishment', 'institutional', 'adversarial', 'unscored'];
+  const tiers = TIERS;
   const isUnscored = Object.values(dist).every(v => v === 0);
 
   const [hoveredTier, setHoveredTier] = useState(null);
@@ -76,7 +63,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
             const labelText = `${TIER_LABELS[tier]} ${Math.round(percentage)}%`;
             const isLast = index === displayedTiers.length - 1;
             const showAbbrev = percentage >= 15;
-            const TIER_FULL_LABELS = { 'pro_establishment': 'Govt', 'institutional': 'Mainstream', 'adversarial': 'Watchdog' };
+            // using imported TIER_LABELS
             
             return (
               <div 

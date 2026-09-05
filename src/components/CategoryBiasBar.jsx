@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
 
-const COVERAGE_TIER_COLORS = {
-  'pro_establishment': '#6d7f92',
-  'institutional': '#a49889',
-  'adversarial': '#8f9a6f',
-  'unscored': '#999999'
-};
-
-const TIER_FULL_NAMES = {
-  'pro_establishment': 'Govt',
-  'institutional': 'Mainstream',
-  'adversarial': 'Watchdog'
-};
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS as TIER_FULL_NAMES } from '../utils/constants';
 
 const TIER_ABBREVS = {
-  'pro_establishment': 'P-E',
-  'institutional': 'I',
-  'adversarial': 'A'
+  'govt_aligned': 'G',
+  'mainstream': 'M',
+  'watchdog': 'W'
 };
 
 export default function CategoryBiasBar({ coverageStats }) {
@@ -25,7 +14,7 @@ export default function CategoryBiasBar({ coverageStats }) {
   const rawDist = coverageStats?.coverage_tier_distribution || {};
   const total = coverageStats?.total_coverage || 1;
   
-  const tiers = ['pro_establishment', 'institutional', 'adversarial'];
+  const tiers = ['govt_aligned', 'mainstream', 'watchdog'];
   const displayedTiers = tiers.filter(tier => (rawDist[tier] || 0) > 0);
 
   return (

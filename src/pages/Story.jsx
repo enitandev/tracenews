@@ -7,25 +7,13 @@ import CoverageSidebar from '../components/CoverageSidebar';
 import MonitoringSignals from '../components/MonitoringSignals';
 import { supabase } from '../lib/supabase';
 
-const COVERAGE_TIER_COLORS = {
-  'pro_establishment': '#6d7f92',
-  'institutional': '#a49889',
-  'adversarial': '#8f9a6f',
-  'unscored': '#999999'
-};
-
-const TIER_LABELS = {
-  'pro_establishment': 'Govt',
-  'institutional': 'Mainstream',
-  'adversarial': 'Watchdog',
-  'unscored': 'Unscored'
-};
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS } from '../utils/constants';
 
 const TAB_TO_KEY = {
   'All': 'all',
-  'Watchdog': 'adversarial',
-  'Mainstream': 'institutional',
-  'Govt': 'pro_establishment'
+  'Watchdog': 'watchdog',
+  'Mainstream': 'mainstream',
+  'Govt': 'govt_aligned'
 };
 
 const GOVERNMENT_COLORS = {
@@ -175,9 +163,9 @@ export default function Story() {
       if (!session) return;
       
       const tierMap = {
-        'pro_establishment': 'govt',
-        'institutional': 'mainstream',
-        'adversarial': 'watchdog'
+        'govt_aligned': 'govt',
+        'mainstream': 'mainstream',
+        'watchdog': 'watchdog'
       };
       const mappedTier = tierMap[story.outlet_coverage_tier];
       if (!mappedTier) return;
@@ -277,7 +265,7 @@ export default function Story() {
 
   // Outlet Logos grouping (By Coverage Tier)
   const groupOutlets = () => {
-    const groups = { 'pro_establishment': [], 'institutional': [], 'adversarial': [], 'blog': [], 'unscored': [] };
+    const groups = { 'govt_aligned': [], 'mainstream': [], 'watchdog': [], 'blog': [], 'unscored': [] };
     const seenOutlets = new Set();
     stories.forEach(s => {
       const tier = s.outlet_coverage_tier || 'unscored';
@@ -294,13 +282,13 @@ export default function Story() {
   // Layer 1: Coverage Tier Bar (Primary)
   const renderLayer1 = () => {
     const dist = {
-      adversarial: outletGroups['adversarial'].length,
-      institutional: outletGroups['institutional'].length,
-      pro_establishment: outletGroups['pro_establishment'].length
+      watchdog: outletGroups['watchdog'].length,
+      mainstream: outletGroups['mainstream'].length,
+      govt_aligned: outletGroups['govt_aligned'].length
     };
     // Calculate total explicitly for coverage tier, excluding 'unscored'
     const totalScored = Object.values(dist).reduce((sum, val) => sum + val, 0) || 1;
-    const tiers = ['adversarial', 'institutional', 'pro_establishment'];
+    const tiers = ['watchdog', 'mainstream', 'govt_aligned'];
     
     return (
       <div style={{ marginBottom: '32px' }}>
@@ -309,12 +297,12 @@ export default function Story() {
           {tiers.map(t => dist[t] > 0 && (
             <div key={t} style={{ width: `${(dist[t]/totalScored)*100}%`, background: COVERAGE_TIER_COLORS[t] }} title={`${t}: ${Math.round((dist[t]/totalScored)*100)}%`} />
           ))}
-          {(!dist['adversarial'] && !dist['institutional'] && !dist['pro_establishment']) && <div style={{width:'100%', background:'#333'}}></div>}
+          {(!dist['watchdog'] && !dist['mainstream'] && !dist['govt_aligned']) && <div style={{width:'100%', background:'#333'}}></div>}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-          <span style={{ color: COVERAGE_TIER_COLORS['adversarial'] }}>{TIER_LABELS['adversarial']}: {Math.round(((dist['adversarial']||0)/totalScored)*100)}%</span>
-          <span style={{ color: COVERAGE_TIER_COLORS['institutional'] }}>{TIER_LABELS['institutional']}: {Math.round(((dist['institutional']||0)/totalScored)*100)}%</span>
-          <span style={{ color: COVERAGE_TIER_COLORS['pro_establishment'] }}>{TIER_LABELS['pro_establishment']}: {Math.round(((dist['pro_establishment']||0)/totalScored)*100)}%</span>
+          <span style={{ color: COVERAGE_TIER_COLORS['watchdog'] }}>{TIER_LABELS['watchdog']}: {Math.round(((dist['watchdog']||0)/totalScored)*100)}%</span>
+          <span style={{ color: COVERAGE_TIER_COLORS['mainstream'] }}>{TIER_LABELS['mainstream']}: {Math.round(((dist['mainstream']||0)/totalScored)*100)}%</span>
+          <span style={{ color: COVERAGE_TIER_COLORS['govt_aligned'] }}>{TIER_LABELS['govt_aligned']}: {Math.round(((dist['govt_aligned']||0)/totalScored)*100)}%</span>
         </div>
       </div>
     );
@@ -666,17 +654,17 @@ export default function Story() {
           <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #333', marginBottom: '24px', paddingBottom: '0' }}>
             {[
               { id: 'all', label: 'All', count: null },
-              { id: 'pro_establishment', label: 'Govt', count: outletGroups['pro_establishment']?.length || 0 },
-              { id: 'institutional', label: 'Mainstream', count: outletGroups['institutional']?.length || 0 },
-              { id: 'adversarial', label: 'Watchdog', count: outletGroups['adversarial']?.length || 0 },
+              { id: 'govt_aligned', label: 'Govt', count: outletGroups['govt_aligned']?.length || 0 },
+              { id: 'mainstream', label: 'Mainstream', count: outletGroups['mainstream']?.length || 0 },
+              { id: 'watchdog', label: 'Watchdog', count: outletGroups['watchdog']?.length || 0 },
               ...(outletGroups['blog']?.length > 0 ? [{ id: 'blog', label: 'Blog', count: outletGroups['blog'].length }] : [])
             ].map(tab => {
               const isActive = activeFilterTab === tab.id;
               let borderColor = 'transparent';
               if (isActive) {
-                if (tab.id === 'pro_establishment') borderColor = '#6d7f92';
-                else if (tab.id === 'institutional') borderColor = '#a49889';
-                else if (tab.id === 'adversarial') borderColor = '#8f9a6f';
+                if (tab.id === 'govt_aligned') borderColor = '#6d7f92';
+                else if (tab.id === 'mainstream') borderColor = '#a49889';
+                else if (tab.id === 'watchdog') borderColor = '#8f9a6f';
                 else if (tab.id === 'blog') borderColor = '#888888';
                 else borderColor = 'var(--text-primary)';
               }
@@ -709,9 +697,9 @@ export default function Story() {
                     <span style={{
                       borderRadius: '10px',
                       padding: '1px 7px',
-                      background: tab.id === 'pro_establishment' ? 'rgba(41,128,185,0.2)' :
-                                  tab.id === 'institutional' ? 'rgba(230,126,34,0.2)' :
-                                  tab.id === 'adversarial' ? 'rgba(192,57,43,0.2)' : 
+                      background: tab.id === 'govt_aligned' ? 'rgba(41,128,185,0.2)' :
+                                  tab.id === 'mainstream' ? 'rgba(230,126,34,0.2)' :
+                                  tab.id === 'watchdog' ? 'rgba(192,57,43,0.2)' : 
                                   tab.id === 'blog' ? 'rgba(136,136,136,0.2)' : 'var(--bg-elevated)',
                       color: tab.id === 'all' ? 'var(--text-primary)' : 
                              tab.id === 'blog' ? '#888888' : COVERAGE_TIER_COLORS[tab.id],

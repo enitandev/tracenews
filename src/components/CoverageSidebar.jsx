@@ -3,24 +3,12 @@ import CoverageBar from './CoverageBar';
 import { Clock, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const COVERAGE_TIER_COLORS = {
-  'pro_establishment': '#6d7f92',
-  'institutional': '#a49889',
-  'adversarial': '#8f9a6f',
-  'unscored': '#999999'
-};
-
-const COVERAGE_TIER_BG_COLORS = {
-  'pro_establishment': 'rgba(41, 128, 185, 0.12)',
-  'institutional': 'rgba(230, 126, 34, 0.12)',
-  'adversarial': 'rgba(192, 57, 43, 0.12)',
-  'unscored': 'rgba(153, 153, 153, 0.12)'
-};
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_BG_COLORS as COVERAGE_TIER_BG_COLORS } from '../utils/constants';
 
 const LEGACY_MAP = {
-  'captured': 'pro_establishment',
-  'deferential': 'institutional',
-  'independent': 'adversarial'
+  'captured': 'govt_aligned',
+  'deferential': 'mainstream',
+  'independent': 'watchdog'
 };
 
 function formatTimeAgo(dateStr) {
@@ -50,24 +38,24 @@ const SidebarCard = ({ title, children, defaultCollapsed = false }) => {
 
 export default function CoverageSidebar({ cluster, stories, outletGroups = null }) {
   // If outletGroups isn't passed for some reason, fallback to basic grouping
-  const groups = outletGroups || { 'pro_establishment': [], 'institutional': [], 'adversarial': [] };
+  const groups = outletGroups || { 'govt_aligned': [], 'mainstream': [], 'watchdog': [] };
   
-  const total = (groups['pro_establishment']?.length || 0) + 
-                (groups['institutional']?.length || 0) + 
-                (groups['adversarial']?.length || 0) +
+  const total = (groups['govt_aligned']?.length || 0) + 
+                (groups['mainstream']?.length || 0) + 
+                (groups['watchdog']?.length || 0) +
                 (groups['blog']?.length || 0);
 
   const allUniqueStories = Object.values(groups).flat();
 
   const tierDistribution = {
-    'pro_establishment': groups['pro_establishment']?.length || 0,
-    'institutional': groups['institutional']?.length || 0,
-    'adversarial': groups['adversarial']?.length || 0
+    'govt_aligned': groups['govt_aligned']?.length || 0,
+    'mainstream': groups['mainstream']?.length || 0,
+    'watchdog': groups['watchdog']?.length || 0
   };
   
   const liveStats = {
     coverage_tier_distribution: tierDistribution,
-    total_coverage: tierDistribution.pro_establishment + tierDistribution.institutional + tierDistribution.adversarial
+    total_coverage: tierDistribution.govt_aligned + tierDistribution.mainstream + tierDistribution.watchdog
   };
 
   const [expandedTiers, setExpandedTiers] = useState({});
@@ -171,16 +159,16 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
             <span style={{ fontWeight: 800 }}>{total}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['pro_establishment'] }}>Govt</span>
-            <span style={{ fontWeight: 800 }}>{groups['pro_establishment']?.length || 0}</span>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['govt_aligned'] }}>Govt</span>
+            <span style={{ fontWeight: 800 }}>{groups['govt_aligned']?.length || 0}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['institutional'] }}>Mainstream</span>
-            <span style={{ fontWeight: 800 }}>{groups['institutional']?.length || 0}</span>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['mainstream'] }}>Mainstream</span>
+            <span style={{ fontWeight: 800 }}>{groups['mainstream']?.length || 0}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['adversarial'] }}>Watchdog</span>
-            <span style={{ fontWeight: 800 }}>{groups['adversarial']?.length || 0}</span>
+            <span style={{ fontWeight: 600, color: COVERAGE_TIER_COLORS['watchdog'] }}>Watchdog</span>
+            <span style={{ fontWeight: 800 }}>{groups['watchdog']?.length || 0}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
             <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>Blogs & Forums</span>
@@ -199,9 +187,9 @@ export default function CoverageSidebar({ cluster, stories, outletGroups = null 
           <CoverageBar variant="hero" coverageStats={liveStats} />
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          {renderLogoPill('pro_establishment')}
-          {renderLogoPill('institutional')}
-          {renderLogoPill('adversarial')}
+          {renderLogoPill('govt_aligned')}
+          {renderLogoPill('mainstream')}
+          {renderLogoPill('watchdog')}
         </div>
       </SidebarCard>
 
