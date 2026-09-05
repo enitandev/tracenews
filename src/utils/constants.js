@@ -6,6 +6,8 @@ export const TIERS = {
   UNSCORED: 'unscored'
 };
 
+export const TIER_KEYS = [TIERS.GOVT, TIERS.MAINSTREAM, TIERS.WATCHDOG, TIERS.UNSCORED];
+
 export const TIER_COLORS = {
   [TIERS.GOVT]: '#6d7f92',
   [TIERS.MAINSTREAM]: '#a49889',

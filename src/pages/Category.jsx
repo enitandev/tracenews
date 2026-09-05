@@ -9,7 +9,7 @@ import CompactStoryItem from '../components/CompactStoryItem';
 
 import CoverageBar from '../components/CoverageBar';
 import CategoryBiasBar from '../components/CategoryBiasBar';
-import { COVERAGE_TIER_COLORS, TIER_LABELS } from '../utils/helpers';
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS, TIER_KEYS } from '../utils/constants';
 
 
 function SkeletonHeroStoryCard() {
@@ -157,7 +157,7 @@ export default function Category() {
 
   let biasSummary = '';
   if (data && tierSum > 0) {
-    const tiers = ['govt_aligned', 'mainstream', 'watchdog'];
+    const tiers = TIER_KEYS.slice(0, 3);
     const dominant = tiers.reduce((a,b) => (bias_breakdown[a] || 0) > (bias_breakdown[b] || 0) ? a : b);
     const pct = Math.round(((bias_breakdown[dominant] || 0) / tierSum) * 100);
     biasSummary = pct > 50 ? 

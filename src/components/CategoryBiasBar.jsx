@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS as TIER_FULL_NAMES } from '../utils/constants';
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS as TIER_FULL_NAMES, TIER_KEYS } from '../utils/constants';
 
 const TIER_ABBREVS = {
   'govt_aligned': 'G',
@@ -14,7 +14,8 @@ export default function CategoryBiasBar({ coverageStats }) {
   const rawDist = coverageStats?.coverage_tier_distribution || {};
   const total = coverageStats?.total_coverage || 1;
   
-  const tiers = ['govt_aligned', 'mainstream', 'watchdog'];
+  // Only use the first 3 elements (scored tiers)
+  const tiers = TIER_KEYS.slice(0, 3);
   const displayedTiers = tiers.filter(tier => (rawDist[tier] || 0) > 0);
 
   return (

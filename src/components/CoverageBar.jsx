@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS } from '../utils/constants';
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS, TIER_KEYS } from '../utils/constants';
 
 const LEGACY_MAP = {
   'captured': 'govt_aligned',
@@ -35,7 +35,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
   }
   
   const dominant = getDominantTier(dist);
-  const tiers = TIERS;
+  const tiers = TIER_KEYS;
   const isUnscored = Object.values(dist).every(v => v === 0);
 
   const [hoveredTier, setHoveredTier] = useState(null);

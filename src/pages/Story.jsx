@@ -7,7 +7,7 @@ import CoverageSidebar from '../components/CoverageSidebar';
 import MonitoringSignals from '../components/MonitoringSignals';
 import { supabase } from '../lib/supabase';
 
-import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS } from '../utils/constants';
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS, TIER_KEYS } from '../utils/constants';
 
 const TAB_TO_KEY = {
   'All': 'all',
@@ -288,7 +288,8 @@ export default function Story() {
     };
     // Calculate total explicitly for coverage tier, excluding 'unscored'
     const totalScored = Object.values(dist).reduce((sum, val) => sum + val, 0) || 1;
-    const tiers = ['watchdog', 'mainstream', 'govt_aligned'];
+    // In Story, it was rendered in reverse order for watchdog first
+    const tiers = [...TIER_KEYS].slice(0, 3).reverse();
     
     return (
       <div style={{ marginBottom: '32px' }}>
