@@ -5,7 +5,7 @@ import { AlertTriangle } from 'lucide-react';
 import CoverageBar, { getDominantTier } from '../components/CoverageBar';
 
 import { REGION_COLORS, formatTimeAgo } from '../utils/helpers';
-import MonitoringAlertCard from '../components/MonitoringAlertCard';
+import CoverageBreadthCard from '../components/CoverageBreadthCard';
 import HeroStoryCard from '../components/HeroStoryCard';
 import StandardStoryItem from '../components/StandardStoryItem';
 import CompactStoryItem from '../components/CompactStoryItem';
@@ -50,18 +50,7 @@ function SkeletonCompactStoryItem() {
   );
 }
 
-function SkeletonMonitoringAlertCard() {
-  return (
-    <div style={{ borderRadius: '8px', overflow: 'hidden', background: 'var(--bg-elevated)', marginBottom: '16px', border: '2px solid var(--border)', height: '300px' }}>
-      <div style={{ width: '100%', height: '180px', background: 'var(--bg-hover)' }}></div>
-      <div style={{ padding: '12px 14px 16px' }}>
-        <div style={{ width: '40%', height: '18px', background: 'var(--border)', borderRadius: '4px', marginBottom: '12px' }}></div>
-        <div style={{ width: '80%', height: '16px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
-        <div style={{ width: '60%', height: '16px', background: 'var(--border)', borderRadius: '4px' }}></div>
-      </div>
-    </div>
-  );
-}
+
 
 
 export default function Home() {
@@ -295,39 +284,10 @@ export default function Home() {
         </div>
 
         {/* CENTER COLUMN: Hero & Standard Feed */}
-        <div style={{ width: '47%', flexShrink: 0, paddingLeft: '32px', paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
+        <div style={{ width: '72%', flexShrink: 0, paddingLeft: '32px' }}>
           {heroCluster ? <HeroStoryCard cluster={heroCluster} /> : <SkeletonHeroStoryCard />}
           <div style={{ marginTop: '24px' }}>
             {standardFeed.map((c, i) => c ? <StandardStoryItem key={c.id} cluster={c} /> : <SkeletonStandardStoryItem key={i} />)}
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: Monitoring Spirit */}
-        <div style={{ width: '25%', flexShrink: 0, paddingLeft: '32px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <AlertTriangle size={20} color="#a49889" />
-            <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '20px', color: 'var(--text-primary)', margin: 0 }}>Monitoring Spirit</h2>
-          </div>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '24px' }}>
-            Our AI continuously monitors the Nigerian media ecosystem for unusual patterns, PR saturation, and verified coverage gaps.
-          </p>
-          
-          {rightWidgets.map((c, i) => c ? <MonitoringAlertCard key={c.id} cluster={c} /> : <SkeletonMonitoringAlertCard key={i} />)}
-          
-          <div style={{ marginTop: '40px' }}>
-            <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '22px', marginBottom: '16px', color: 'var(--text-primary)' }}>My News Diet</h2>
-            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', padding: '20px', borderRadius: '6px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'var(--text-primary)' }}>Anonymous User</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>0 Stories Read</div>
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Avg Independence Score</span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>--/100</span>
-              </div>
-              <div style={{ width: '100%', height: '8px', background: 'var(--bg-hover)', borderRadius: '4px' }}></div>
-
-              <button style={{ width: '100%', padding: '10px', marginTop: '24px', background: 'var(--bg-hover)', color: 'var(--text-primary)', border: '1px solid var(--border-bright)', borderRadius: '4px', fontWeight: 600, cursor: 'pointer' }}>Sign In to Track</button>
-            </div>
           </div>
         </div>
       </div>
@@ -338,8 +298,18 @@ export default function Home() {
         const catHero = catStories[0];
         const catStandard = catStories.slice(1, 4);
         
-        const catAlerts = catStories.filter(c => c.monitoring_flags && c.monitoring_flags.length > 0);
-        const catWidgets = catAlerts.length >= 2 ? catAlerts.slice(0, 2) : catStories.slice(4, 6);
+        const scoredStories = catStories.filter(c => {
+          const dist = c.coverage_stats?.coverage_tier_distribution || {};
+          const scored = (dist.govt_aligned || 0) + (dist.mainstream || 0) + (dist.watchdog || 0);
+          return scored >= 3;
+        }).sort((a, b) => {
+          const distA = a.coverage_stats?.coverage_tier_distribution || {};
+          const scoredA = (distA.govt_aligned || 0) + (distA.mainstream || 0) + (distA.watchdog || 0);
+          const distB = b.coverage_stats?.coverage_tier_distribution || {};
+          const scoredB = (distB.govt_aligned || 0) + (distB.mainstream || 0) + (distB.watchdog || 0);
+          return scoredB - scoredA;
+        });
+        const breadthCards = scoredStories.slice(0, 2);
 
         const allRemaining = clusters.slice(14).filter(c => !validCategories.includes(c.category || 'General'));
         const isFirstInterstitial = index === 0;
@@ -360,8 +330,8 @@ export default function Home() {
               </div>
               
               <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex' }}>
-                {/* Left 60%: Latest Category News */}
-                <div style={{ width: '60%', paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
+                {/* Left: Latest Category News */}
+                <div style={{ width: breadthCards.length > 0 ? '60%' : '100%', paddingRight: breadthCards.length > 0 ? '32px' : '0', borderRight: breadthCards.length > 0 ? '1px solid var(--border)' : 'none' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>Latest {cat} News</h3>
                   {catHero && <HeroStoryCard cluster={catHero} />}
                   
@@ -370,25 +340,17 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {/* Right 40%: Category Alerts */}
+                {/* Right: Category Top Stories */}
+                {breadthCards.length > 0 && (
                 <div style={{ width: '40%', paddingLeft: '32px' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>{cat} Spirit Alerts</h3>
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    {catWidgets.map(c => (
-                      <div key={c.id} style={{ flex: 1 }}>
-                        <MonitoringAlertCard cluster={c} />
-                      </div>
+                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-muted)' }}>Top {cat} Stories</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {breadthCards.map(c => (
+                      <CoverageBreadthCard key={c.id} cluster={c} />
                     ))}
                   </div>
-                  <div style={{ background: '#2a2a2a', padding: '24px', borderRadius: '6px', color: '#fff', marginTop: '16px' }}>
-                    <h4 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Watchdog Report</h4>
-                    <p style={{ fontSize: '13px', color: '#ccc', marginBottom: '16px' }}>Get the weekly {cat} Watchdog report sent to your inbox.</p>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <input type="email" placeholder="Email address" style={{ flexGrow: 1, padding: '10px', background: '#444', border: '1px solid #555', color: '#fff', borderRadius: '4px' }} />
-                      <button style={{ padding: '10px 16px', background: '#777', border: 'none', color: '#fff', fontWeight: 600, borderRadius: '4px', cursor: 'pointer' }}>Subscribe</button>
-                    </div>
-                  </div>
                 </div>
+                )}
               </div>
             </div>
 
@@ -441,6 +403,15 @@ export default function Home() {
           </React.Fragment>
         );
       })}
+
+      <div style={{ margin: '60px auto', maxWidth: '600px', background: '#2a2a2a', padding: '32px', borderRadius: '6px', color: '#fff', textAlign: 'center' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '24px' }}>The Watchdog Report</h4>
+        <p style={{ fontSize: '15px', color: '#ccc', marginBottom: '24px' }}>Get the weekly Watchdog report sent to your inbox.</p>
+        <div style={{ display: 'flex', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
+          <input type="email" placeholder="Email address" style={{ flexGrow: 1, padding: '12px', background: '#444', border: '1px solid #555', color: '#fff', borderRadius: '4px' }} />
+          <button style={{ padding: '12px 24px', background: '#777', border: 'none', color: '#fff', fontWeight: 600, borderRadius: '4px', cursor: 'pointer' }}>Subscribe</button>
+        </div>
+      </div>
 
     </div>
   );

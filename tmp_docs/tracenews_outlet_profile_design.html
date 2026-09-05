@@ -1,0 +1,247 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-sans);}
+.op{max-width:900px;padding:0 0 60px;}
+.op-header{display:flex;align-items:flex-start;gap:20px;padding:32px 0 24px;border-bottom:0.5px solid var(--border);}
+.op-logo{width:64px;height:64px;border-radius:12px;border:0.5px solid var(--border);background:var(--surface-1);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.op-logo img{width:100%;height:100%;object-fit:contain;}
+.op-identity{flex:1;min-width:0;}
+.op-name{font-size:22px;font-weight:500;color:var(--text-primary);line-height:1.2;margin-bottom:6px;}
+.op-meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--text-secondary);margin-bottom:10px;}
+.op-meta-dot{color:var(--border-strong);}
+.op-website{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--text-accent);text-decoration:none;}
+.op-score-band{padding:24px 0;border-bottom:0.5px solid var(--border);}
+.op-score-row{display:flex;align-items:flex-start;gap:32px;}
+.op-score-big{flex-shrink:0;}
+.op-score-num{font-family:var(--font-mono);font-size:56px;font-weight:500;line-height:1;color:#E67E22;}
+.op-score-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-top:4px;}
+.op-spectrum-wrap{flex:1;min-width:0;padding-top:6px;}
+.op-spectrum-bar{position:relative;height:28px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:10px;}
+.op-spectrum-govt{flex:0 0 35%;background:#2980B9;display:flex;align-items:center;padding-left:10px;}
+.op-spectrum-main{flex:0 0 40%;background:#E67E22;display:flex;align-items:center;padding-left:10px;}
+.op-spectrum-watch{flex:0 0 25%;background:#C0392B;display:flex;align-items:center;padding-left:10px;}
+.op-spectrum-label{font-family:var(--font-mono);font-size:10px;font-weight:500;color:rgba(255,255,255,.9);letter-spacing:.04em;}
+.op-dot-track{position:relative;height:20px;margin-bottom:6px;}
+.op-dot-track-line{position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border-strong);}
+.op-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:#E67E22;border:2.5px solid var(--surface-2);top:50%;transform:translate(-50%,-50%);left:calc(35% + (58 - 35) / 25 * 40%);box-shadow:0 0 0 2px #E67E22;}
+.op-dot-label{position:absolute;font-family:var(--font-mono);font-size:10px;color:#E67E22;font-weight:500;top:100%;margin-top:3px;left:calc(35% + (58 - 35) / 25 * 40%);transform:translateX(-50%);}
+.op-spectrum-axis{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);}
+.op-tier-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px;background:rgba(230,126,34,.1);color:#E67E22;border:0.5px solid rgba(230,126,34,.3);margin-top:8px;}
+.op-tier-dot{width:7px;height:7px;border-radius:50%;background:#E67E22;}
+.op-body{display:grid;grid-template-columns:1fr 280px;gap:32px;margin-top:28px;}
+.op-main{}
+.op-sidebar{}
+.op-card{background:var(--surface-1);border:0.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
+.op-card-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.op-card-title i{font-size:16px;color:var(--text-muted);}
+.op-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--border);gap:16px;}
+.op-row:last-child{border-bottom:none;}
+.op-row-label{font-size:13px;color:var(--text-secondary);flex-shrink:0;}
+.op-row-val{font-size:13px;color:var(--text-primary);font-weight:500;text-align:right;}
+.op-row-val.govt{color:#2980B9;}
+.op-row-val.main{color:#E67E22;}
+.op-row-val.watch{color:#C0392B;}
+.op-row-val.neutral{color:var(--text-secondary);}
+.op-transp{display:inline-flex;align-items:center;gap:3px;}
+.op-transp-dot{width:8px;height:8px;border-radius:50%;}
+.op-stories-list{display:flex;flex-direction:column;gap:0;}
+.op-story{padding:10px 0;border-bottom:0.5px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
+.op-story:last-child{border-bottom:none;}
+.op-story-img{width:64px;height:48px;border-radius:6px;background:var(--surface-0);flex-shrink:0;overflow:hidden;}
+.op-story-img img{width:100%;height:100%;object-fit:cover;}
+.op-story-body{flex:1;min-width:0;}
+.op-story-title{font-size:13px;font-weight:500;color:var(--text-primary);line-height:1.4;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.op-story-meta{font-size:11px;color:var(--text-muted);}
+.op-alert{background:rgba(230,126,34,.06);border:0.5px solid rgba(230,126,34,.2);border-radius:8px;padding:12px 14px;}
+.op-alert-label{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#E67E22;margin-bottom:6px;}
+.op-alert-text{font-size:12px;color:var(--text-secondary);line-height:1.55;}
+.op-score-context{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-top:8px;}
+.op-quick-item{display:flex;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--border);align-items:flex-start;}
+.op-quick-item:last-child{border-bottom:none;}
+.op-quick-key{font-size:12px;color:var(--text-muted);flex-shrink:0;width:100px;}
+.op-quick-val{font-size:12px;color:var(--text-primary);font-weight:500;}
+</style>
+
+<div class="op">
+  <div class="op-header">
+    <div class="op-logo">
+      <img src="https://www.google.com/s2/favicons?domain=premiumtimesng.com&sz=128" alt="Premium Times logo">
+    </div>
+    <div class="op-identity">
+      <div class="op-name">Premium Times</div>
+      <div class="op-meta">
+        <span>Online newspaper</span>
+        <span class="op-meta-dot">·</span>
+        <span>Founded 2011</span>
+        <span class="op-meta-dot">·</span>
+        <span>Abuja</span>
+        <span class="op-meta-dot">·</span>
+        <span>National reach</span>
+      </div>
+      <a class="op-website" href="#">
+        <i class="ti ti-external-link" aria-hidden="true"></i>
+        premiumtimesng.com
+      </a>
+    </div>
+  </div>
+
+  <div class="op-score-band">
+    <div class="op-score-row">
+      <div class="op-score-big">
+        <div class="op-score-num">58</div>
+        <div class="op-score-label">Independence score</div>
+        <div class="op-tier-badge">
+          <div class="op-tier-dot"></div>
+          Mainstream
+        </div>
+      </div>
+      <div class="op-spectrum-wrap">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:var(--font-mono);">Position on the independence spectrum</div>
+        <div class="op-spectrum-bar">
+          <div class="op-spectrum-govt"><span class="op-spectrum-label">Govt 0–34</span></div>
+          <div class="op-spectrum-main"><span class="op-spectrum-label">Mainstream 35–59</span></div>
+          <div class="op-spectrum-watch"><span class="op-spectrum-label">Watchdog 60+</span></div>
+        </div>
+        <div class="op-dot-track">
+          <div class="op-dot-track-line"></div>
+          <div class="op-dot"></div>
+          <div class="op-dot-label">58</div>
+        </div>
+        <div class="op-spectrum-axis">
+          <span>0</span>
+          <span>25</span>
+          <span>50</span>
+          <span>75</span>
+          <span>100</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="op-body">
+    <div class="op-main">
+
+      <div class="op-card">
+        <div class="op-card-title">
+          <i class="ti ti-building" aria-hidden="true"></i>
+          Ownership and editorial profile
+        </div>
+        <div class="op-row">
+          <span class="op-row-label">Owner</span>
+          <span class="op-row-val">Dapo Olorunyomi (Independent)</span>
+        </div>
+        <div class="op-row">
+          <span class="op-row-label">Ownership type</span>
+          <span class="op-row-val">Independent</span>
+        </div>
+        <div class="op-row">
+          <span class="op-row-label">Ownership transparency</span>
+          <span class="op-row-val">
+            <span class="op-transp">
+              <span class="op-transp-dot" style="background:#27B060;"></span>
+              High
+            </span>
+          </span>
+        </div>
+        <div class="op-row">
+          <span class="op-row-label">Government alignment</span>
+          <span class="op-row-val neutral">Editorially neutral</span>
+        </div>
+        <div class="op-row">
+          <span class="op-row-label">Geopolitical lean</span>
+          <span class="op-row-val">National</span>
+        </div>
+      </div>
+
+      <div class="op-card">
+        <div class="op-card-title">
+          <i class="ti ti-article" aria-hidden="true"></i>
+          Recent coverage
+        </div>
+        <div class="op-stories-list">
+          <div class="op-story">
+            <div class="op-story-img"><img src="https://dailytrust.com/wp-content/uploads/2026/06/WhatsApp-Image-2026-06-21-at-03.56.43.jpeg" alt=""></div>
+            <div class="op-story-body">
+              <div class="op-story-title">INEC declares Oyebanji winner of Ekiti governorship election</div>
+              <div class="op-story-meta">6 hours ago · Politics</div>
+            </div>
+          </div>
+          <div class="op-story">
+            <div class="op-story-img" style="background:var(--surface-0);"></div>
+            <div class="op-story-body">
+              <div class="op-story-title">El-Rufai: Bail must not become punishment, says Atiku</div>
+              <div class="op-story-meta">8 hours ago · Judiciary</div>
+            </div>
+          </div>
+          <div class="op-story">
+            <div class="op-story-img" style="background:var(--surface-0);"></div>
+            <div class="op-story-body">
+              <div class="op-story-title">Group condemns Sowore's arrest, warns against suppression of democratic rights</div>
+              <div class="op-story-meta">9 hours ago · Security</div>
+            </div>
+          </div>
+          <div class="op-story">
+            <div class="op-story-img" style="background:var(--surface-0);"></div>
+            <div class="op-story-body">
+              <div class="op-story-title">Senate passes state police bill, empowers governors to appoint commissioners</div>
+              <div class="op-story-meta">11 hours ago · Politics</div>
+            </div>
+          </div>
+          <div class="op-story">
+            <div class="op-story-img" style="background:var(--surface-0);"></div>
+            <div class="op-story-body">
+              <div class="op-story-title">Katsina government paid ₦10M each to send bandit leaders on Hajj</div>
+              <div class="op-story-meta">14 hours ago · Security</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="op-sidebar">
+
+      <div class="op-alert">
+        <div class="op-alert-label">What this score means</div>
+        <div class="op-alert-text">Premium Times sits at the upper end of the Mainstream tier — broadly independent but with constraints typical of commercial Nigerian journalism. A score of 58 means the outlet does substantial original reporting but its editorial choices don't yet show the consistent accountability pattern of Watchdog-tier outlets.</div>
+      </div>
+
+      <div class="op-card" style="margin-top:16px;">
+        <div class="op-card-title">
+          <i class="ti ti-info-circle" aria-hidden="true"></i>
+          Quick facts
+        </div>
+        <div class="op-quick-item">
+          <span class="op-quick-key">Founded</span>
+          <span class="op-quick-val">2011</span>
+        </div>
+        <div class="op-quick-item">
+          <span class="op-quick-key">Headquarters</span>
+          <span class="op-quick-val">Abuja, FCT</span>
+        </div>
+        <div class="op-quick-item">
+          <span class="op-quick-key">Medium</span>
+          <span class="op-quick-val">Online</span>
+        </div>
+        <div class="op-quick-item">
+          <span class="op-quick-key">Language</span>
+          <span class="op-quick-val">English</span>
+        </div>
+        <div class="op-quick-item">
+          <span class="op-quick-key">Reach</span>
+          <span class="op-quick-val">National</span>
+        </div>
+        <div class="op-quick-item">
+          <span class="op-quick-key">Last scored</span>
+          <span class="op-quick-val" style="font-family:var(--font-mono);font-size:11px;">Jun 2026</span>
+        </div>
+      </div>
+
+      <div style="padding:14px 0;font-size:12px;color:var(--text-muted);line-height:1.6;border-top:0.5px solid var(--border);margin-top:4px;">
+        Score is computed from a 30-day rolling sample. <a href="/methodology" style="color:var(--text-accent);text-decoration:none;">How we score →</a>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,379 @@
+<!doctype html>
+<!--
+================================================================================
+ TRACENEWS — THE DESK · STAFF CONSOLE, FULL SCOPE + DESIGN DIRECTION
+================================================================================
+ TWO PROBLEMS THIS FIXES.
+
+ 1. SCOPE. The previous map covered four sections — the three tools that happen
+    to exist plus health. That is not an admin surface, it is an inventory of
+    what we already built. This file maps what TraceNews actually needs to
+    control, derived from what has genuinely gone wrong or been promised across
+    this build: outlets and tiers, politicians, clusters, the article/report CMS,
+    the briefing and newsletter, frozen strings and methodology, corrections,
+    counsel documents, the audit ledger, NDPA data-subject requests, reader and
+    staff accounts, subscriptions, ingestion, scorer, deploys, cost, tripwires.
+
+ 2. DESIGN. Everything I produced looked like every other dashboard because it
+    was built from the same parts: sidebar, top bar, four stat cards, tables in
+    boxes. The concept here is different and it is ours:
+
+    ── THE DESK ──────────────────────────────────────────────────────────────
+    TraceNews watches the press. Its console should feel like the room where
+    that watching happens — a broadsheet desk, not a SaaS admin panel.
+      • A masthead with a rule and a dateline, like a front page.
+      • ONE editorial lede in Spectral stating the state of the desk in words,
+        before a single number. The console tells you what is true, then shows
+        the evidence — the same inversion as the verdict card.
+      • Column rules and hairlines instead of boxes. Nothing is a card unless it
+        must be. Density is achieved with rules and space, not containers.
+      • Numerals enormous, mono, tabular — the texture of the page.
+      • ONE accent, used two or three times per screen. Everything else is ink.
+      • A live wire strip: ingestion ticking, because this is a monitoring room.
+      • Asymmetric: a wide desk column and a narrow standing column. Equal
+        four-up stat grids are the tell of a template.
+    ──────────────────────────────────────────────────────────────────────────
+
+ Tokens come from the component library. Nothing here invents a colour.
+================================================================================
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceNews — The Desk</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --page:#0b0c0e; --shell:#0e1013; --card:#141619; --raised:#191c20; --sunk:#101215;
+  --border:#25282e; --hair:#1c1f24; --track:#1a1d21; --active:#191d22;
+  --ink:#eef1f4; --t-primary:#cfd4da; --t-body:#a8adb5; --t-sub:#8a8f98; --t-muted:#6f747d; --t-faint:#585d65;
+  --tier-govt:#6d7f92; --tier-main:#a49889; --tier-watch:#8f9a6f;
+  --v-clear:#63cda8; --v-mixed:#e2ab4d; --v-dark:#9298db; --danger:#d9705f;
+  --on-accent:#0b0c0e;
+}
+[data-theme="light"]{
+  --page:#f4f2ee; --shell:#fffefb; --card:#fffefb; --raised:#f7f5f1; --sunk:#eeece7;
+  --border:#dcd8d0; --hair:#e8e5df; --track:#e6e3dd; --active:#eeebe5;
+  --ink:#14161a; --t-primary:#23272d; --t-body:#43484f; --t-sub:#5b6068; --t-muted:#787d85; --t-faint:#9a9ea6;
+  --tier-govt:#4d6072; --tier-main:#8c7c68; --tier-watch:#5d7a50;
+  --v-clear:#2c8f6d; --v-mixed:#a8761c; --v-dark:#5960ab; --danger:#b4503c;
+  --on-accent:#fffefb;
+}
+:root{--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:26px;--s7:34px;--s8:48px;
+  --f-d:'Spectral',Georgia,serif;--f-u:'Montserrat',system-ui,sans-serif;--f-m:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{background:var(--page);margin:0;font-family:var(--f-u);color:var(--t-body);-webkit-font-smoothing:antialiased}
+.pg{max-width:1180px;margin:0 auto;padding:var(--s7) var(--s6) var(--s8)}
+.doc-h{font-family:var(--f-d);font-size:30px;font-weight:600;color:var(--ink);margin:0 0 var(--s2);letter-spacing:-.3px}
+.doc-s{font-size:13px;color:var(--t-muted);max-width:72ch;line-height:1.7;margin:0 0 var(--s7)}
+.sec{margin-bottom:var(--s8);padding-top:var(--s6);border-top:1px solid var(--border)}
+.sec>h2{font-family:var(--f-m);font-size:10px;letter-spacing:1.7px;text-transform:uppercase;color:var(--v-clear);margin:0 0 var(--s2)}
+.sec>h3{font-family:var(--f-d);font-size:21px;font-weight:600;color:var(--ink);margin:0 0 var(--s3)}
+.sec>.n{font-size:12.5px;color:var(--t-muted);max-width:76ch;line-height:1.7;margin:0 0 var(--s5)}
+.sec>.n b{color:var(--t-body)}
+.cap{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t-faint);margin:0 0 var(--s3)}
+
+/* ═══════════ THE DESK — console design ═══════════ */
+.desk{background:var(--page);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+/* masthead */
+.mh{padding:var(--s4) var(--s5) 0}
+.mh-top{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:var(--s3)}
+.mh-id{display:flex;align-items:baseline;gap:var(--s3)}
+.mh-id .wm{font-family:var(--f-d);font-size:23px;font-weight:700;color:var(--ink);letter-spacing:-.4px}
+.mh-id .wm i{font-style:normal;color:var(--v-clear)}
+.mh-id .desk-l{font-family:var(--f-m);font-size:9px;letter-spacing:2.4px;text-transform:uppercase;color:var(--t-muted);padding-bottom:2px}
+.mh-meta{display:flex;align-items:center;gap:var(--s4);font-family:var(--f-m);font-size:9.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--t-faint)}
+.mh-meta .who{color:var(--t-sub)}
+.mh-rule{height:2px;background:var(--ink);opacity:.85}
+.mh-rule2{height:1px;background:var(--border);margin-top:2px}
+/* body: rail + desk + standing column */
+.dk{display:flex;min-height:520px}
+.rail{width:172px;flex:0 0 172px;padding:var(--s5) var(--s4) var(--s5) var(--s5);border-right:1px solid var(--hair)}
+.rg{font-family:var(--f-m);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-faint);margin:0 0 var(--s2)}
+.rg:not(:first-child){margin-top:var(--s5)}
+.ri{display:flex;align-items:center;font-size:12px;color:var(--t-sub);padding:5px 0;cursor:pointer;position:relative;letter-spacing:-.1px}
+.ri:hover{color:var(--t-primary)}
+.ri.on{color:var(--ink);font-weight:600}
+.ri.on::before{content:"";position:absolute;left:-var(--s5);left:-20px;top:8px;bottom:8px;width:2px;background:var(--v-clear)}
+.ri .n{margin-left:auto;font-family:var(--f-m);font-size:9.5px;color:var(--t-faint)}
+.ri .n.att{color:var(--v-mixed)}
+.ri.soon{color:var(--t-faint);cursor:default}
+.ri.soon .n{font-size:8px;letter-spacing:.8px}
+.desk-col{flex:1;padding:var(--s5) var(--s6);min-width:0;border-right:1px solid var(--hair)}
+.stand{width:236px;flex:0 0 236px;padding:var(--s5) var(--s5)}
+/* lede */
+.dateline{font-family:var(--f-m);font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--t-faint);margin-bottom:var(--s3)}
+.lede{font-family:var(--f-d);font-size:27px;line-height:1.26;font-weight:600;color:var(--ink);margin:0 0 var(--s3);letter-spacing:-.4px;max-width:20ch}
+.lede em{font-style:normal;color:var(--v-mixed)}
+.byline{font-size:11.5px;color:var(--t-muted);padding-bottom:var(--s5);border-bottom:1px solid var(--border);margin-bottom:var(--s5)}
+/* figures — asymmetric, rule-separated, no boxes */
+.figs{display:flex;gap:var(--s6);padding-bottom:var(--s5);border-bottom:1px solid var(--border);margin-bottom:var(--s5)}
+.fig{flex:1;border-left:1px solid var(--hair);padding-left:var(--s3)}
+.fig:first-child{border-left:none;padding-left:0}
+.fig .l{font-family:var(--f-m);font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t-faint);margin-bottom:var(--s2)}
+.fig .v{font-family:var(--f-m);font-size:34px;font-weight:400;color:var(--ink);line-height:.85;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.fig .v.att{color:var(--v-mixed)}
+.fig .v.sm{font-size:17px;letter-spacing:-.4px;color:var(--v-clear)}
+.fig .s{font-size:10.5px;color:var(--t-muted);margin-top:var(--s2);line-height:1.45}
+/* desk sections */
+.ds{margin-bottom:var(--s6)}
+.ds-h{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s2)}
+.ds-h .t{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-sub)}
+.ds-h .ln{flex:1;height:1px;background:var(--hair)}
+.ds-h .lk{font-size:10.5px;color:var(--t-faint);cursor:pointer}
+.ds-h .lk:hover{color:var(--v-clear)}
+.it{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair);align-items:baseline}
+.it:last-child{border-bottom:none}
+.it .mk{font-family:var(--f-m);font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border:1px solid;border-radius:2px;white-space:nowrap;flex:0 0 auto}
+.mk-new{color:var(--v-mixed);border-color:var(--v-mixed)}
+.mk-dk{color:var(--v-dark);border-color:var(--v-dark)}
+.mk-nu{color:var(--t-faint);border-color:var(--border)}
+.it .bd{flex:1;min-width:0}
+.it .tt{font-size:13px;color:var(--t-primary);font-weight:500;line-height:1.35;letter-spacing:-.1px}
+.it .mt{font-size:10.5px;color:var(--t-muted);margin-top:3px}
+.it .ag{font-family:var(--f-m);font-size:9.5px;color:var(--t-faint);white-space:nowrap}
+/* standing column */
+.st-h{font-family:var(--f-m);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-faint);padding-bottom:var(--s2);border-bottom:1px solid var(--border);margin-bottom:var(--s3)}
+.wire{font-family:var(--f-m);font-size:10px;line-height:1.9;color:var(--t-muted);margin-bottom:var(--s6)}
+.wire .t{color:var(--t-faint)}
+.wire .o{color:var(--t-sub)}
+.wire .live{color:var(--v-clear)}
+.led{padding:var(--s2) 0;border-bottom:1px solid var(--hair);font-size:11px;line-height:1.55;color:var(--t-muted)}
+.led:last-child{border-bottom:none}
+.led b{color:var(--t-primary);font-weight:600}
+.led q{font-family:var(--f-d);font-style:italic;color:var(--t-sub)}
+.led .ts{font-family:var(--f-m);font-size:9px;color:var(--t-faint);display:block;margin-top:3px}
+.hb{display:flex;align-items:center;justify-content:space-between;font-size:10.5px;padding:5px 0;border-bottom:1px solid var(--hair);color:var(--t-muted)}
+.hb:last-child{border-bottom:none}
+.hb .v{font-family:var(--f-m);font-size:10px;color:var(--t-sub)}
+.hb .ok{color:var(--v-clear)} .hb .warn{color:var(--v-mixed)}
+
+/* scope map */
+.scope{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s5)}
+.grpc{border-top:2px solid var(--border);padding-top:var(--s3)}
+.grpc h4{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--v-clear);margin:0 0 var(--s2)}
+.grpc .why{font-size:11px;color:var(--t-faint);font-style:italic;line-height:1.5;margin:0 0 var(--s3)}
+.grpc ul{margin:0;padding:0;list-style:none}
+.grpc li{font-size:12px;line-height:1.5;color:var(--t-body);padding:5px 0;border-bottom:1px solid var(--hair);display:flex;gap:var(--s2)}
+.grpc li:last-child{border-bottom:none}
+.grpc li b{color:var(--t-primary);font-weight:600}
+.grpc li .tag{font-family:var(--f-m);font-size:8px;letter-spacing:.8px;text-transform:uppercase;color:var(--t-faint);border:1px solid var(--border);border-radius:2px;padding:1px 5px;margin-left:auto;white-space:nowrap;align-self:flex-start}
+.grpc li .tag.now{color:var(--v-mixed);border-color:var(--v-mixed)}
+.grpc li .tag.oblig{color:var(--v-dark);border-color:var(--v-dark)}
+</style>
+</head>
+<body><div class="pg">
+
+<h1 class="doc-h">The Desk</h1>
+<p class="doc-s">Two fixes. <b style="color:var(--t-body)">Scope</b> — the previous map covered the three tools that happen to exist; this maps what the console actually needs to control, every item traced to something this build promised, broke, or owes. <b style="color:var(--t-body)">Design</b> — the earlier mockups looked generic because they were assembled from generic parts: sidebar, top bar, four equal stat cards, tables in boxes. TraceNews watches the press; its console should feel like the room where that happens. A broadsheet desk: masthead and dateline, one editorial sentence before any number, column rules instead of containers, enormous mono numerals as texture, one accent used twice.</p>
+
+<!-- ═══ THE CONSOLE ═══ -->
+<section class="sec">
+  <h2>Design</h2><h3>Console — overview</h3>
+  <p class="n">Read it top to bottom: masthead rule, dateline, then <b>a sentence that tells you the state of the desk in words</b>. Figures are rule-separated and unequal — the one that needs you is larger and amber. No cards. The standing column carries the live wire and the ledger, because a monitoring room shows its pulse.</p>
+
+  <div class="desk">
+    <div class="mh">
+      <div class="mh-top">
+        <div class="mh-id"><span class="wm">Trace<i>News</i></span><span class="desk-l">The Desk</span></div>
+        <div class="mh-meta"><span>Wed 2 Sep 2026</span><span class="who">Enitan Bello · Super Admin</span></div>
+      </div>
+      <div class="mh-rule"></div><div class="mh-rule2"></div>
+    </div>
+
+    <div class="dk">
+      <!-- rail -->
+      <aside class="rail">
+        <p class="rg">Desk</p>
+        <div class="ri on">Overview</div>
+        <div class="ri">Corrections<span class="n att">3</span></div>
+        <div class="ri">Data requests<span class="n">1</span></div>
+        <div class="ri">Audit ledger</div>
+
+        <p class="rg">Intelligence</p>
+        <div class="ri">Monitoring Spirit<span class="n">1</span></div>
+        <div class="ri">Outlets<span class="n">142</span></div>
+        <div class="ri">Politicians<span class="n">13</span></div>
+        <div class="ri">Stories</div>
+        <div class="ri">Taxonomy</div>
+
+        <p class="rg">Newsroom</p>
+        <div class="ri">Reports<span class="n att">2</span></div>
+        <div class="ri">Daily Briefing</div>
+        <div class="ri">Newsletter</div>
+        <div class="ri">Site copy</div>
+
+        <p class="rg">People</p>
+        <div class="ri">Readers</div>
+        <div class="ri">Staff</div>
+        <div class="ri">Subscriptions</div>
+
+        <p class="rg">Platform</p>
+        <div class="ri">Ingestion</div>
+        <div class="ri">Scorer</div>
+        <div class="ri">Deploys</div>
+        <div class="ri">Counsel file</div>
+      </aside>
+
+      <!-- desk column -->
+      <div class="desk-col">
+        <p class="dateline">Overview · Wednesday, 2 September</p>
+        <h2 class="lede">Three corrections are open, and <em>one has passed its 48-hour window</em>.</h2>
+        <p class="byline">Signed in as Enitan Bello · every action on this desk is recorded against your name</p>
+
+        <div class="figs">
+          <div class="fig"><div class="l">Corrections</div><div class="v att">03</div><div class="s">1 past SLA<br>oldest 3d</div></div>
+          <div class="fig"><div class="l">Verdicts</div><div class="v">01</div><div class="s">Dark, unreviewed</div></div>
+          <div class="fig"><div class="l">Held</div><div class="v">13</div><div class="s">Politicians pending</div></div>
+          <div class="fig"><div class="l">Drafts</div><div class="v">02</div><div class="s">Awaiting counsel</div></div>
+        </div>
+
+        <div class="ds">
+          <div class="ds-h"><span class="t">Awaiting action</span><span class="ln"></span><span class="lk">Open queue →</span></div>
+          <div class="it"><span class="mk mk-new">New</span><div class="bd"><div class="tt">Disputed tier assignment — Ripples Nigeria</div><div class="mt">Reader submission · via /corrections</div></div><span class="ag">2h</span></div>
+          <div class="it"><span class="mk mk-new">New</span><div class="bd"><div class="tt">Politician page — current position out of date</div><div class="mt">From subject's office</div></div><span class="ag">19h</span></div>
+          <div class="it"><span class="mk mk-nu">Open</span><div class="bd"><div class="tt">Outlet ownership record query</div><div class="mt">Assigned · Enitan Bello · <span style="color:var(--v-mixed)">past 48h</span></div></div><span class="ag">3d</span></div>
+        </div>
+
+        <div class="ds">
+          <div class="ds-h"><span class="t">Live verdicts</span><span class="ln"></span><span class="lk">Oversight →</span></div>
+          <div class="it"><span class="mk mk-dk">Dark</span><div class="bd"><div class="tt">Bagudu Seeks Stronger Partnership To Cushion Impact Of Economic Reforms</div><div class="mt">4 watchdog · govt-aligned none recorded · held 4 checks</div></div><span class="ag">6h</span></div>
+        </div>
+
+        <div class="ds">
+          <div class="ds-h"><span class="t">Newsroom</span><span class="ln"></span><span class="lk">All reports →</span></div>
+          <div class="it"><span class="mk mk-nu">Draft</span><div class="bd"><div class="tt">How the Nigerian press covered the fuel subsidy debate — August</div><div class="mt">Human-authored · counsel review not started</div></div><span class="ag">1d</span></div>
+          <div class="it"><span class="mk mk-new">Review</span><div class="bd"><div class="tt">Monthly media independence report — August</div><div class="mt">With Bridge Chambers since 29 Aug</div></div><span class="ag">4d</span></div>
+        </div>
+      </div>
+
+      <!-- standing column -->
+      <aside class="stand">
+        <p class="st-h">The wire</p>
+        <div class="wire">
+          <div><span class="t">14:22</span> <span class="o">Premium Times</span> <span class="live">·</span> 3</div>
+          <div><span class="t">14:19</span> <span class="o">Punch</span> <span class="live">·</span> 1</div>
+          <div><span class="t">14:16</span> <span class="o">Daily Trust</span> <span class="live">·</span> 2</div>
+          <div><span class="t">14:11</span> <span class="o">TheCable</span> <span class="live">·</span> 1</div>
+          <div><span class="t">14:04</span> <span class="o">Vanguard</span> <span class="live">·</span> 4</div>
+        </div>
+
+        <p class="st-h">Platform</p>
+        <div class="hb"><span>Ingestion</span><span class="v ok">14m ago</span></div>
+        <div class="hb"><span>Scorer</span><span class="v ok">Clean</span></div>
+        <div class="hb"><span>Sitemap</span><span class="v ok">13,100</span></div>
+        <div class="hb"><span>Deploy</span><span class="v ok">in sync</span></div>
+        <div class="hb"><span>API spend</span><span class="v warn">$18 / mo</span></div>
+
+        <p class="st-h" style="margin-top:var(--s6)">Ledger</p>
+        <div class="led"><b>Enitan Bello</b> held <b>Aminu Ado Bayero</b> — <q>Kano succession under litigation</q><span class="ts">31 Aug · 09:14</span></div>
+        <div class="led"><b>Enitan Bello</b> actioned <b>#0042</b> — <q>Tier corrected; outlet re-scored</q><span class="ts">30 Aug · 17:02</span></div>
+        <div class="led"><b>Enitan Bello</b> dismissed a <b>Dark</b> verdict — <q>Not newsworthy</q><span class="ts">30 Aug · 16:48</span></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SCOPE ═══ -->
+<section class="sec">
+  <h2>Scope</h2><h3>What the desk controls</h3>
+  <p class="n">Every item below traces to something this build promised, broke, or owes. <span style="color:var(--v-mixed)">Amber</span> = needed before launch. <span style="color:var(--v-dark)">Indigo</span> = a legal or counsel obligation, not a convenience.</p>
+
+  <div class="scope">
+
+    <div class="grpc">
+      <h4>Trust &amp; compliance</h4>
+      <p class="why">The Gate 2 commitments. These are promises made to a Senior Advocate, in writing.</p>
+      <ul>
+        <li><b>Corrections queue</b> — intake, assign, action, SLA clock<span class="tag oblig">Gate 2</span></li>
+        <li><b>Audit ledger</b> — every staff action, named actor, reason, filterable<span class="tag oblig">Counsel</span></li>
+        <li><b>Data-subject requests</b> — access, export, deletion under NDPA<span class="tag oblig">NDPA</span></li>
+        <li><b>Counsel file</b> — opinions, addenda, DPIA rev, sign-off status, expiry<span class="tag oblig">Record</span></li>
+        <li><b>Consent copy versions</b> — frozen strings, reviewedBy / reviewedAt<span class="tag oblig">DPIA</span></li>
+        <li><b>Takedown &amp; legal requests</b> — separate from corrections</li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>Media intelligence data</h4>
+      <p class="why">The dataset the whole product rests on. A hand-edited tier with no record is how drift starts.</p>
+      <ul>
+        <li><b>Outlets</b> — registry, tier, TII score, re-score trigger<span class="tag now">Now</span></li>
+        <li><b>Ownership records</b> — structure, owner, transparency, documented proximity<span class="tag oblig">Signed</span></li>
+        <li><b>Politicians</b> — publication_status, category, positions<span class="tag now">Now</span></li>
+        <li><b>Stories &amp; clusters</b> — view, merge, split, exclude, re-score</li>
+        <li><b>Taxonomy</b> — categories, topics, entity tags; per-country later</li>
+        <li><b>Blog / non-tier sources</b> — exclusion rules</li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>Monitoring Spirit</h4>
+      <p class="why">The kill switch is a launch dependency — a live verdict with no named human able to withdraw it is indefensible.</p>
+      <ul>
+        <li><b>Live verdicts</b> — dismiss / reinstate with written reason<span class="tag oblig">Blocks launch</span></li>
+        <li><b>DARK gate</b> — the switch that keeps DARK dormant until it can pass<span class="tag now">Now</span></li>
+        <li><b>Engine health</b> — funnel counts, rail pass rates, per-run</li>
+        <li><b>Shadow runs</b> — sample, results, pre-registration record</li>
+        <li><b>Rail thresholds</b> — read-only display of what is actually live</li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>Newsroom</h4>
+      <p class="why">The articles you raised. This is where the Bias Comparison ambition survives — human-authored, counsel from first draft.</p>
+      <ul>
+        <li><b>Reports &amp; analysis</b> — draft, counsel review, publish, version<span class="tag now">Phase 3</span></li>
+        <li><b>Counsel review state</b> — on the record per piece<span class="tag oblig">Cumulative</span></li>
+        <li><b>Daily Briefing</b> — curation and scheduling</li>
+        <li><b>Newsletter</b> — compose, schedule, send, subscribers</li>
+        <li><b>Methodology page</b> — versioned, editable without deploy</li>
+        <li><b>Site copy</b> — frozen string files with sign-off fields</li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>People &amp; access</h4>
+      <p class="why">A shared token means the ledger records "someone with the token" — which is not the named-human guarantee we gave counsel.</p>
+      <ul>
+        <li><b>Staff accounts</b> — named, invite, revoke<span class="tag now">Now</span></li>
+        <li><b>Roles</b> — Super Admin · Editorial · Tech · Read-only</li>
+        <li><b>Readers</b> — account, consent state, subscription</li>
+        <li><b>Reader data</b> — export and delete on request<span class="tag oblig">NDPA</span></li>
+        <li><b>Subscriptions</b> — plan, payment, refund (Paystack, naira)</li>
+        <li><b>Org seats &amp; API keys</b> — later</li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>Platform health</h4>
+      <p class="why">Seven silent failures this build: empty sitemap, stale stats, dead feed, bot-path errors, hollow tests, sitemap timeout, deploys not deploying. Every one was found by accident.</p>
+      <ul>
+        <li><b>Ingestion</b> — live wire, per-outlet last-seen, stalls<span class="tag now">Now</span></li>
+        <li><b>Scorer</b> — last run, pending, failures</li>
+        <li><b>Sitemap &amp; indexing</b> — URL counts, Search Console trend</li>
+        <li><b>Deploys</b> — live commit vs main, drift alarm<span class="tag now">Now</span></li>
+        <li><b>Bot path</b> — Googlebot fetch returns real content</li>
+        <li><b>Cost</b> — API spend; an exhausted key killed the feed for 4 days</li>
+        <li><b>Tripwire log</b> — what fired, when, acknowledged by whom</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ WHAT MAKES IT NOT GENERIC ═══ -->
+<section class="sec">
+  <h2>Direction</h2><h3>Why this isn't the same dashboard</h3>
+  <p class="n">If any of these are dropped in build, it reverts to a template. They are the design, not decoration.</p>
+  <div class="scope">
+    <div class="grpc"><h4>Words before numbers</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">One Spectral sentence states the desk's condition before a single figure. Same inversion as the verdict card: say what is true, then show the evidence. Every generic dashboard opens with a stat grid and makes you do the reading.</p></div>
+    <div class="grpc"><h4>Rules, not boxes</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">Nothing is a card unless it must be. Hairlines and column rules carry structure. Cards-inside-cards is the single strongest signal of a template.</p></div>
+    <div class="grpc"><h4>Unequal figures</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">Four identical stat tiles say everything matters equally, which is never true. The figure that needs you is amber; the rest are ink. One accent, twice a screen.</p></div>
+    <div class="grpc"><h4>The wire</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">A monitoring room shows its pulse. Live ingestion ticking in the standing column makes the console feel like an instrument that is running, not a form that is waiting.</p></div>
+    <div class="grpc"><h4>The ledger as typeset record</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">Actor in weight, reason in italic Spectral. It should read like something a person can be held to — which is exactly what counsel required it to be.</p></div>
+    <div class="grpc"><h4>Masthead and dateline</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">A heavy rule under the wordmark, the date set in mono. It costs nothing and it immediately reads as a press desk rather than a SaaS panel.</p></div>
+  </div>
+</section>
+
+</div></body></html>

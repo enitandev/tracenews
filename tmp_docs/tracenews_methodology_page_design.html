@@ -1,0 +1,709 @@
+
+<style>
+  .meth-root {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--color-text-primary);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+    position: relative;
+  }
+  .meth-layout {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 48px;
+    align-items: start;
+  }
+  .meth-main { min-width: 0; }
+  .meth-toc {
+    position: sticky;
+    top: 20px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 16px;
+  }
+  .meth-toc-title {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
+    margin: 0 0 12px;
+  }
+  .meth-toc a {
+    display: block;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: 4px 0;
+    border-left: 2px solid transparent;
+    padding-left: 8px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .meth-toc a:hover {
+    color: var(--color-text-primary);
+    border-left-color: #E67E22;
+  }
+  .meth-hero {
+    padding: 40px 0 32px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 48px;
+  }
+  .meth-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #E67E22;
+    margin: 0 0 12px;
+  }
+  .meth-h1 {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+  }
+  .meth-hero-sub {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    max-width: 580px;
+    margin: 0 0 20px;
+  }
+  .meth-meta {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    display: flex;
+    gap: 16px;
+  }
+  .meth-section {
+    margin-bottom: 56px;
+  }
+  .meth-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .meth-section-num {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.06em;
+  }
+  .meth-h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .meth-prose {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+  .meth-prose strong {
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+  .signal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .signal-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 16px;
+    position: relative;
+  }
+  .signal-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .signal-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.06em;
+  }
+  .signal-weight {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(230,126,34,0.12);
+    color: #E67E22;
+    border: 0.5px solid rgba(230,126,34,0.3);
+  }
+  .signal-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 8px;
+  }
+  .signal-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 10px;
+  }
+  .signal-example {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    border-left: 2px solid var(--color-border-tertiary);
+    padding-left: 8px;
+    margin: 0;
+    opacity: 0.8;
+  }
+  .tier-spectrum {
+    display: flex;
+    height: 48px;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    margin: 24px 0;
+  }
+  .tier-band {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tier-band-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.95);
+    letter-spacing: 0.04em;
+  }
+  .tier-band-range {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+  }
+  .tier-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .tier-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 16px;
+    border-top: 3px solid transparent;
+  }
+  .tier-card-govt { border-top-color: #2980B9; }
+  .tier-card-mainstream { border-top-color: #E67E22; }
+  .tier-card-watchdog { border-top-color: #C0392B; }
+  .tier-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .tier-badge-govt { background: rgba(41,128,185,0.12); color: #2980B9; border: 0.5px solid rgba(41,128,185,0.3); }
+  .tier-badge-mainstream { background: rgba(230,126,34,0.12); color: #E67E22; border: 0.5px solid rgba(230,126,34,0.3); }
+  .tier-badge-watchdog { background: rgba(192,57,43,0.12); color: #C0392B; border: 0.5px solid rgba(192,57,43,0.3); }
+  .tier-score-range {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .tier-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+  .tier-examples {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--color-border-tertiary);
+  }
+  .tier-examples-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+  }
+  .tier-example-outlet {
+    font-size: 12px;
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+  .ms-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .ms-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 16px;
+  }
+  .ms-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .ms-pill-osc { background: rgba(192,57,43,0.1); color: #C0392B; border: 1px solid rgba(192,57,43,0.3); }
+  .ms-pill-cp { background: rgba(230,126,34,0.1); color: #E67E22; border: 1px solid rgba(230,126,34,0.3); }
+  .ms-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .ms-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 12px;
+  }
+  .ms-threshold {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+  .ms-threshold strong {
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+  .special-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .special-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 16px;
+  }
+  .special-card-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .special-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .special-card-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 10px;
+  }
+  .special-outlets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .outlet-chip {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 20px;
+    color: var(--color-text-secondary);
+  }
+  .claim-list {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+  }
+  .claim-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+  .claim-item:last-child { border-bottom: none; }
+  .claim-x {
+    color: #C0392B;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .stat-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+  .contact-box {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .contact-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .contact-desc {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+  .contact-email {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #E67E22;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(230,126,34,0.3);
+    padding-bottom: 2px;
+  }
+</style>
+
+<div class="meth-root">
+  <div class="meth-layout">
+    <div class="meth-main">
+
+      <div class="meth-hero">
+        <p class="meth-eyebrow">TraceNews Independence Index</p>
+        <h1 class="meth-h1">How We Score Nigerian Media Independence</h1>
+        <p class="meth-hero-sub">The TII is a 0–100 behavioural score applied to Nigerian news outlets. This page explains every signal, every threshold, and every editorial decision behind the numbers — because a media intelligence instrument you cannot examine is one you should not trust.</p>
+        <div class="meth-meta">
+          <span>Last updated: June 2026</span>
+          <span>·</span>
+          <span>82 outlets scored</span>
+          <span>·</span>
+          <span>30-day rolling window</span>
+        </div>
+      </div>
+
+      <div class="meth-section" id="what">
+        <div class="meth-section-header">
+          <span class="meth-section-num">01</span>
+          <h2 class="meth-h2">What the TII Measures</h2>
+        </div>
+        <p class="meth-prose">The <strong>TraceNews Independence Index (TII)</strong> measures one specific thing: how freely a Nigerian news outlet makes editorial decisions independent of political and commercial power. It does not measure accuracy, quality of writing, or factual reliability. It measures editorial behaviour — who is sourced, what stories are chosen, what language is used, and what stories are absent.</p>
+        <p class="meth-prose">Every outlet is scored on a 30-day rolling sample of up to 150 published stories. The sample is drawn from RSS ingestion. Scores update periodically or when significant changes in an outlet's behaviour are detected.</p>
+        <p class="meth-prose"><strong>A higher score means greater editorial independence from power.</strong> A lower score means editorial choices that consistently defer to government, party, or commercial interests — whether by direct control, ownership alignment, or access-journalism incentives.</p>
+      </div>
+
+      <div class="meth-section" id="signals">
+        <div class="meth-section-header">
+          <span class="meth-section-num">02</span>
+          <h2 class="meth-h2">The Six Signals</h2>
+        </div>
+        <p class="meth-prose">The TII is a weighted average of six behavioural signals, each computed from the outlet's story sample. Weights reflect the signal's discriminating power in the Nigerian media context — source hierarchy and original reporting together account for 55% of the score because they are the most reliably measurable indicators of editorial independence.</p>
+        <div class="signal-grid">
+          <div class="signal-card">
+            <div class="signal-card-top">
+              <span class="signal-label">S1</span>
+              <span class="signal-weight">30%</span>
+            </div>
+            <div class="signal-name">Source Hierarchy</div>
+            <p class="signal-desc">Does the outlet rely primarily on official government sources, or does it seek independent verification and alternative voices? We assess whether stories draw predominantly from government spokespeople, press releases, and official statements versus journalists, civil society, or independently verified accounts.</p>
+            <p class="signal-example">Example: A story on fuel scarcity that quotes only the NNPC spokesperson scores low. One that also quotes petrol station owners, independent economists, and civil society analysts scores higher.</p>
+          </div>
+          <div class="signal-card">
+            <div class="signal-card-top">
+              <span class="signal-label">S2</span>
+              <span class="signal-weight">25%</span>
+            </div>
+            <div class="signal-name">Original Reporting</div>
+            <p class="signal-desc">What proportion of stories are original reporting versus republished wire copy or press releases? We compare each story against NAN wire content and detect semantic near-duplicates — stories where the outlet added no original reporting and simply reformatted a government wire or press release.</p>
+            <p class="signal-example">Example: An outlet running 13 of 14 stories as near-identical NAN wire copy scores very low on S2. An outlet where most stories carry original bylines and new information scores high.</p>
+          </div>
+          <div class="signal-card">
+            <div class="signal-card-top">
+              <span class="signal-label">S3</span>
+              <span class="signal-weight">20%</span>
+            </div>
+            <div class="signal-name">Omission Pattern</div>
+            <p class="signal-desc">Does the outlet consistently avoid covering major accountability stories that the wider Nigerian media ecosystem reports? We identify clusters of stories covered by ≥60% of outlets in the ecosystem and check whether this outlet is absent from them — a pattern of strategic silence on accountability topics.</p>
+            <p class="signal-example">Example: If 35 outlets cover a court ruling against a government agency but a specific outlet never publishes it across multiple such cases, this depresses S3.</p>
+          </div>
+          <div class="signal-card">
+            <div class="signal-card-top">
+              <span class="signal-label">S4</span>
+              <span class="signal-weight">10%</span>
+            </div>
+            <div class="signal-name">Lexical Deference</div>
+            <p class="signal-desc">Does the outlet's language use political honorifics, PR framing, or deferential terms toward officials? We score the density of terms like "His Excellency," "magnanimous," "graciously," and promotional superlatives that signal editorial deference rather than neutral reporting.</p>
+            <p class="signal-example">Example: An outlet that consistently writes "His Excellency graciously approved a landmark directive" scores lower than one that writes "The governor approved the policy."</p>
+          </div>
+          <div class="signal-card">
+            <div class="signal-card-top">
+              <span class="signal-label">S5</span>
+              <span class="signal-weight">10%</span>
+            </div>
+            <div class="signal-name">Story Selection</div>
+            <p class="signal-desc">What proportion of the outlet's coverage focuses on accountability, oversight, and public-interest topics versus government announcements, ceremonies, and promotional content? We classify stories by category and assess the ratio of accountability-relevant coverage.</p>
+            <p class="signal-example">Example: An outlet whose politics section is dominated by "Governor commissions borehole in community" and similar announcement coverage scores lower than one where government-accountability stories predominate.</p>
+          </div>
+          <div class="signal-card">
+            <div class="signal-card-top">
+              <span class="signal-label">S6</span>
+              <span class="signal-weight">5%</span>
+            </div>
+            <div class="signal-name">Editorial Indicators</div>
+            <p class="signal-desc">Does the outlet publish corrections, engage with source disputes, or show evidence of editorial independence processes? This is the lightest-weighted signal because it is harder to systematically measure from RSS feeds, but carries meaningful signal when present or provably absent.</p>
+            <p class="signal-example">Example: An outlet that has published corrections and named both sides in editorial disputes scores higher than one with no public record of corrections or source engagement.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="meth-section" id="tiers">
+        <div class="meth-section-header">
+          <span class="meth-section-num">03</span>
+          <h2 class="meth-h2">The Three Tiers</h2>
+        </div>
+        <p class="meth-prose">The weighted average of S1–S6 produces a raw TII score from 0 to 100. This score maps to one of three tiers. Tier boundaries are not arbitrary — they reflect meaningful behavioural thresholds in the Nigerian media context: below 35 indicates systematic deference to power; above 60 indicates a consistent pattern of editorial independence; between 35 and 60 is the large middle of commercial Nigerian journalism.</p>
+
+        <div class="tier-spectrum">
+          <div class="tier-band" style="width:35%; background:#2980B9;">
+            <span class="tier-band-label">Govt</span>
+            <span class="tier-band-range">0 – 34</span>
+          </div>
+          <div class="tier-band" style="width:40%; background:#E67E22;">
+            <span class="tier-band-label">Mainstream</span>
+            <span class="tier-band-range">35 – 59</span>
+          </div>
+          <div class="tier-band" style="width:25%; background:#C0392B;">
+            <span class="tier-band-label">Watchdog</span>
+            <span class="tier-band-range">60 – 100</span>
+          </div>
+        </div>
+
+        <div class="tier-cards">
+          <div class="tier-card tier-card-govt">
+            <span class="tier-badge tier-badge-govt">Govt</span>
+            <div class="tier-score-range" style="color:#2980B9;">0 – 34</div>
+            <p class="tier-desc">Editorial choices consistently defer to government or aligned interests. Includes state-owned media (NTA, VON, Radio Nigeria), party-linked outlets, and outlets where ownership ties or commercial dependencies create structural editorial deference — regardless of individual story quality.</p>
+            <div class="tier-examples">
+              <div class="tier-examples-label">Currently in this tier:</div>
+              <div class="tier-example-outlet">NTA · Voice of Nigeria · TVC News · The Nation · Channels TV · Blueprint</div>
+            </div>
+          </div>
+          <div class="tier-card tier-card-mainstream">
+            <span class="tier-badge tier-badge-mainstream">Mainstream</span>
+            <div class="tier-score-range" style="color:#E67E22;">35 – 59</div>
+            <p class="tier-desc">The majority of Nigerian commercial press. Broadly balanced enough to report widely but constrained by access journalism, commercial pressures, ownership influence, or a preference for official sources that falls short of full editorial independence. This is not a negative judgment — it reflects the structural reality of commercial Nigerian journalism.</p>
+            <div class="tier-examples">
+              <div class="tier-examples-label">Currently in this tier:</div>
+              <div class="tier-example-outlet">Punch · Vanguard · Guardian · ThisDay · Daily Trust · Vanguard · The Sun</div>
+            </div>
+          </div>
+          <div class="tier-card tier-card-watchdog">
+            <span class="tier-badge tier-badge-watchdog">Watchdog</span>
+            <div class="tier-score-range" style="color:#C0392B;">60 – 100</div>
+            <p class="tier-desc">A consistent behavioural pattern of original accountability reporting, source diversity, and editorial independence from official narratives. Scoring Watchdog does not mean an outlet is infallible or unbiased — it means its editorial choices, measured across 30 days, show systematic independence from power.</p>
+            <div class="tier-examples">
+              <div class="tier-examples-label">Currently in this tier:</div>
+              <div class="tier-example-outlet">Premium Times · The Cable · FIJ Nigeria · Sahara Reporters · BBC Yoruba · The Africa Report</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meth-section" id="ms">
+        <div class="meth-section-header">
+          <span class="meth-section-num">04</span>
+          <h2 class="meth-h2">Monitoring Spirit Signals</h2>
+        </div>
+        <p class="meth-prose">Beyond individual outlet scores, TraceNews surfaces patterns across the entire Nigerian media ecosystem for each story. These ecosystem signals describe observable coverage facts — not editorial motives, and not assertions about any individual outlet's decision-making.</p>
+        <div class="ms-cards">
+          <div class="ms-card">
+            <div class="ms-pill ms-pill-osc">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              One-Sided Coverage
+            </div>
+            <div class="ms-name">Coverage concentrated in one tier</div>
+            <p class="ms-desc">Fires when a story's coverage is dominated by one editorial tier while another is largely silent. This surfaces both cases: accountability outlets covering something government-aligned outlets are not reporting, and government-aligned outlets amplifying something accountability outlets are ignoring.</p>
+            <div class="ms-threshold">
+              <strong>Threshold:</strong> One tier ≥ 60% of coverage AND another tier ≤ 10% of coverage, with total outlet count ≥ 5 and the imbalance persisting for ≥ 2 hours.
+            </div>
+          </div>
+          <div class="ms-card">
+            <div class="ms-pill ms-pill-cp">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy-and-Paste
+            </div>
+            <div class="ms-name">Most outlets ran the same report</div>
+            <p class="ms-desc">Fires when the majority of outlets covering a story published substantially identical content — indicating the story propagated through the ecosystem without independent verification. When the identical source is a government wire (NAN, VON), this is noted specifically: the government effectively authored the story that 12 outlets ran.</p>
+            <div class="ms-threshold">
+              <strong>Threshold:</strong> ≥ 60% of scored covering outlets have S2 score &lt; 40 (wire-republishing pattern), with minimum 4 scored outlets.
+            </div>
+          </div>
+        </div>
+        <p class="meth-prose" style="margin-top:16px;">Both signals are <strong>direction-agnostic by design</strong>: the same logic fires whether government-aligned outlets are silent or whether watchdog outlets are silent. The instrument sees both — because a monitoring system that only points in one direction is a propaganda instrument, not an editorial one.</p>
+      </div>
+
+      <div class="meth-section" id="special">
+        <div class="meth-section-header">
+          <span class="meth-section-num">05</span>
+          <h2 class="meth-h2">Special Cases and Structural Caps</h2>
+        </div>
+        <p class="meth-prose">The TII methodology applies cleanly to general-purpose Nigerian newsrooms. Several outlet types require adjustments where the standard signals would produce systematically inaccurate readings — not because the outlets are better or worse, but because the methodology's assumptions don't hold for their editorial model.</p>
+        <div class="special-cards">
+          <div class="special-card">
+            <div class="special-card-tag">Language Service Outlets</div>
+            <div class="special-card-title">S3 signal defaulted to neutral</div>
+            <p class="special-card-desc">The S3 omission signal compares an outlet against English-language accountability clusters. Language service outlets covering Nigerian news in Hausa or Yoruba structurally cannot match these English clusters — not because they suppress stories, but because the same events are reported in different language contexts. S3 is set to 70 (neutral) for these outlets.</p>
+            <div class="special-outlets">
+              <span class="outlet-chip">BBC Hausa</span>
+              <span class="outlet-chip">BBC Yoruba</span>
+              <span class="outlet-chip">RFI Hausa</span>
+              <span class="outlet-chip">Aminiya</span>
+              <span class="outlet-chip">VOA Hausa</span>
+              <span class="outlet-chip">BBC Pidgin</span>
+            </div>
+          </div>
+          <div class="special-card">
+            <div class="special-card-tag">Specialist / Beat Outlets</div>
+            <div class="special-card-title">S3 signal excluded</div>
+            <p class="special-card-desc">Outlets covering a specific beat (technology, finance, pan-African analysis, sports) should not be penalised for not covering political accountability stories outside their editorial mandate. S3 is set to 70 (neutral) for confirmed specialist outlets.</p>
+            <div class="special-outlets">
+              <span class="outlet-chip">Techpoint Africa</span>
+              <span class="outlet-chip">TechCabal</span>
+              <span class="outlet-chip">Technext</span>
+              <span class="outlet-chip">The Africa Report</span>
+              <span class="outlet-chip">Investors King</span>
+            </div>
+          </div>
+          <div class="special-card">
+            <div class="special-card-tag">Federal Government Outlets</div>
+            <div class="special-card-title">Score capped at 30</div>
+            <p class="special-card-desc">Outlets owned and editorially directed by the federal government are structurally incapable of editorial independence on matters of government conduct, regardless of individual story quality. Their scores are capped at 30 to reflect this structural reality.</p>
+            <div class="special-outlets">
+              <span class="outlet-chip">NTA</span>
+              <span class="outlet-chip">NAN</span>
+              <span class="outlet-chip">Voice of Nigeria</span>
+              <span class="outlet-chip">Radio Nigeria</span>
+            </div>
+          </div>
+          <div class="special-card">
+            <div class="special-card-tag">Known-Aligned Outlets</div>
+            <div class="special-card-title">Score capped at 34 (Govt tier)</div>
+            <p class="special-card-desc">Outlets where ownership ties to political figures or parties constitute a documented structural fact — not inferred from behavioural patterns alone — are capped at 34 to reflect that structural editorial alignment, regardless of their day-to-day content scores.</p>
+            <div class="special-outlets">
+              <span class="outlet-chip">The Nation</span>
+              <span class="outlet-chip">Blueprint Newspaper</span>
+              <span class="outlet-chip">Channels TV</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meth-section" id="claims">
+        <div class="meth-section-header">
+          <span class="meth-section-num">06</span>
+          <h2 class="meth-h2">What We Do Not Claim</h2>
+        </div>
+        <p class="meth-prose">The TII describes observable editorial behaviour across a 30-day sample. Several things that readers might infer from a score are things we explicitly do not assert.</p>
+        <ul class="claim-list">
+          <li class="claim-item"><span class="claim-x">✕</span> <span>We do not assert that any outlet accepted payment for coverage, engaged in "brown envelope" journalism, or made any financially corrupt editorial decision. The promotional_alignment_flag describes an observable behavioural pattern — anomalously positive sentiment combined with low source diversity — not a transaction.</span></li>
+          <li class="claim-item"><span class="claim-x">✕</span> <span>We do not assert that any journalist or editor acted in bad faith. Structural constraints (ownership, access dependence, commercial pressure) can produce low TII scores without any individual making a dishonest decision.</span></li>
+          <li class="claim-item"><span class="claim-x">✕</span> <span>We do not claim to measure the factual accuracy of individual stories. An outlet can produce factually accurate stories while still deferring systematically to official sources and narratives.</span></li>
+          <li class="claim-item"><span class="claim-x">✕</span> <span>We do not claim that One-Sided Coverage signals represent deliberate suppression. "Government-aligned outlets have not reported this" is a fact about which outlets published stories in a window — not an assertion that any outlet chose to suppress the story.</span></li>
+          <li class="claim-item"><span class="claim-x">✕</span> <span>We do not claim that the TII is final or infallible. It is a behavioural measurement on a 30-day rolling window. An outlet that changes its editorial practices will see its score change. We welcome methodological challenges.</span></li>
+        </ul>
+      </div>
+
+      <div class="meth-section" id="data">
+        <div class="meth-section-header">
+          <span class="meth-section-num">07</span>
+          <h2 class="meth-h2">Data Sources and Refresh Rate</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num">~100</div>
+            <div class="stat-label">Nigerian news outlets tracked via RSS</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">10 min</div>
+            <div class="stat-label">Story ingestion cycle — live feed updates</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">9,165</div>
+            <div class="stat-label">Story clusters with public coverage pages</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">882</div>
+            <div class="stat-label">Nigerian political actors tracked in entity registry</div>
+          </div>
+        </div>
+        <p class="meth-prose" style="margin-top:20px;">Coverage snapshots are taken every 10 minutes per cluster and retained permanently, enabling historical analysis of how coverage patterns changed over time. This is the data layer that makes it possible to detect Memory Hole patterns — stories that spike and then quietly disappear from coverage before resolution.</p>
+        <p class="meth-prose">The entity registry covers 10 categories: Legislature (450), Governors (217), Security apparatus (73), Executive (33), Party leadership (28), Judiciary (27), Power brokers (24), Civil society (15), Traditional rulers (10), and Business crossovers (5). The registry is updated as appointments, elections, and party changes occur.</p>
+      </div>
+
+      <div class="meth-section" id="contact">
+        <div class="meth-section-header">
+          <span class="meth-section-num">08</span>
+          <h2 class="meth-h2">Disputes, Data Access, and Contact</h2>
+        </div>
+        <div class="contact-box">
+          <div class="contact-title">Challenge a score or request data</div>
+          <p class="contact-desc">If you believe a TII score is inaccurate — whether you represent a scored outlet or are a researcher who has identified a methodological flaw — we will review the challenge and publish our response. We take methodological accountability seriously: the instrument cannot demand it of others if it does not practice it.<br><br>Researchers, NGOs, and funders may request the full scoring dataset for specific outlets or date ranges, including historical TII score records and coverage snapshot data.</p>
+          <a class="contact-email" href="mailto:methodology@tracenews.ng">methodology@tracenews.ng</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="meth-toc">
+      <div class="meth-toc-title">Contents</div>
+      <a href="#what">What the TII measures</a>
+      <a href="#signals">The six signals</a>
+      <a href="#tiers">The three tiers</a>
+      <a href="#ms">Monitoring Spirit</a>
+      <a href="#special">Special cases</a>
+      <a href="#claims">What we don't claim</a>
+      <a href="#data">Data and refresh</a>
+      <a href="#contact">Disputes and contact</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,533 @@
+<!doctype html>
+<!--
+================================================================================
+ TRACENEWS — DESIGN SYSTEM · COMPONENT LIBRARY (v2)
+================================================================================
+ THIS IS NOT A PAGE. It is the shared component layer every surface imports.
+
+ v2 changes: logo section REMOVED (a logo exists and another is in design — the
+ system references the asset, it does not define a mark). Adds the components
+ that are live on the site today but were never specified — article card, outlet
+ row, tabs, ownership row, popover, tier-distribution grid — plus the primitives
+ every surface has been reinventing: modal, toast, table, pagination, search,
+ avatar, breadcrumb, focus states, SPACING SCALE, breakpoints.
+
+ ─── THE THREE FIXES THAT MATTER MOST ───────────────────────────────────────
+ ★1  THE OWNERSHIP POPOVER. The live version uses RED — a red dot, party name in
+     red, red hover outline. Red was retired from tier bars because it reads as
+     alarm; party-coded red also reads as taking a side. On party proximity —
+     the most sensitive datum on the page — it does both at once. The popover
+     here is anchored (caret), uses card tokens, and renders proximity as plain
+     recorded fact in body colour with the documented-only note. No red anywhere.
+ ★2  SPACING SCALE. Colour and type were tokenised; spacing never was, so every
+     page picked its own padding. That is most of why surfaces feel unrelated.
+ ★3  ONE SHELL, ONE STATE SET. Masthead + rail + content is implemented twice
+     (reader dashboard, staff console). Loading is "Loading..." on every page.
+     Both become components here.
+
+ ─── RULES CARRIED FROM THE SIGNED WORK — do not relax ──────────────────────
+  • DARK verdict is indigo, never red. Tiers are steel/taupe/sage/neutral —
+    none red, none a party primary. One valenced colour per view.
+  • Red (--danger) is ONLY for destructive user actions. It may never appear on
+    coverage data, tiers, verdicts, ownership or party proximity.
+  • Counts, never percentages, at small N. A zero tier reads "none recorded"
+    with the hatched ghost — never "0", never "0%", never an empty gap.
+  • Numerals: IBM Plex Mono, tabular. Display: Spectral. UI: Montserrat.
+  • Loading is a skeleton shaped like its result. Never the word "Loading...".
+
+ ─── ICON SET — DECIDE ONCE ────────────────────────────────────────────────
+  The codebase references Tabler (`ti ti-*`). STANDARDISE ON TABLER, 1.5px
+  stroke, 16px default / 14px in dense rows. No mixed sets, no emoji as UI
+  icons (the live dashboard rail uses emoji — 🔔 🚀 — that stops).
+================================================================================
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceNews — Design System v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ 0. TOKENS ═════════════════════════════════════════════════════════ */
+:root,[data-theme="dark"]{
+  --page:#0d0e10; --shell:#101216; --card:#16181c; --raised:#1b1e23; --sunk:#131518;
+  --border:#282b32; --hair:#212429; --track:#1e2126; --active:#1d2127;
+  --t-display:#e6e9ed; --t-primary:#d0d4da; --t-body:#aeb3bb; --t-sub:#8f949d; --t-muted:#767b84; --t-faint:#61666e;
+  --tier-govt:#6d7f92; --tier-main:#a49889; --tier-watch:#8f9a6f; --tier-none:#6b6f78;
+  --v-clear:#63cda8; --v-mixed:#e2ab4d; --v-dark:#9298db;
+  --danger:#d9705f;                    /* destructive actions ONLY */
+  --on-accent:#0d0e10; --on-tier:#12141a;
+  --skel-a:#1b1e23; --skel-b:#22262c;
+  --shadow-pop:0 14px 34px rgba(0,0,0,.46);
+}
+[data-theme="light"]{
+  --page:#f2f4f7; --shell:#ffffff; --card:#ffffff; --raised:#f7f9fb; --sunk:#eef1f5;
+  --border:#e0e4e9; --hair:#eceff3; --track:#e9edf1; --active:#edf1f5;
+  --t-display:#14171b; --t-primary:#242830; --t-body:#454b54; --t-sub:#5d636c; --t-muted:#7b818a; --t-faint:#9aa0a8;
+  --tier-govt:#4d6072; --tier-main:#8c7c68; --tier-watch:#5d7a50; --tier-none:#868b94;
+  --v-clear:#2f9d78; --v-mixed:#a8761c; --v-dark:#5960ab;
+  --danger:#b4503c; --on-accent:#ffffff; --on-tier:#ffffff;
+  --skel-a:#e9edf1; --skel-b:#f2f5f8;
+  --shadow-pop:0 12px 30px rgba(20,30,45,.14);
+}
+:root{
+  /* ★2 SPACING SCALE — 4px base. Use these. Never a raw px value for layout. */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:26px; --s7:34px; --s8:46px;
+  --r-sm:6px; --r-md:9px; --r-lg:13px; --r-pill:100px;
+  --f-display:'Spectral',Georgia,serif; --f-ui:'Montserrat',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* layout constants — one definition for every surface */
+  --w-page:1240px; --w-rail:230px; --w-sidebar:320px; --w-read:66ch;
+  /* breakpoints (documented; use in media queries) 640 / 900 / 1180 */
+}
+*{box-sizing:border-box}
+body{background:var(--page);margin:0;font-family:var(--f-ui);color:var(--t-body);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--v-clear);outline-offset:2px;border-radius:3px}
+
+/* ═══ 1. TYPE ═══════════════════════════════════════════════════════════ */
+.t-display{font-family:var(--f-display);font-size:27px;line-height:1.3;font-weight:500;color:var(--t-display);letter-spacing:-.2px;margin:0}
+.t-h1{font-family:var(--f-display);font-size:21px;line-height:1.32;font-weight:600;color:var(--t-display);margin:0}
+.t-h2{font-size:13px;font-weight:600;color:var(--t-primary);letter-spacing:.2px;margin:0}
+.t-body{font-size:13px;line-height:1.55;color:var(--t-body);margin:0}
+.t-meta{font-size:11px;color:var(--t-muted);margin:0}
+.t-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--t-faint);margin:0}
+.t-num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:26px;color:var(--t-display);letter-spacing:-.8px;line-height:1}
+.t-quote{font-family:var(--f-display);font-style:italic;font-size:13px;color:var(--t-muted)}
+a.tn-link{color:var(--v-clear);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--v-clear) 35%,transparent)}
+a.tn-link:hover{border-bottom-color:var(--v-clear)}
+
+/* ═══ 2. BUTTONS ════════════════════════════════════════════════════════ */
+.btn{font-family:var(--f-ui);font-size:12.5px;font-weight:600;padding:var(--s2) var(--s4);border-radius:var(--r-sm);
+  border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.13s;white-space:nowrap}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.btn-primary{background:var(--v-clear);color:var(--on-accent);border-color:var(--v-clear)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.08)}
+.btn-secondary{background:none;color:var(--t-body);border-color:var(--border)}
+.btn-secondary:hover:not(:disabled){border-color:var(--v-clear);color:var(--v-clear)}
+.btn-ghost{background:none;color:var(--t-muted);border-color:transparent;padding:var(--s2) var(--s3)}
+.btn-ghost:hover:not(:disabled){color:var(--t-primary);background:var(--active)}
+.btn-danger{background:none;color:var(--danger);border-color:var(--danger)}
+.btn-danger:hover:not(:disabled){background:var(--danger);color:#fff}
+.btn-sm{font-size:11.5px;padding:6px var(--s3)}
+.btn .spin{width:11px;height:11px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.btn-link{background:none;border:none;padding:0;font-size:11.5px;font-weight:500;color:var(--t-muted);cursor:pointer;font-family:var(--f-ui)}
+.btn-link:hover{color:var(--v-clear)}
+
+/* ═══ 3. FORM + SEARCH ══════════════════════════════════════════════════ */
+.field{display:block;margin-bottom:var(--s4);max-width:340px}
+.field label{display:block;font-size:11.5px;color:var(--t-sub);margin-bottom:6px;font-weight:500}
+.input,.select,.textarea{width:100%;font-family:var(--f-ui);font-size:13px;color:var(--t-primary);background:var(--raised);
+  border:1px solid var(--border);border-radius:var(--r-sm);padding:9px var(--s3);transition:.13s}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--v-clear);box-shadow:0 0 0 3px color-mix(in srgb,var(--v-clear) 14%,transparent)}
+.input::placeholder{color:var(--t-faint)}
+.input.err{border-color:var(--danger)}
+.field .hint{font-size:10.5px;color:var(--t-faint);margin-top:5px}
+.field .hint.err{color:var(--danger)}
+.search{position:relative;max-width:340px}
+.search .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--t-faint);font-size:14px}
+.search input{padding-left:32px}
+.search .clr{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--t-faint);cursor:pointer;font-size:13px}
+
+/* ═══ 4. TOGGLES ════════════════════════════════════════════════════════ */
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.switch .track{width:36px;height:20px;border-radius:var(--r-pill);background:var(--track);border:1px solid var(--border);position:relative;transition:.16s}
+.switch .knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--t-muted);transition:.16s}
+.switch.on .track{background:color-mix(in srgb,var(--v-clear) 22%,transparent);border-color:var(--v-clear)}
+.switch.on .knob{left:18px;background:var(--v-clear)}
+.switch .lbl{font-size:12.5px;color:var(--t-body)}
+.theme-tgl{font-size:10.5px;letter-spacing:.5px;color:var(--t-muted);background:none;border:1px solid var(--border);
+  border-radius:var(--r-pill);padding:5px var(--s3);cursor:pointer;font-family:var(--f-ui)}
+.theme-tgl:hover{color:var(--t-body);border-color:var(--t-faint)}
+
+/* ═══ 5. MARKS — tiers, verdicts, counts ════════════════════════════════ */
+.pill{font-family:var(--f-mono);font-size:9px;letter-spacing:1.1px;text-transform:uppercase;padding:3px var(--s2);
+  border-radius:3px;border:1px solid;white-space:nowrap;display:inline-block}
+.pill-clear{color:var(--v-clear);border-color:var(--v-clear)}
+.pill-mixed{color:var(--v-mixed);border-color:var(--v-mixed)}
+.pill-dark{color:var(--v-dark);border-color:var(--v-dark)}
+.pill-neutral{color:var(--t-muted);border-color:var(--border)}
+/* tier tag — solid, used on article cards. Text colour is fixed for contrast. */
+.tag{font-family:var(--f-mono);font-size:9px;letter-spacing:1.1px;text-transform:uppercase;padding:4px 10px;
+  border-radius:var(--r-pill);color:var(--on-tier);font-weight:500;white-space:nowrap;display:inline-block}
+.tag-govt{background:var(--tier-govt)} .tag-main{background:var(--tier-main)}
+.tag-watch{background:var(--tier-watch)} .tag-blog{background:var(--tier-none)}
+.tag-outline{background:none;border:1px solid var(--border);color:var(--t-muted)}
+.count{font-family:var(--f-mono);font-size:10.5px;color:var(--t-muted);background:var(--raised);
+  border:1px solid var(--border);border-radius:var(--r-pill);padding:1px var(--s2)}
+.count.att{color:var(--v-mixed);border-color:var(--v-mixed)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.d-govt{background:var(--tier-govt)}.d-main{background:var(--tier-main)}
+.d-watch{background:var(--tier-watch)}.d-none{background:var(--tier-none)}
+.tierbar{height:7px;border-radius:3px;background:var(--track);display:flex;overflow:hidden}
+.tierbar i{display:block;height:100%}
+.tierbar .ghost{background-image:repeating-linear-gradient(45deg,var(--track) 0,var(--track) 3px,var(--border) 3px,var(--border) 6px)}
+.tierlabels{display:flex;gap:var(--s4);margin-top:var(--s2);font-family:var(--f-mono);font-size:10.5px;color:var(--t-muted)}
+.tierlabels b{color:var(--t-body);font-weight:500;margin-left:4px}
+.tierlabels .none{font-family:var(--f-ui);font-size:10px;color:var(--t-faint);font-style:italic;margin-left:4px}
+
+/* ═══ 6. AVATAR · BREADCRUMB · TABS · PAGINATION ════════════════════════ */
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(140deg,var(--tier-govt),var(--tier-watch));
+  color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700}
+.avatar.lg{width:38px;height:38px;font-size:13px}
+.outlet-mark{width:26px;height:26px;border-radius:50%;background:var(--track);border:1px solid var(--border);
+  display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;color:var(--t-sub);font-weight:700;flex:0 0 26px}
+.crumb{font-family:var(--f-mono);font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--t-faint);
+  display:flex;align-items:center;gap:var(--s2)}
+.tabs{display:flex;gap:var(--s5);border-bottom:1px solid var(--border)}
+.tab{padding:0 0 var(--s3);font-size:13px;color:var(--t-muted);cursor:pointer;position:relative;display:flex;align-items:center;gap:7px}
+.tab:hover{color:var(--t-body)}
+.tab.on{color:var(--t-display);font-weight:600}
+.tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--v-clear)}
+.tab .n{font-family:var(--f-mono);font-size:10px;color:var(--t-faint)}
+.pager{display:flex;align-items:center;gap:var(--s2);justify-content:center;padding-top:var(--s5)}
+.pager .pg{min-width:29px;height:29px;border-radius:var(--r-sm);border:1px solid var(--border);background:none;
+  color:var(--t-sub);font-family:var(--f-mono);font-size:11.5px;cursor:pointer}
+.pager .pg.on{background:var(--active);color:var(--t-display);border-color:var(--v-clear)}
+.pager .pg:hover:not(.on){color:var(--t-primary)}
+
+/* ═══ 7. CARDS · ARTICLE CARD · STORY CARD ══════════════════════════════ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s5)}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:var(--s3);border-bottom:1px solid var(--border)}
+.row{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 2px;border-bottom:1px solid var(--hair)}
+.row:last-child{border-bottom:none}
+.row:hover{background:var(--active)}
+/* ARTICLE CARD — the story page's coverage list. Live today, never specified. */
+.article{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s4) var(--s5);margin-bottom:var(--s3);transition:.13s}
+.article:hover{border-color:var(--t-faint)}
+.article .top{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s3)}
+.article .name{font-size:13px;font-weight:600;color:var(--t-primary)}
+.article .top .rt{margin-left:auto;display:flex;align-items:center;gap:var(--s2)}
+.article .hl{font-size:15px;line-height:1.4;font-weight:600;color:var(--t-display);margin:0 0 7px;letter-spacing:-.15px}
+.article .ex{font-size:12.5px;line-height:1.55;color:var(--t-muted);margin:0 0 var(--s3);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.article .btm{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--t-faint)}
+.article .btm .read{font-size:11.5px;font-weight:500;color:var(--t-sub)}
+.article:hover .btm .read{color:var(--v-clear)}
+/* STORY CARD — thumbnail grid (front page, dashboard) */
+.story{background:var(--raised);border:1px solid var(--border);border-radius:11px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer}
+.story .thumb{height:92px;background:var(--track);position:relative}
+.story .cat{position:absolute;top:var(--s2);left:var(--s2);font-family:var(--f-mono);font-size:9px;letter-spacing:.9px;
+  text-transform:uppercase;color:#fff;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:3px}
+.story .in{padding:var(--s3)}
+.story .hl{font-size:13px;line-height:1.35;font-weight:600;color:var(--t-primary);margin:0 0 var(--s2);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ═══ 8. ★1 POPOVER — replaces the red ownership tooltip ════════════════ */
+.pop{position:relative;display:inline-block}
+.pop .panel{position:absolute;top:calc(100% + 9px);right:0;width:280px;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-pop);padding:var(--s4);z-index:20}
+.pop .panel::before{content:"";position:absolute;top:-5px;right:22px;width:9px;height:9px;background:var(--card);
+  border-left:1px solid var(--border);border-top:1px solid var(--border);transform:rotate(45deg)}
+.pop .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s3);
+  padding-bottom:var(--s2);border-bottom:1px solid var(--hair)}
+.pop .ph .t{font-size:11.5px;font-weight:600;color:var(--t-primary);letter-spacing:.2px}
+.pop .line{font-size:12.5px;color:var(--t-body);line-height:1.5;margin:0 0 var(--s2)}
+.pop .line .k{color:var(--t-faint);font-size:10.5px;font-family:var(--f-mono);letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:2px}
+.pop .note{font-size:10.5px;color:var(--t-faint);font-style:italic;line-height:1.5;margin:var(--s3) 0 0;padding-top:var(--s2);border-top:1px solid var(--hair)}
+
+/* ═══ 9. OWNERSHIP ROW — restructured from the 25-row wall ══════════════ */
+.own{padding:var(--s3) 0;border-bottom:1px solid var(--hair)}
+.own:last-child{border-bottom:none}
+.own .l1{display:flex;align-items:center;gap:var(--s2);margin-bottom:3px}
+.own .nm{font-size:12.5px;font-weight:600;color:var(--t-primary)}
+.own .l2{font-size:11px;color:var(--t-muted);line-height:1.45;padding-left:calc(26px + var(--s2))}
+.own .prox{color:var(--t-sub)}   /* party proximity: plain text. NEVER red. */
+
+/* ═══ 10. TIER DISTRIBUTION GRID ════════════════════════════════════════ */
+.tdgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-top:var(--s3)}
+.tdcol{background:var(--sunk);border:1px solid var(--hair);border-radius:var(--r-md);padding:var(--s3) var(--s2);text-align:center}
+.tdcol .h{font-family:var(--f-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:var(--s2)}
+.tdcol .marks{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+
+/* ═══ 11. MODAL · TOAST · TABLE ═════════════════════════════════════════ */
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-pop);
+  width:100%;max-width:440px;padding:var(--s5)}
+.modal .mh{font-family:var(--f-display);font-size:18px;font-weight:600;color:var(--t-display);margin:0 0 var(--s2)}
+.modal .mb{font-size:12.5px;line-height:1.6;color:var(--t-body);margin:0 0 var(--s4)}
+.modal .mf{display:flex;gap:var(--s2);justify-content:flex-end;padding-top:var(--s4);border-top:1px solid var(--hair)}
+.toast{display:inline-flex;align-items:center;gap:var(--s3);background:var(--raised);border:1px solid var(--border);
+  border-left:2px solid var(--v-clear);border-radius:var(--r-md);padding:var(--s3) var(--s4);box-shadow:var(--shadow-pop);font-size:12.5px;color:var(--t-body)}
+.toast.err{border-left-color:var(--danger)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--t-faint);
+  text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--border);font-weight:400}
+.tbl td{padding:var(--s3);border-bottom:1px solid var(--hair);color:var(--t-body)}
+.tbl tr:hover td{background:var(--active)}
+.tbl .num{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums;color:var(--t-primary)}
+
+/* ═══ 12. STATES ════════════════════════════════════════════════════════ */
+.skel{background:linear-gradient(90deg,var(--skel-a) 25%,var(--skel-b) 37%,var(--skel-a) 63%);
+  background-size:400% 100%;animation:sh 1.3s ease infinite;border-radius:5px}
+@keyframes sh{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.skel-line{height:11px;margin-bottom:var(--s2)}
+.empty{border:1px dashed var(--border);border-radius:var(--r-lg);padding:var(--s7) var(--s6);text-align:center}
+.empty .ttl{font-family:var(--f-display);font-size:18px;color:var(--t-sub);margin-bottom:7px}
+.empty .msg{font-size:12.5px;color:var(--t-muted);max-width:360px;margin:0 auto var(--s4);line-height:1.55}
+.errbox{border:1px solid var(--danger);border-radius:var(--r-md);padding:var(--s4);background:color-mix(in srgb,var(--danger) 7%,transparent)}
+.errbox .ttl{font-size:12.5px;font-weight:600;color:var(--danger);margin-bottom:5px}
+.errbox .msg{font-size:12px;color:var(--t-body);line-height:1.5}
+
+/* ═══ 13. NAV ═══════════════════════════════════════════════════════════ */
+.nav-item{display:flex;align-items:center;gap:11px;padding:var(--s2) var(--s3);border-radius:7px;font-size:13px;
+  color:var(--t-sub);cursor:pointer;position:relative;margin-bottom:1px}
+.nav-item:hover{color:var(--t-primary);background:var(--active)}
+.nav-item.on{background:var(--active);color:var(--t-display);font-weight:600}
+.nav-item.on::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:2px;background:var(--v-clear);border-radius:0 2px 2px 0}
+.nav-item .ic{width:15px;text-align:center;opacity:.75;font-size:14px}
+.nav-item.on .ic{opacity:1;color:var(--v-clear)}
+.nav-item .count{margin-left:auto}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:var(--s3);border-bottom:1px solid var(--border)}
+.sec-head .ttl{font-size:12px;font-weight:600;color:var(--t-primary);letter-spacing:.3px}
+.sec-head .ttl span{font-family:var(--f-mono);font-size:10px;color:var(--t-faint);margin-left:9px;font-weight:400}
+
+/* ═══ library chrome (NOT part of the system) ═══════════════════════════ */
+.lib{max-width:1000px;margin:0 auto;padding:var(--s7) var(--s6) var(--s8)}
+.libhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s2)}
+.libsub{font-size:13px;color:var(--t-muted);margin:0 0 var(--s7);max-width:66ch;line-height:1.6}
+.grp{margin-bottom:var(--s7);padding-top:var(--s6);border-top:1px solid var(--border)}
+.grp>h2{font-family:var(--f-mono);font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--v-clear);margin:0 0 4px}
+.grp>.note{font-size:11.5px;color:var(--t-muted);margin:0 0 var(--s5);max-width:70ch;line-height:1.6}
+.grp>.note b{color:var(--t-body)}
+.spec{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:center;margin-bottom:var(--s4)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
+.cap{font-family:var(--f-mono);font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--t-faint);margin:0 0 var(--s2)}
+.swatch{display:flex;align-items:center;gap:var(--s2);font-family:var(--f-mono);font-size:10.5px;color:var(--t-muted)}
+.swatch i{width:22px;height:22px;border-radius:5px;display:block;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="lib">
+
+  <div class="libhead">
+    <span class="t-h1">Design System</span>
+    <button class="theme-tgl" onclick="var h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';this.textContent=h.dataset.theme==='dark'?'Light':'Dark';">Light</button>
+  </div>
+  <p class="libsub">The shared component layer. Every surface imports these — no page defines its own button, toggle, popover or loading state again. Tokens are the signed Gate B palette plus a spacing scale. The logo is an existing asset referenced as a slot; this system does not define a mark.</p>
+
+  <!-- SPACING -->
+  <section class="grp">
+    <h2>01 · Spacing &amp; layout</h2>
+    <p class="note">Colour and type were tokenised months ago; spacing never was, so every page picked its own padding. <b>That is most of why the surfaces feel unrelated.</b> 4px base. Layout constants: page 1240 · rail 230 · sidebar 320 · reading measure 66ch. Breakpoints 640 / 900 / 1180.</p>
+    <div class="spec">
+      <span class="swatch"><i style="background:var(--v-clear);width:4px"></i>s1 4</span>
+      <span class="swatch"><i style="background:var(--v-clear);width:8px"></i>s2 8</span>
+      <span class="swatch"><i style="background:var(--v-clear);width:12px"></i>s3 12</span>
+      <span class="swatch"><i style="background:var(--v-clear);width:16px"></i>s4 16</span>
+      <span class="swatch"><i style="background:var(--v-clear);width:20px"></i>s5 20</span>
+      <span class="swatch"><i style="background:var(--v-clear);width:26px"></i>s6 26</span>
+      <span class="swatch"><i style="background:var(--v-clear);width:34px"></i>s7 34</span>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section class="grp">
+    <h2>02 · Typography</h2>
+    <p class="note">Spectral for display and quoted reasons. Montserrat for UI. IBM Plex Mono for every numeral, label and timestamp — always tabular.</p>
+    <p class="t-display" style="margin-bottom:var(--s3)">Three corrections are open</p>
+    <p class="t-h1" style="margin-bottom:var(--s3)">Your reading summary</p>
+    <p class="t-h2" style="margin-bottom:var(--s2)">Section heading</p>
+    <p class="t-body" style="margin-bottom:var(--s2)">Body copy at 13px. It carries explanation, never verdicts. Inline <a class="tn-link">links look like this</a>.</p>
+    <p class="t-meta" style="margin-bottom:var(--s2)">Meta line · 11px</p>
+    <p class="t-label" style="margin-bottom:var(--s3)">Micro label · mono · tracked</p>
+    <p class="t-num">1,284</p>
+  </section>
+
+  <!-- BUTTONS -->
+  <section class="grp">
+    <h2>03 · Buttons &amp; links</h2>
+    <p class="note"><b>Red is reserved for destructive actions only.</b> It may never appear on coverage data, tiers, verdicts, ownership or party proximity.</p>
+    <div class="spec">
+      <button class="btn btn-primary">Save changes</button><button class="btn btn-secondary">Review</button>
+      <button class="btn btn-ghost">Cancel</button><button class="btn btn-danger">Delete my counts</button>
+      <button class="btn-link">Full audit log →</button>
+    </div>
+    <div class="spec">
+      <button class="btn btn-primary" disabled>Disabled</button>
+      <button class="btn btn-primary"><span class="spin"></span>Saving</button>
+      <button class="btn btn-secondary btn-sm">Small</button>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section class="grp">
+    <h2>04 · Form controls &amp; search</h2>
+    <div class="cols">
+      <div>
+        <div class="field"><label>Reason for dismissal</label><textarea class="textarea" rows="3" placeholder="Recorded against your name"></textarea></div>
+        <div class="field"><label>Email</label><input class="input err" value="not-an-email"><div class="hint err">Enter a valid email address.</div></div>
+      </div>
+      <div>
+        <div class="field"><label>Tier</label><select class="select"><option>Government-aligned</option><option>Mainstream</option><option>Watchdog</option></select></div>
+        <p class="cap">Search</p>
+        <div class="search"><span class="ic"><i class="ti ti-search"></i></span><input class="input" placeholder="Search outlets, stories…"><span class="clr">×</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOGGLES -->
+  <section class="grp">
+    <h2>05 · Toggles</h2>
+    <p class="note">One theme-toggle implementation for the whole codebase. The live dashboard's decorative toggle is the bug this replaces — it must actually switch themes on every surface.</p>
+    <div class="spec" style="gap:var(--s6)">
+      <span class="switch on" onclick="this.classList.toggle('on')"><span class="track"><span class="knob"></span></span><span class="lbl">Tracking is on</span></span>
+      <span class="switch" onclick="this.classList.toggle('on')"><span class="track"><span class="knob"></span></span><span class="lbl">Tracking is off</span></span>
+    </div>
+  </section>
+
+  <!-- MARKS -->
+  <section class="grp">
+    <h2>06 · Tier &amp; verdict marks</h2>
+    <p class="note">Solid tags on article cards; outlined pills for verdict states. DARK is indigo, never red. A zero tier reads “none recorded” with the hatched ghost — never “0”, never “0%”.</p>
+    <div class="spec">
+      <span class="tag tag-govt">Govt</span><span class="tag tag-main">Mainstream</span>
+      <span class="tag tag-watch">Watchdog</span><span class="tag tag-blog">Blog</span><span class="tag tag-outline">Ownership</span>
+    </div>
+    <div class="spec">
+      <span class="pill pill-clear">Clear</span><span class="pill pill-mixed">Mixed</span>
+      <span class="pill pill-dark">Dark</span><span class="pill pill-neutral">Open</span>
+      <span class="count">13</span><span class="count att">3</span>
+    </div>
+    <div class="cols" style="margin-top:var(--s4)">
+      <div><p class="cap">Tier bar · counts</p>
+        <div class="tierbar"><i style="width:22%;background:var(--tier-govt)"></i><i style="width:45%;background:var(--tier-main)"></i><i style="width:33%;background:var(--tier-watch)"></i></div>
+        <div class="tierlabels"><span><i class="dot d-govt"></i>Govt<b>5</b></span><span><i class="dot d-main"></i>Main<b>14</b></span><span><i class="dot d-watch"></i>Watch<b>5</b></span></div>
+      </div>
+      <div><p class="cap">Zero tier · ghost + “none recorded”</p>
+        <div class="tierbar"><i class="ghost" style="width:8%"></i><i style="width:12%;background:var(--tier-main)"></i><i style="width:80%;background:var(--tier-watch)"></i></div>
+        <div class="tierlabels"><span><i class="dot d-govt"></i>Govt<span class="none">none recorded</span></span><span><i class="dot d-main"></i>Main<b>1</b></span><span><i class="dot d-watch"></i>Watch<b>7</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <section class="grp">
+    <h2>07 · Tabs</h2>
+    <p class="note">Live on the story page (All / Govt / Mainstream / Watchdog / Blog) and never specified. Counts are mono and muted; the active tab takes the teal underline.</p>
+    <div class="tabs">
+      <span class="tab on">All <span class="n">26</span></span><span class="tab">Govt <span class="n">5</span></span>
+      <span class="tab">Mainstream <span class="n">14</span></span><span class="tab">Watchdog <span class="n">5</span></span><span class="tab">Blog <span class="n">2</span></span>
+    </div>
+  </section>
+
+  <!-- ARTICLE CARD + POPOVER -->
+  <section class="grp">
+    <h2>08 · Article card &amp; ownership popover</h2>
+    <p class="note"><b>★ The popover is the fix.</b> The live tooltip uses a red dot, the party name in red and a red hover outline. Red was retired from tier bars because it reads as alarm; party-coded red also reads as taking a side. On party proximity it does both at once. Here it is anchored with a caret, built from card tokens, and proximity renders as recorded fact in body colour — with the documented-only note that makes it defensible.</p>
+    <div class="article">
+      <div class="top">
+        <span class="outlet-mark">TVC</span><span class="name">TVC News</span>
+        <span class="rt">
+          <span class="pop">
+            <span class="tag tag-outline" style="cursor:pointer">Ownership</span>
+            <span class="panel">
+              <span class="ph"><span class="t">Ownership</span><span class="tag tag-outline">Corporate</span></span>
+              <p class="line"><span class="k">Owner</span>TVC Communications Limited</p>
+              <p class="line"><span class="k">Party proximity</span><span class="prox">APC — documented</span></p>
+              <p class="note">Shown only where ownership or affiliation is a matter of public record. Proximity is a recorded fact, not an inference about coverage.</p>
+            </span>
+          </span>
+          <span class="tag tag-govt">Govt</span>
+        </span>
+      </div>
+      <p class="hl">‘End Of An Era’, Fans Mourn Messi’s International Football Retirement</p>
+      <p class="ex">Social media users have flooded X with emotional tributes following Lionel Messi’s decision to retire from international football with Argentina.</p>
+      <div class="btm"><span>6h ago · Lagos</span><span class="read">Read Full Article →</span></div>
+    </div>
+    <p class="cap" style="margin-top:var(--s4)">Popover, isolated</p>
+    <div style="position:relative;height:210px">
+      <span class="pop"><span class="panel" style="position:static;display:block;width:290px">
+        <span class="ph"><span class="t">Ownership</span><span class="tag tag-outline">Corporate</span></span>
+        <p class="line"><span class="k">Owner</span>TVC Communications Limited</p>
+        <p class="line"><span class="k">Party proximity</span><span class="prox">APC — documented</span></p>
+        <p class="note">Shown only where ownership or affiliation is a matter of public record. Proximity is a recorded fact, not an inference about coverage.</p>
+      </span></span>
+    </div>
+  </section>
+
+  <!-- SIDEBAR PATTERNS -->
+  <section class="grp">
+    <h2>09 · Sidebar — ownership rows &amp; tier distribution</h2>
+    <p class="note">The live Ownership card is a 25-row wall of tags with no hierarchy. Restructured to two lines per outlet: name and structure on the first, owner and documented proximity on the second, in muted body text.</p>
+    <div class="cols">
+      <div class="card">
+        <div class="card-head" style="margin-bottom:var(--s2)"><span class="t-h2">Ownership</span></div>
+        <div class="own"><div class="l1"><span class="outlet-mark">VN</span><span class="nm">Voice of Nigeria</span><span class="tag tag-outline">Government</span></div>
+          <div class="l2">Federal Government of Nigeria · <span class="prox">proximity: APC (documented)</span></div></div>
+        <div class="own"><div class="l1"><span class="outlet-mark">CH</span><span class="nm">Channels Television</span><span class="tag tag-outline">Private</span></div>
+          <div class="l2">John Momoh</div></div>
+        <div class="own"><div class="l1"><span class="outlet-mark">PT</span><span class="nm">Premium Times</span><span class="tag tag-outline">Independent</span></div>
+          <div class="l2">Premium Times Services</div></div>
+        <p class="note" style="font-size:10.5px;color:var(--t-faint);font-style:italic;margin-top:var(--s3)">Proximity shown only where documented.</p>
+      </div>
+      <div class="card">
+        <div class="card-head" style="margin-bottom:var(--s2)"><span class="t-h2">Tier Distribution</span></div>
+        <div class="tierbar" style="margin-top:var(--s3)"><i style="width:21%;background:var(--tier-govt)"></i><i style="width:58%;background:var(--tier-main)"></i><i style="width:21%;background:var(--tier-watch)"></i></div>
+        <div class="tierlabels"><span><i class="dot d-govt"></i>Govt<b>5</b></span><span><i class="dot d-main"></i>Main<b>14</b></span><span><i class="dot d-watch"></i>Watch<b>5</b></span></div>
+        <div class="tdgrid">
+          <div class="tdcol"><div class="h" style="color:var(--tier-govt)">Govt</div><div class="marks"><span class="outlet-mark">VN</span><span class="outlet-mark">TV</span><span class="outlet-mark">RN</span></div></div>
+          <div class="tdcol"><div class="h" style="color:var(--tier-main)">Main</div><div class="marks"><span class="outlet-mark">PN</span><span class="outlet-mark">VG</span><span class="outlet-mark">TW</span></div></div>
+          <div class="tdcol"><div class="h" style="color:var(--tier-watch)">Watch</div><div class="marks"><span class="outlet-mark">PT</span><span class="outlet-mark">SR</span><span class="outlet-mark">IC</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL TOAST TABLE -->
+  <section class="grp">
+    <h2>10 · Modal, toast, table, pagination</h2>
+    <p class="note">The dismiss-a-verdict dialog is counsel-relevant — it captures the written reason attributed to a named person. It is a component, not a per-page invention.</p>
+    <div class="cols">
+      <div class="modal">
+        <p class="mh">Dismiss this verdict?</p>
+        <p class="mb">This removes the verdict from the story page. Your name and reason are recorded in the audit log.</p>
+        <div class="field" style="max-width:none;margin-bottom:0"><label>Reason</label><textarea class="textarea" rows="2" placeholder="Why this verdict should not stand"></textarea></div>
+        <div class="mf"><button class="btn btn-ghost">Cancel</button><button class="btn btn-primary">Dismiss verdict</button></div>
+      </div>
+      <div>
+        <p class="cap">Toast</p>
+        <div class="spec" style="flex-direction:column;align-items:flex-start">
+          <span class="toast"><i class="ti ti-check"></i>Correction actioned · logged</span>
+          <span class="toast err"><i class="ti ti-alert-triangle"></i>Couldn’t save — try again</span>
+        </div>
+        <p class="cap" style="margin-top:var(--s4)">Table</p>
+        <table class="tbl"><thead><tr><th>Outlet</th><th>Tier</th><th class="num">Stories</th></tr></thead>
+        <tbody><tr><td>Punch Nigeria</td><td><span class="tag tag-main">Main</span></td><td class="num">1,284</td></tr>
+        <tr><td>Premium Times</td><td><span class="tag tag-watch">Watch</span></td><td class="num">942</td></tr></tbody></table>
+        <div class="pager"><button class="pg">‹</button><button class="pg on">1</button><button class="pg">2</button><button class="pg">3</button><button class="pg">›</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATES -->
+  <section class="grp">
+    <h2>11 · Loading, empty, error</h2>
+    <p class="note">A generic “Loading…” on every page is the clearest evidence no component layer exists. Loading is a skeleton shaped like its result.</p>
+    <div class="cols" style="margin-bottom:var(--s5)">
+      <div class="article"><div class="top"><span class="skel" style="width:26px;height:26px;border-radius:50%"></span><span class="skel skel-line" style="width:110px;margin:0"></span></div>
+        <div class="skel skel-line" style="width:94%;height:14px"></div><div class="skel skel-line" style="width:70%;height:14px"></div>
+        <div class="skel skel-line" style="width:100%;margin-top:var(--s3)"></div></div>
+      <div class="card"><div class="skel skel-line" style="width:40%;height:9px"></div>
+        <div class="skel skel-line" style="width:88%;margin-top:var(--s3)"></div><div class="skel skel-line" style="width:72%"></div><div class="skel skel-line" style="width:80%"></div></div>
+    </div>
+    <div class="cols">
+      <div class="empty"><div class="ttl">Nothing saved yet</div><p class="msg">Stories you save will appear here. Look for the bookmark on any story.</p><button class="btn btn-secondary btn-sm">Browse stories</button></div>
+      <div class="errbox"><div class="ttl">Couldn’t load your summary</div><p class="msg">We couldn’t reach the server. Nothing has been lost — try again in a moment.</p></div>
+    </div>
+  </section>
+
+  <!-- NAV -->
+  <section class="grp">
+    <h2>12 · Navigation &amp; breadcrumb</h2>
+    <p class="note">One rail-item component shared by the reader dashboard and the staff console. Tabler icons only — the live dashboard rail uses emoji, which stops.</p>
+    <div class="crumb" style="margin-bottom:var(--s4)"><span>Nigeria</span><span>·</span><span>Coverage Diet</span></div>
+    <div style="max-width:230px;padding-left:var(--s4)">
+      <p class="t-label" style="margin:0 var(--s3) var(--s2)">Nigeria</p>
+      <div class="nav-item on"><span class="ic"><i class="ti ti-chart-donut"></i></span>Coverage Diet</div>
+      <div class="nav-item"><span class="ic"><i class="ti ti-eye"></i></span>Divergence</div>
+      <div class="nav-item"><span class="ic"><i class="ti ti-bell"></i></span>Alerts<span class="count">2</span></div>
+      <div class="nav-item"><span class="ic"><i class="ti ti-bookmark"></i></span>Saved</div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

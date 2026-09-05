@@ -16,16 +16,16 @@ export const SEVERITY_COLORS = {
 };
 
 export const COVERAGE_TIER_COLORS = {
-  'pro_establishment': '#6d7f92',
-  'institutional': '#a49889',
-  'adversarial': '#8f9a6f',
+  'govt_aligned': '#6d7f92',
+  'mainstream': '#a49889',
+  'watchdog': '#8f9a6f',
   'unscored': '#999999'
 };
 
 export const TIER_LABELS = {
-  'pro_establishment': 'Govt',
-  'institutional': 'Mainstream',
-  'adversarial': 'Watchdog',
+  'govt_aligned': 'Govt',
+  'mainstream': 'Mainstream',
+  'watchdog': 'Watchdog',
   'unscored': 'Unscored'
 };
 
@@ -40,8 +40,8 @@ export function formatTimeAgo(dateStr) {
 }
 
 export const COVERAGE_TIER_BG_COLORS = {
-  pro_establishment: 'rgba(41, 128, 185, 0.12)',
-  institutional: 'rgba(230, 126, 34, 0.12)',
-  adversarial: 'rgba(192, 57, 43, 0.12)',
+  govt_aligned: 'rgba(41, 128, 185, 0.12)',
+  mainstream: 'rgba(230, 126, 34, 0.12)',
+  watchdog: 'rgba(192, 57, 43, 0.12)',
   unscored: 'rgba(153, 153, 153, 0.12)'
 };

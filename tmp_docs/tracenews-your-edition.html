@@ -1,0 +1,323 @@
+<!doctype html>
+<!--
+================================================================================
+ TRACENEWS — YOUR EDITION · READER DASHBOARD, FULL SCOPE + DESIGN DIRECTION
+================================================================================
+ The subscriber side, in the same broadsheet language as The Desk.
+
+ THE FRAMING. The staff console is a monitoring room. The reader dashboard is
+ not — it is the reader's standing relationship with the Nigerian press. Their
+ own masthead, their own dateline, an editorial sentence about their reading
+ before any number. Same grammar, different room.
+
+ SCOPE — bigger than the five sections we have been circling. A subscriber to a
+ media-intelligence product should be able to follow OUTLETS and POLITICIANS
+ (we hold 867 politician pages and 142 outlet profiles and offer the reader no
+ way to track any of them), read the reports we publish, control their alerts,
+ manage billing in naira, and exercise their NDPA rights without emailing us.
+
+ ─── POSTURE RULES THAT CONSTRAIN THIS SURFACE — do not relax ───────────────
+  • TraceNews scores the MEDIA, never the READER. Describe consumption, surface
+    gaps, never attribute a trait. "You read mostly mainstream" is a log.
+    "You have a mainstream bias" is forbidden.
+  • COUNTERS, NOT DIARIES. We increment tier and verdict-state counters and
+    discard the read event. Therefore the lede may say "2 of the stories you
+    opened sat with one tier" (a counter) but we can NEVER list which ones.
+    The gaps section is therefore the PUBLIC feed of concentrated-coverage
+    stories — the door is real, it just doesn't open onto a personal diary.
+    This is the single thing most likely to be built wrong.
+  • Small N shows counts, never percentages. Zero reads "none recorded".
+  • Alerts are INVITATIONS to the evidence, never the verdict delivered naked.
+  • Consent state is visible on the surface, and deletion actually works.
+================================================================================
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceNews — Your Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --page:#0b0c0e; --shell:#0e1013; --card:#141619; --raised:#191c20; --sunk:#101215;
+  --border:#25282e; --hair:#1c1f24; --track:#1a1d21; --active:#191d22;
+  --ink:#eef1f4; --t-primary:#cfd4da; --t-body:#a8adb5; --t-sub:#8a8f98; --t-muted:#6f747d; --t-faint:#585d65;
+  --tier-govt:#6d7f92; --tier-main:#a49889; --tier-watch:#8f9a6f;
+  --v-clear:#63cda8; --v-mixed:#e2ab4d; --v-dark:#9298db; --danger:#d9705f; --on-accent:#0b0c0e;
+}
+[data-theme="light"]{
+  --page:#f4f2ee; --shell:#fffefb; --card:#fffefb; --raised:#f7f5f1; --sunk:#eeece7;
+  --border:#dcd8d0; --hair:#e8e5df; --track:#e6e3dd; --active:#eeebe5;
+  --ink:#14161a; --t-primary:#23272d; --t-body:#43484f; --t-sub:#5b6068; --t-muted:#787d85; --t-faint:#9a9ea6;
+  --tier-govt:#4d6072; --tier-main:#8c7c68; --tier-watch:#5d7a50;
+  --v-clear:#2c8f6d; --v-mixed:#a8761c; --v-dark:#5960ab; --danger:#b4503c; --on-accent:#fffefb;
+}
+:root{--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:26px;--s7:34px;--s8:48px;
+  --f-d:'Spectral',Georgia,serif;--f-u:'Montserrat',system-ui,sans-serif;--f-m:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{background:var(--page);margin:0;font-family:var(--f-u);color:var(--t-body);-webkit-font-smoothing:antialiased}
+.pg{max-width:1180px;margin:0 auto;padding:var(--s7) var(--s6) var(--s8)}
+.doc-h{font-family:var(--f-d);font-size:30px;font-weight:600;color:var(--ink);margin:0 0 var(--s2);letter-spacing:-.3px}
+.doc-s{font-size:13px;color:var(--t-muted);max-width:72ch;line-height:1.7;margin:0 0 var(--s7)}
+.doc-s b{color:var(--t-body)}
+.sec{margin-bottom:var(--s8);padding-top:var(--s6);border-top:1px solid var(--border)}
+.sec>h2{font-family:var(--f-m);font-size:10px;letter-spacing:1.7px;text-transform:uppercase;color:var(--v-clear);margin:0 0 var(--s2)}
+.sec>h3{font-family:var(--f-d);font-size:21px;font-weight:600;color:var(--ink);margin:0 0 var(--s3)}
+.sec>.n{font-size:12.5px;color:var(--t-muted);max-width:76ch;line-height:1.7;margin:0 0 var(--s5)}
+.sec>.n b{color:var(--t-body)}
+
+/* ══ shell ══ */
+.ed{background:var(--page);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.mh{padding:var(--s4) var(--s5) 0}
+.mh-top{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:var(--s3)}
+.mh-id{display:flex;align-items:baseline;gap:var(--s3)}
+.mh-id .wm{font-family:var(--f-d);font-size:23px;font-weight:700;color:var(--ink);letter-spacing:-.4px}
+.mh-id .wm i{font-style:normal;color:var(--v-clear)}
+.mh-id .lbl{font-family:var(--f-m);font-size:9px;letter-spacing:2.4px;text-transform:uppercase;color:var(--t-muted);padding-bottom:2px}
+.mh-meta{display:flex;align-items:center;gap:var(--s4);font-family:var(--f-m);font-size:9.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--t-faint)}
+.mh-meta .nav{display:flex;gap:var(--s3);text-transform:none;letter-spacing:0;font-family:var(--f-u);font-size:11.5px;color:var(--t-sub)}
+.mh-meta .nav .on{color:var(--ink);font-weight:600}
+.av{width:24px;height:24px;border-radius:50%;background:linear-gradient(140deg,var(--tier-govt),var(--tier-watch));color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.mh-rule{height:2px;background:var(--ink);opacity:.85}
+.mh-rule2{height:1px;background:var(--border);margin-top:2px}
+.dk{display:flex;min-height:540px}
+.rail{width:176px;flex:0 0 176px;padding:var(--s5) var(--s4) var(--s5) var(--s5);border-right:1px solid var(--hair)}
+.rg{font-family:var(--f-m);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-faint);margin:0 0 var(--s2)}
+.rg:not(:first-child){margin-top:var(--s5)}
+.ri{display:flex;align-items:center;font-size:12px;color:var(--t-sub);padding:5px 0;cursor:pointer;position:relative;letter-spacing:-.1px}
+.ri:hover{color:var(--t-primary)}
+.ri.on{color:var(--ink);font-weight:600}
+.ri.on::before{content:"";position:absolute;left:-20px;top:8px;bottom:8px;width:2px;background:var(--v-clear)}
+.ri .n{margin-left:auto;font-family:var(--f-m);font-size:9.5px;color:var(--t-faint)}
+.ri .n.att{color:var(--v-mixed)}
+.main{flex:1;padding:var(--s5) var(--s6);min-width:0;border-right:1px solid var(--hair)}
+.stand{width:236px;flex:0 0 236px;padding:var(--s5)}
+.dateline{font-family:var(--f-m);font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--t-faint);margin-bottom:var(--s3)}
+.lede{font-family:var(--f-d);font-size:26px;line-height:1.28;font-weight:600;color:var(--ink);margin:0 0 var(--s3);letter-spacing:-.4px;max-width:21ch}
+.lede em{font-style:normal;color:var(--v-dark)}
+.byline{font-size:11.5px;color:var(--t-muted);padding-bottom:var(--s5);border-bottom:1px solid var(--border);margin-bottom:var(--s5);display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.byline .ctl{color:var(--v-clear);cursor:pointer}
+.figs{display:flex;gap:var(--s6);padding-bottom:var(--s5);border-bottom:1px solid var(--border);margin-bottom:var(--s5)}
+.fig{flex:1;border-left:1px solid var(--hair);padding-left:var(--s3)}
+.fig:first-child{border-left:none;padding-left:0}
+.fig .l{font-family:var(--f-m);font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t-faint);margin-bottom:var(--s2)}
+.fig .v{font-family:var(--f-m);font-size:34px;font-weight:400;color:var(--ink);line-height:.85;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.fig .v.gap{color:var(--v-dark)}
+.fig .s{font-size:10.5px;color:var(--t-muted);margin-top:var(--s2);line-height:1.45}
+.tb{height:6px;border-radius:3px;background:var(--track);display:flex;overflow:hidden;margin:var(--s3) 0 var(--s2)}
+.tb i{display:block;height:100%}
+.tl{display:flex;gap:var(--s4);font-family:var(--f-m);font-size:10px;color:var(--t-muted)}
+.tl b{color:var(--t-body);font-weight:500;margin-left:4px}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px}
+.ds{margin-bottom:var(--s6)}
+.ds-h{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s2)}
+.ds-h .t{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-sub)}
+.ds-h .ln{flex:1;height:1px;background:var(--hair)}
+.ds-h .lk{font-size:10.5px;color:var(--t-faint);cursor:pointer}
+.ds-h .lk:hover{color:var(--v-clear)}
+.it{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--hair);align-items:baseline}
+.it:last-child{border-bottom:none}
+.it .mk{font-family:var(--f-m);font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border:1px solid;border-radius:2px;white-space:nowrap}
+.mk-dk{color:var(--v-dark);border-color:var(--v-dark)}
+.mk-nu{color:var(--t-faint);border-color:var(--border)}
+.mk-cl{color:var(--v-clear);border-color:var(--v-clear)}
+.it .bd{flex:1;min-width:0}
+.it .tt{font-size:13px;color:var(--t-primary);font-weight:500;line-height:1.35;letter-spacing:-.1px}
+.it .mt{font-size:10.5px;color:var(--t-muted);margin-top:3px}
+.it .ag{font-family:var(--f-m);font-size:9.5px;color:var(--t-faint);white-space:nowrap}
+.st-h{font-family:var(--f-m);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-faint);padding-bottom:var(--s2);border-bottom:1px solid var(--border);margin-bottom:var(--s3)}
+.al{padding:var(--s2) 0;border-bottom:1px solid var(--hair);font-size:11.5px;line-height:1.5;color:var(--t-muted)}
+.al:last-child{border-bottom:none}
+.al b{color:var(--t-primary);font-weight:600}
+.al .ts{font-family:var(--f-m);font-size:9px;color:var(--t-faint);display:block;margin-top:3px}
+.fol{display:flex;align-items:center;gap:var(--s2);padding:6px 0;border-bottom:1px solid var(--hair);font-size:11.5px;color:var(--t-sub)}
+.fol:last-child{border-bottom:none}
+.fol .mk2{width:20px;height:20px;border-radius:50%;background:var(--track);border:1px solid var(--border);font-family:var(--f-m);font-size:8px;color:var(--t-faint);display:flex;align-items:center;justify-content:center;flex:0 0 20px}
+.fol .n{margin-left:auto;font-family:var(--f-m);font-size:9px;color:var(--t-faint)}
+.privacy{border:1px solid var(--border);border-radius:3px;padding:var(--s3);margin-top:var(--s5)}
+.privacy .h{font-family:var(--f-m);font-size:8.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--t-faint);margin-bottom:var(--s2)}
+.privacy .b{font-size:11px;line-height:1.55;color:var(--t-muted);margin-bottom:var(--s2)}
+.privacy .a{font-size:10.5px;color:var(--v-clear);cursor:pointer}
+/* scope */
+.scope{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s5)}
+.grpc{border-top:2px solid var(--border);padding-top:var(--s3)}
+.grpc h4{font-family:var(--f-m);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--v-clear);margin:0 0 var(--s2)}
+.grpc .why{font-size:11px;color:var(--t-faint);font-style:italic;line-height:1.5;margin:0 0 var(--s3)}
+.grpc ul{margin:0;padding:0;list-style:none}
+.grpc li{font-size:12px;line-height:1.5;color:var(--t-body);padding:5px 0;border-bottom:1px solid var(--hair);display:flex;gap:var(--s2)}
+.grpc li:last-child{border-bottom:none}
+.grpc li b{color:var(--t-primary);font-weight:600}
+.grpc li .tag{font-family:var(--f-m);font-size:8px;letter-spacing:.8px;text-transform:uppercase;color:var(--t-faint);border:1px solid var(--border);border-radius:2px;padding:1px 5px;margin-left:auto;white-space:nowrap;align-self:flex-start}
+.grpc li .tag.new{color:var(--v-clear);border-color:var(--v-clear)}
+.grpc li .tag.paid{color:var(--v-mixed);border-color:var(--v-mixed)}
+.grpc li .tag.ob{color:var(--v-dark);border-color:var(--v-dark)}
+</style>
+</head>
+<body><div class="pg">
+
+<h1 class="doc-h">Your Edition</h1>
+<p class="doc-s">The subscriber side in the same broadsheet language. The console is a monitoring room; this is not — it is the reader's <b>standing relationship with the Nigerian press</b>. Their own masthead, their own dateline, one editorial sentence about their reading before any number. Scope is deliberately bigger than the five sections we have circled: we hold 867 politician pages and 142 outlet profiles and currently give a reader no way to follow any of them, no way to read what we publish, and no way to exercise their data rights without emailing us.</p>
+
+<!-- ══ THE SCREEN ══ -->
+<section class="sec">
+  <h2>Design</h2><h3>Reading summary — the landing</h3>
+  <p class="n">The lede is <b>indigo, not amber</b> — the reader's gap is information, not an alarm on their desk. Consent state sits in the byline where it is always visible. Figures are unequal and rule-separated. The standing column carries alerts, what they follow, and a privacy panel that makes control feel present rather than buried in settings.</p>
+
+  <div class="ed">
+    <div class="mh">
+      <div class="mh-top">
+        <div class="mh-id"><span class="wm">Trace<i>News</i></span><span class="lbl">Your Edition</span></div>
+        <div class="mh-meta">
+          <span class="nav"><span>Home</span><span>For You</span><span>Briefing</span><span>Monitoring Spirit</span><span class="on">Account</span></span>
+          <span>Wed 2 Sep</span><span class="av">EB</span>
+        </div>
+      </div>
+      <div class="mh-rule"></div><div class="mh-rule2"></div>
+    </div>
+
+    <div class="dk">
+      <aside class="rail">
+        <p class="rg">Your reading</p>
+        <div class="ri on">Summary</div>
+        <div class="ri">Coverage gaps<span class="n">2</span></div>
+        <div class="ri">Saved<span class="n">7</span></div>
+
+        <p class="rg">Following</p>
+        <div class="ri">Topics<span class="n">3</span></div>
+        <div class="ri">Outlets<span class="n">5</span></div>
+        <div class="ri">Politicians<span class="n">4</span></div>
+
+        <p class="rg">From TraceNews</p>
+        <div class="ri">Alerts<span class="n att">2</span></div>
+        <div class="ri">Reports</div>
+        <div class="ri">Watchdog Report</div>
+
+        <p class="rg">Your account</p>
+        <div class="ri">Subscription</div>
+        <div class="ri">Data &amp; privacy</div>
+        <div class="ri">Notifications</div>
+        <div class="ri">Profile</div>
+      </aside>
+
+      <div class="main">
+        <p class="dateline">Your reading · last 30 days</p>
+        <h2 class="lede">You read across all three tiers — but <em>2 stories sat with one tier only</em>.</h2>
+        <p class="byline">
+          <span>Tracking is on · we count tiers, never which stories you opened</span>
+          <span class="ctl">Manage</span><span class="ctl">Delete my counts</span>
+        </p>
+
+        <div class="figs">
+          <div class="fig"><div class="l">Stories opened</div><div class="v">18</div><div class="s">Across 30 days</div></div>
+          <div class="fig"><div class="l">Broadly covered</div><div class="v">11</div><div class="s">All three tiers</div></div>
+          <div class="fig"><div class="l">One tier only</div><div class="v gap">02</div><div class="s">Coverage you may<br>have missed</div></div>
+          <div class="fig"><div class="l">Following</div><div class="v">12</div><div class="s">Topics, outlets<br>and politicians</div></div>
+        </div>
+
+        <div class="ds">
+          <div class="ds-h"><span class="t">Who you've been reading</span><span class="ln"></span></div>
+          <div class="tb"><i style="width:20%;background:var(--tier-govt)"></i><i style="width:54%;background:var(--tier-main)"></i><i style="width:26%;background:var(--tier-watch)"></i></div>
+          <div class="tl"><span><i class="dot" style="background:var(--tier-govt)"></i>Govt-aligned<b>7</b></span><span><i class="dot" style="background:var(--tier-main)"></i>Mainstream<b>19</b></span><span><i class="dot" style="background:var(--tier-watch)"></i>Watchdog<b>9</b></span></div>
+          <p style="font-size:10.5px;color:var(--t-faint);font-style:italic;margin:var(--s3) 0 0;line-height:1.5">Counts are outlet-visits across the stories you opened. A log of what you read — not a judgment about you.</p>
+        </div>
+
+        <div class="ds">
+          <div class="ds-h"><span class="t">Stories only one tier carried this month</span><span class="ln"></span><span class="lk">See all →</span></div>
+          <div class="it"><span class="mk mk-dk">One tier</span><div class="bd"><div class="tt">Emefiele trial: witness admits bypassing bank procedures on disputed transactions</div><div class="mt">Watchdog only · government-aligned none recorded</div></div><span class="ag">18h</span></div>
+          <div class="it"><span class="mk mk-dk">One tier</span><div class="bd"><div class="tt">Police redeploy officers in Rivers as new command structure takes effect</div><div class="mt">Government-aligned only</div></div><span class="ag">1d</span></div>
+        </div>
+
+        <div class="ds">
+          <div class="ds-h"><span class="t">From TraceNews</span><span class="ln"></span><span class="lk">All reports →</span></div>
+          <div class="it"><span class="mk mk-cl">New</span><div class="bd"><div class="tt">How the Nigerian press covered the fuel subsidy debate — August</div><div class="mt">14 outlets, one story, three pictures · 9 min read</div></div><span class="ag">2d</span></div>
+        </div>
+      </div>
+
+      <aside class="stand">
+        <p class="st-h">Your alerts</p>
+        <div class="al"><b>Judiciary</b> — an unusual coverage pattern on a story you follow. See the analysis<span class="ts">2h ago</span></div>
+        <div class="al"><b>Economy</b> — a story you follow is now carried across all three tiers<span class="ts">Yesterday</span></div>
+
+        <p class="st-h" style="margin-top:var(--s6)">You follow</p>
+        <div class="fol"><span class="mk2">EC</span>Economy<span class="n">topic</span></div>
+        <div class="fol"><span class="mk2">PT</span>Premium Times<span class="n">outlet</span></div>
+        <div class="fol"><span class="mk2">NW</span>Nyesom Wike<span class="n">figure</span></div>
+        <div class="fol"><span class="mk2">SE</span>Security<span class="n">topic</span></div>
+
+        <div class="privacy">
+          <div class="h">Your data</div>
+          <p class="b">Three numbers, nothing more. We never build a list of the stories you opened.</p>
+          <span class="a">Export · Delete · Turn off →</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCOPE ══ -->
+<section class="sec">
+  <h2>Scope</h2><h3>What a subscriber can do</h3>
+  <p class="n"><span style="color:var(--v-clear)">Teal</span> = not built and not previously scoped. <span style="color:var(--v-mixed)">Amber</span> = paid tier. <span style="color:var(--v-dark)">Indigo</span> = legal obligation.</p>
+
+  <div class="scope">
+
+    <div class="grpc">
+      <h4>Your reading</h4>
+      <p class="why">Counters only. The lede may state that 2 stories sat with one tier — that is a counter. It may never list which, because we do not store them.</p>
+      <ul>
+        <li><b>Reading summary</b> — tier counts, editorial lede</li>
+        <li><b>Coverage gaps</b> — the public feed of one-tier stories<span class="tag new">Door, not diary</span></li>
+        <li><b>Saved stories</b> — user-initiated, so a real list is fine</li>
+        <li><b>History window</b> — 30 days free, longer paid<span class="tag paid">Paid</span></li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>Following</h4>
+      <p class="why">We hold 867 politician pages and 142 outlet profiles and offer no way to track any of them. This is the largest unbuilt opportunity on the reader side.</p>
+      <ul>
+        <li><b>Topics</b> — follow, unfollow, feeds alerts</li>
+        <li><b>Outlets</b> — follow an outlet; see its tier changes<span class="tag new">New</span></li>
+        <li><b>Politicians</b> — follow a figure; see coverage of them<span class="tag new">New</span></li>
+        <li><b>Follow limits</b> — 3 free, unlimited paid<span class="tag paid">Paid</span></li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>From TraceNews</h4>
+      <p class="why">The articles you raised. This is the reader-facing end of the Newsroom — and where the Bias Comparison ambition survives as human-authored analysis.</p>
+      <ul>
+        <li><b>Reports &amp; analysis</b> — read, archive, share<span class="tag new">New</span></li>
+        <li><b>Alerts</b> — invitations to evidence, never naked verdicts<span class="tag ob">Gate B</span></li>
+        <li><b>Watchdog Report</b> — weekly digest, frequency control</li>
+        <li><b>Daily Briefing</b> — subscribe, choose time</li>
+        <li><b>Alert channels</b> — email now; push later<span class="tag paid">Slots paid</span></li>
+      </ul>
+    </div>
+
+    <div class="grpc">
+      <h4>Account &amp; rights</h4>
+      <p class="why">A reader must be able to exercise NDPA rights in the product, not by emailing us. Consent state visible on the surface, not buried.</p>
+      <ul>
+        <li><b>Subscription</b> — plan, invoices, cancel (Paystack, naira)<span class="tag paid">Paid</span></li>
+        <li><b>Data &amp; privacy</b> — tracking on/off, export, delete<span class="tag ob">NDPA</span></li>
+        <li><b>Consent record</b> — what version they agreed to, when<span class="tag ob">DPIA</span></li>
+        <li><b>Notifications</b> — per-channel, per-type</li>
+        <li><b>Profile</b> — email, password, sign-out everywhere</li>
+        <li><b>Delete account</b> — cascading, verified<span class="tag ob">NDPA</span></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ THE TWO ROOMS ══ -->
+<section class="sec">
+  <h2>Direction</h2><h3>One grammar, two rooms</h3>
+  <p class="n">The console and the edition share every token, component and rule — masthead and dateline, a sentence before numbers, rules not boxes, unequal figures, mono numerals as texture, one accent per screen. What differs is register, and it should.</p>
+  <div class="scope">
+    <div class="grpc"><h4>The Desk — staff</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">A monitoring room. Amber accent: things are <i>owed</i> and overdue. The standing column shows the platform's pulse — the wire, health, the ledger. It answers: <b>what needs me?</b></p></div>
+    <div class="grpc"><h4>Your Edition — reader</h4><p class="why" style="font-style:normal;color:var(--t-body);font-size:12px">A personal edition. Indigo accent: gaps are <i>information</i>, not alarms — nothing here is the reader's fault or duty. The standing column shows their alerts, what they follow, and their control over their own data. It answers: <b>what did I miss?</b></p></div>
+  </div>
+</section>
+
+</div></body></html>
