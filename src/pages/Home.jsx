@@ -301,7 +301,7 @@ export default function Home() {
         const scoredStories = catStories.filter(c => {
           const dist = c.coverage_stats?.coverage_tier_distribution || {};
           const scored = (dist.govt_aligned || 0) + (dist.mainstream || 0) + (dist.watchdog || 0);
-          return scored >= 3;
+          return scored >= 8;
         }).sort((a, b) => {
           const distA = a.coverage_stats?.coverage_tier_distribution || {};
           const scoredA = (distA.govt_aligned || 0) + (distA.mainstream || 0) + (distA.watchdog || 0);
