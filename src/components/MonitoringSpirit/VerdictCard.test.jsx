@@ -48,7 +48,7 @@ describe('VerdictCard Invariants', () => {
     // Track check: ghost slice must exist for govt and mainstream
     const ghostTracks = screen.getAllByTestId(/track-ghost-/);
     expect(ghostTracks.length).toBe(2);
-    ghostTracks.forEach(el => expect(el.className).toBe('ghost'));
+    ghostTracks.forEach(el => expect(el.className).toBe('vc-ghost'));
   });
 
   // I4: Wire attribution only for mixed (structural scoping)
