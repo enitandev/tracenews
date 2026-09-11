@@ -23,3 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+.venv/
+.venv12/
+venv/
+__pycache__/
+.pytest_cache/
+*_output.txt
+temp.json
+final_output.txt
