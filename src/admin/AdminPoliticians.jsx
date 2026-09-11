@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Table, Thead, Tbody, Tr, Th, Td } from '../components/ds/Table';
 import { Card } from '../components/ds/Card';
 import { Button } from '../components/ds/Button';
+import { ROUTES } from '../constants/routes';
 import { Tag } from '../components/ds/Marks';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
@@ -35,7 +36,7 @@ export default function AdminPoliticians() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate(ROUTES.LOGIN);
         return;
       }
       const res = await fetch(`${API_BASE}/api/admin/politicians?status=${status}`, {
@@ -43,7 +44,7 @@ export default function AdminPoliticians() {
       });
       if (!res.ok) {
         if (res.status === 401 || res.status === 403) {
-          navigate('/login');
+          navigate(ROUTES.LOGIN);
           throw new Error('Unauthorized or staff access required');
         }
         throw new Error('Failed to fetch');
@@ -91,7 +92,7 @@ export default function AdminPoliticians() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate(ROUTES.LOGIN);
         return;
       }
       const res = await fetch(`${API_BASE}/api/admin/politicians/${id}`, {

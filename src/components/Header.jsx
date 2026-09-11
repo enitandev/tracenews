@@ -6,6 +6,7 @@ import Sidebar from './Sidebar';
 import Logo from './Logo';
 import { supabase } from '../lib/supabase';
 import { isStaffRole } from '../admin/permissions';
+import { ROUTES } from '../constants/routes';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -68,7 +69,7 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    window.location.href = '/';
+    window.location.href = ROUTES.HOME;
   };
 
   useEffect(() => {
@@ -134,7 +135,7 @@ export default function Header() {
             </div>
             
             <nav className="hide-on-mobile" style={{ display: 'flex', gap: '20px', fontWeight: 600, fontSize: '15px' }}>
-              <Link to="/" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname === '/' ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Home</Link>
+              <Link to={ROUTES.HOME} style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname === ROUTES.HOME ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Home</Link>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>For You</a>
               <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Local</a>
               <Link to="/daily-briefing" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname.startsWith('/daily-briefing') ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Daily Briefing</Link>
@@ -183,11 +184,11 @@ export default function Header() {
                 </div>
                 {isMenuOpen && (
                   <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', zIndex: 100, minWidth: '200px', boxShadow: '0 10px 20px rgba(0,0,0,0.2)', padding: '8px 0', overflow: 'hidden' }}>
-                    {location.pathname.startsWith('/admin') ? (
-                      <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Your dashboard</Link>
+                    {location.pathname.startsWith(ROUTES.ADMIN) ? (
+                      <Link to={ROUTES.DASHBOARD} onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Your dashboard</Link>
                     ) : (
                       isStaffRole(profile?.role, profile?.is_staff) && (
-                        <Link to="/admin" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Staff console</Link>
+                        <Link to={ROUTES.ADMIN} onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Staff console</Link>
                       )
                     )}
                     <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Settings</Link>
@@ -199,7 +200,7 @@ export default function Header() {
             ) : (
               <>
                 <button className="hide-on-mobile" style={{ background: 'var(--text-primary)', color: 'var(--bg-base)', border: 'none', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Subscribe</button>
-                <Link to="/login" className="hide-on-mobile" style={{ display: 'inline-block', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border)', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px', textDecoration: 'none' }}>Login</Link>
+                <Link to={ROUTES.LOGIN} className="hide-on-mobile" style={{ display: 'inline-block', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border)', padding: '10px 24px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px', textDecoration: 'none' }}>Login</Link>
               </>
             )}
           </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { Tag } from '../components/ds/Marks';
+import { ROUTES } from '../constants/routes';
 import { TIERS, TIER_COLORS, TIER_LABELS } from '../utils/constants';
 
 const DATA_SINCE = "22 June 2026";
@@ -163,7 +165,7 @@ export default function PoliticianProfile() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '100px 24px', fontFamily: 'var(--font-body)', color: 'var(--text-primary)' }}>
         <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>Politician not found.</h2>
-        <Link to="/" style={{ color: '#a49889', textDecoration: 'none', fontWeight: 600 }}>Return to homepage →</Link>
+        <Link to={ROUTES.HOME} style={{ color: '#a49889', textDecoration: 'none', fontWeight: 600 }}>Return to homepage →</Link>
       </div>
     );
   }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { Tag } from '../components/ds/Marks';
+import { ROUTES } from '../constants/routes';
 
 
 function timeAgo(dateStr) {
@@ -68,7 +70,7 @@ export default function OutletProfile() {
     return (
       <div style={{ padding: '80px 20px', textAlign: 'center', fontFamily: 'var(--font-body)' }}>
         <p style={{ fontSize: '16px', color: 'var(--text-primary)', marginBottom: '16px' }}>Outlet not found.</p>
-        <Link to="/" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 500 }}>← Go back home</Link>
+        <Link to={ROUTES.HOME} style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 500 }}>← Go back home</Link>
       </div>
     );
   }

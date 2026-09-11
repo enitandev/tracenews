@@ -1,12 +1,4 @@
-export const TIERS = {
-  GOVT: 'govt_aligned',
-  MAINSTREAM: 'mainstream',
-  WATCHDOG: 'watchdog',
-  BLOG: 'blog',
-  UNSCORED: 'unscored'
-};
-
-export const TIER_KEYS = [TIERS.GOVT, TIERS.MAINSTREAM, TIERS.WATCHDOG, TIERS.UNSCORED];
+import { TIERS, TIER_KEYS, TIER_LABELS } from '../constants/tiers';
 
 export const TIER_COLORS = {
   [TIERS.GOVT]: '#6d7f92',
@@ -24,10 +16,4 @@ export const TIER_BG_COLORS = {
   [TIERS.UNSCORED]: 'rgba(51, 51, 51, 0.1)'
 };
 
-export const TIER_LABELS = {
-  [TIERS.GOVT]: 'Govt',
-  [TIERS.MAINSTREAM]: 'Mainstream',
-  [TIERS.WATCHDOG]: 'Watchdog',
-  [TIERS.BLOG]: 'Blog',
-  [TIERS.UNSCORED]: 'Unscored'
-};
+export { TIERS, TIER_KEYS, TIER_LABELS };

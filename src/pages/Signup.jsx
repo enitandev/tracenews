@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Field, Input } from '../components/ds/Form';
 import { Button } from '../components/ds/Button';
+import { ROUTES } from '../constants/routes';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -67,7 +68,7 @@ export default function Signup() {
           Please click the link to activate your account.
         </p>
         <div style={{ textAlign: 'left', marginTop: '18px' }}>
-          <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
+          <Link to={ROUTES.LOGIN} style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
         </div>
       </>
     );
@@ -127,7 +128,7 @@ export default function Signup() {
       </form>
       
       <div style={{ marginTop: '18px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
-        Already have an account? <Link to="/login" style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Log in</Link>
+        Already have an account? <Link to={ROUTES.LOGIN} style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Log in</Link>
       </div>
     </>
   );

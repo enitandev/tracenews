@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ds/Button';
 import { Card } from '../components/ds/Card';
+import { ROUTES } from '../constants/routes';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
@@ -23,7 +24,7 @@ export default function MonitoringSpiritAdmin() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate(ROUTES.LOGIN);
         return;
       }
 
@@ -38,7 +39,7 @@ export default function MonitoringSpiritAdmin() {
       
       if (!vRes.ok || !oRes.ok) {
         if (vRes.status === 401 || vRes.status === 403 || oRes.status === 401 || oRes.status === 403) {
-          navigate('/login');
+          navigate(ROUTES.LOGIN);
           throw new Error('Unauthorized or staff access required');
         }
         throw new Error('Failed to fetch data');
@@ -69,7 +70,7 @@ export default function MonitoringSpiritAdmin() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate(ROUTES.LOGIN);
         return;
       }
       const res = await fetch(`${API_BASE}/api/admin/monitoring-spirit/overrides`, {
@@ -103,7 +104,7 @@ export default function MonitoringSpiritAdmin() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate(ROUTES.LOGIN);
         return;
       }
       const res = await fetch(`${API_BASE}/api/admin/monitoring-spirit/overrides/${overrideId}/reinstate`, {

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Field, Input } from '../components/ds/Form';
 import { Button } from '../components/ds/Button';
 import { isStaffRole } from '../admin/permissions';
+import { ROUTES } from '../constants/routes';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -45,7 +46,7 @@ export default function Login() {
       let finalTarget = searchParams.get('redirect');
       if (!finalTarget || finalTarget === '/settings') {
         const { data: profile } = await supabase.from('profiles').select('role, is_staff').eq('id', data.user.id).single();
-        finalTarget = isStaffRole(profile?.role, profile?.is_staff) ? '/admin' : '/dashboard';
+        finalTarget = isStaffRole(profile?.role, profile?.is_staff) ? ROUTES.ADMIN : ROUTES.DASHBOARD;
       }
       navigate(finalTarget);
     } catch (err) {
@@ -83,7 +84,7 @@ export default function Login() {
         </Field>
         
         <div style={{ textAlign: 'left', marginBottom: '24px', marginTop: '-8px' }}>
-          <Link to="/reset" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Forgot password?</Link>
+          <Link to={ROUTES.RESET} style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Forgot password?</Link>
         </div>
 
         <Button 
@@ -97,7 +98,7 @@ export default function Login() {
       </form>
       
       <div style={{ marginTop: '18px', textAlign: 'left', fontSize: '11.5px', color: 'var(--t-muted)' }}>
-        Don't have an account? <Link to="/signup" style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Sign up</Link>
+        Don't have an account? <Link to={ROUTES.SIGNUP} style={{ color: 'var(--v-clear)', textDecoration: 'none' }}>Sign up</Link>
       </div>
     </>
   );

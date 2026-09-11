@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { ROUTES } from '../constants/routes';
 import { MapPin, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import { formatTimeAgo } from '../utils/helpers';
@@ -276,7 +277,10 @@ export default function DailyBriefingStory() {
       </Helmet>
       
       {/* Back link */}
-      <Link to="/daily-briefing" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontSize: '13px', marginBottom: '32px' }}>
+      <Link to="/daily-briefing" style={{ 
+        display: 'inline-flex', 
+        alignItems: 'center', 
+        gap: '6px', color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontSize: '13px', marginBottom: '32px' }}>
         ← Daily Briefing
       </Link>
 

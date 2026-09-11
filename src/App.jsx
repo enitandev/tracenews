@@ -11,6 +11,7 @@ import Category from "./pages/Category";
 import DailyBriefingStory from "./pages/DailyBriefingStory";
 import Methodology from "./pages/Methodology";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { ROUTES } from "./constants/routes";
 import "./App.css";
 import OutletProfile from './pages/OutletProfile'
 import Corrections from './pages/Corrections';
@@ -73,16 +74,16 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* Auth routes with Minimal Layout */}
-          <Route path="/login" element={<MinimalLayout><Login /></MinimalLayout>} />
-          <Route path="/signup" element={<MinimalLayout><Signup /></MinimalLayout>} />
-          <Route path="/reset" element={<MinimalLayout><Reset /></MinimalLayout>} />
+          <Route path={ROUTES.LOGIN} element={<MinimalLayout><Login /></MinimalLayout>} />
+          <Route path={ROUTES.SIGNUP} element={<MinimalLayout><Signup /></MinimalLayout>} />
+          <Route path={ROUTES.RESET} element={<MinimalLayout><Reset /></MinimalLayout>} />
           <Route path="/verify" element={<MinimalLayout><Verify /></MinimalLayout>} />
 
           {/* Routes with standard Layout */}
           <Route path="/*" element={
             <Layout>
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path={ROUTES.HOME} element={<Home />} />
                 <Route path="/test-verdict" element={<TestVerdict />} />
                 <Route path="/home" element={<HomepagePlaceholder />} />
                 <Route path="/registry" element={<Registry />} />
@@ -97,13 +98,13 @@ export default function App() {
                 <Route path="/methodology" element={<Methodology />} />
                 <Route path="/corrections" element={<Corrections />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
+                <Route path="/settings" element={<Navigate to={`${ROUTES.DASHBOARD}/settings`} replace />} />
               </Routes>
             </Layout>
           } />
 
           {/* Admin routes with AdminShell layout */}
-          <Route path="/admin/*" element={
+          <Route path={`${ROUTES.ADMIN}/*`} element={
             <AdminShell>
               <Routes>
                 <Route index element={<AdminOverview />} />
@@ -116,7 +117,7 @@ export default function App() {
           } />
           
           {/* Dashboard route (standalone layout) */}
-          <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path={`${ROUTES.DASHBOARD}/*`} element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

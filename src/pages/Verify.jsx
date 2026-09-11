@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ds/Button';
+import { ROUTES } from '../constants/routes';
 
 export default function Verify() {
   const [status, setStatus] = useState('pending'); // 'pending', 'success', 'already_verified', 'expired', 'error'
@@ -70,7 +71,7 @@ export default function Verify() {
           <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             Your email has been successfully verified. You can now sign in to your account.
           </p>
-          <Link to="/login?redirect=/settings" style={{ textDecoration: 'none' }}>
+          <Link to={`${ROUTES.LOGIN}?redirect=/settings`} style={{ textDecoration: 'none' }}>
             <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Continue to Sign In
             </Button>
@@ -84,7 +85,7 @@ export default function Verify() {
           <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             Your email is already verified. You can proceed to sign in.
           </p>
-          <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Link to={ROUTES.LOGIN} style={{ textDecoration: 'none' }}>
             <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Go to Sign In
             </Button>
@@ -98,7 +99,7 @@ export default function Verify() {
           <p style={{ fontSize: '12px', color: 'var(--t-muted)', lineHeight: 1.5, maxWidth: '34ch', marginTop: '6px', marginBottom: '24px', textAlign: 'left' }}>
             The verification link is invalid or has expired.
           </p>
-          <Link to="/reset" style={{ textDecoration: 'none' }}>
+          <Link to={ROUTES.RESET} style={{ textDecoration: 'none' }}>
             <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Request New Link
             </Button>
@@ -112,7 +113,7 @@ export default function Verify() {
           <p style={{ color: '#991b1b', fontSize: '14px', lineHeight: '1.5', marginBottom: '32px', background: '#fee2e2', padding: '12px', borderRadius: '4px', marginTop: '6px' }}>
             {errorMsg || 'An error occurred during verification.'}
           </p>
-          <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Link to={ROUTES.LOGIN} style={{ textDecoration: 'none' }}>
             <Button variant="primary" style={{ width: '100%', fontSize: '13px', padding: '10px', borderRadius: '4px', marginTop: '20px' }}>
               Return to Login
             </Button>

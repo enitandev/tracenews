@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { StateCoverage } from '../components/ds/StateCoverage';
+import { ROUTES } from '../constants/routes';
 import './desk.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
@@ -18,7 +19,7 @@ export default function AdminOverview() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate(ROUTES.LOGIN);
         return;
       }
       

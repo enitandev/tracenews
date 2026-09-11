@@ -5,6 +5,7 @@ import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info, MapPin } f
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
 import MonitoringSignals from '../components/MonitoringSignals';
+import { ROUTES } from '../constants/routes';
 import { supabase } from '../lib/supabase';
 
 import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS, TIER_KEYS } from '../utils/constants';
@@ -504,7 +505,7 @@ export default function Story() {
       
       {/* Top Nav Back */}
       <div style={{ marginBottom: '24px' }}>
-        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600 }}>
+        <Link to={ROUTES.HOME} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600 }}>
           <ArrowLeft size={16} /> Back to Feed
         </Link>
       </div>

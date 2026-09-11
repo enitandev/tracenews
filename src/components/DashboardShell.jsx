@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { ROUTES } from '../constants/routes';
 
 export default function DashboardShell({ children }) {
   const location = useLocation();
@@ -14,12 +15,12 @@ export default function DashboardShell({ children }) {
       <div className="mast">
         <div className="brand">Trace<b>News</b></div>
         <nav>
-          <Link to="/">Home</Link>
+          <Link to={ROUTES.HOME}>Home</Link>
           <div className="nav-item soon" style={{ opacity: 0.5, fontSize: '13px', cursor: 'default' }}>For You</div>
           <div className="nav-item soon" style={{ opacity: 0.5, fontSize: '13px', cursor: 'default' }}>Local</div>
           <Link to="/daily-briefing">Daily Briefing</Link>
-          <Link to="/admin/monitoring-spirit">Monitoring Spirit</Link>
-          <Link to="/dashboard" className="on">Account</Link>
+          <Link to={ROUTES.ADMIN_MONITORING}>Monitoring Spirit</Link>
+          <Link to={ROUTES.DASHBOARD} className="on">Account</Link>
         </nav>
         <div className="right">
           <button className="toggle" onClick={() => toggleTheme()}>
@@ -48,7 +49,7 @@ export default function DashboardShell({ children }) {
           </div>
 
           <div className="railgroup">Nigeria</div>
-          <Link to="/dashboard" className={`navitem ${location.pathname === '/dashboard' ? 'on' : ''}`} style={{ textDecoration: 'none' }}>
+          <Link to={ROUTES.DASHBOARD} className={`navitem ${location.pathname === ROUTES.DASHBOARD ? 'on' : ''}`} style={{ textDecoration: 'none' }}>
             <i className="ti ti-chart-donut"></i>Coverage Diet
           </Link>
           {/* Stubs with disabled/Soon treatment per user instruction */}
@@ -77,7 +78,7 @@ export default function DashboardShell({ children }) {
           <div className="navitem" onClick={async () => {
             const { supabase } = await import('../lib/supabase');
             await supabase.auth.signOut();
-            window.location.href = '/login';
+            window.location.href = ROUTES.LOGIN;
           }}>
             <i className="ti ti-logout"></i>Sign Out
           </div>

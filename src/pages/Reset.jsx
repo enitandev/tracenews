@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Field, Input } from '../components/ds/Form';
 import { Button } from '../components/ds/Button';
-
+import { ROUTES } from '../constants/routes';
 export default function Reset() {
   const [view, setView] = useState('request'); // 'request', 'sent', 'update', 'expired'
   const [email, setEmail] = useState('');
@@ -60,7 +60,7 @@ export default function Reset() {
     setError(null);
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/reset',
+        redirectTo: window.location.origin + ROUTES.RESET,
       });
       if (resetError) throw resetError;
       setView('sent');
@@ -84,7 +84,7 @@ export default function Reset() {
     try {
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) throw updateError;
-      navigate('/login?redirect=/settings');
+      navigate(`${ROUTES.LOGIN}?redirect=/settings`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -123,7 +123,7 @@ export default function Reset() {
           </form>
           
           <div style={{ marginTop: '18px', textAlign: 'left', fontSize: '11.5px' }}>
-            <Link to="/login" style={{ color: 'var(--t-muted)', textDecoration: 'none' }}>&larr; Back to <span style={{ color: 'var(--v-clear)' }}>Log in</span></Link>
+            <Link to={ROUTES.LOGIN} style={{ color: 'var(--t-muted)', textDecoration: 'none' }}>&larr; Back to <span style={{ color: 'var(--v-clear)' }}>Log in</span></Link>
           </div>
         </>
       )}
@@ -136,7 +136,7 @@ export default function Reset() {
             Please check your inbox (and spam folder) and click the link to continue.
           </p>
           <div style={{ textAlign: 'left', marginTop: '18px' }}>
-            <Link to="/login" style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
+            <Link to={ROUTES.LOGIN} style={{ fontSize: '11.5px', color: 'var(--v-clear)', textDecoration: 'none' }}>Return to Login</Link>
           </div>
         </>
       )}

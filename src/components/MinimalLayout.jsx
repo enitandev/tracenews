@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
+import { ROUTES } from '../constants/routes';
 import { useTheme } from '../contexts/ThemeContext';
 
 export default function MinimalLayout({ children }) {
@@ -10,7 +11,7 @@ export default function MinimalLayout({ children }) {
       <main style={{ flexGrow: 1 }}>
         <div style={{ maxWidth: '420px', margin: '0 auto', width: '100%', paddingLeft: '20px', paddingRight: '20px', paddingTop: '12vh', boxSizing: 'border-box' }}>
           
-          <Link to="/" style={{ display: 'inline-block', textDecoration: 'none', marginBottom: '14px' }}>
+          <Link to={ROUTES.HOME} style={{ display: 'inline-block', textDecoration: 'none', marginBottom: '14px' }}>
             <Logo height="56px" />
           </Link>
           

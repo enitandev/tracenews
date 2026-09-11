@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { StateCoverage } from '../components/ds/StateCoverage';
 import DashboardShell from '../components/DashboardShell';
+import { ROUTES } from '../constants/routes';
 import './dashboard.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
@@ -19,7 +20,7 @@ export default function Dashboard() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate(ROUTES.LOGIN);
         return;
       }
       

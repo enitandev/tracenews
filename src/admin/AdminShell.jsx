@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { isStaffRole, hasPermission } from './permissions';
+import { ROUTES } from '../constants/routes';
 import './desk.css';
 
 export default function AdminShell({ children }) {
@@ -14,7 +15,7 @@ export default function AdminShell({ children }) {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login?redirect=' + encodeURIComponent(location.pathname));
+        navigate(`${ROUTES.LOGIN}?redirect=` + encodeURIComponent(location.pathname));
         return;
       }
       const { data: userProfile } = await supabase
@@ -28,7 +29,7 @@ export default function AdminShell({ children }) {
         setProfile(userProfile);
         setStaffName(userProfile.display_name || userProfile.email || 'Staff');
       } else {
-        navigate('/login?redirect=' + encodeURIComponent(location.pathname));
+        navigate(`${ROUTES.LOGIN}?redirect=` + encodeURIComponent(location.pathname));
       }
     };
     checkAuth();
@@ -56,15 +57,15 @@ export default function AdminShell({ children }) {
         <div className="dk">
           <aside className="rail">
             <p className="rg">Desk</p>
-            <Link to="/admin" className={`ri ${location.pathname === '/admin' ? 'on' : ''}`} style={{textDecoration: 'none'}}>Overview</Link>
-            <Link to="/admin/corrections" className={`ri ${location.pathname.includes('/corrections') ? 'on' : ''}`} style={{textDecoration: 'none'}}>Corrections</Link>
+            <Link to={ROUTES.ADMIN} className={`ri ${location.pathname === ROUTES.ADMIN ? 'on' : ''}`} style={{textDecoration: 'none'}}>Overview</Link>
+            <Link to={ROUTES.ADMIN_CORRECTIONS} className={`ri ${location.pathname.includes(ROUTES.ADMIN_CORRECTIONS) ? 'on' : ''}`} style={{textDecoration: 'none'}}>Corrections</Link>
             <div className="ri soon">Data requests <span className="n">Soon</span></div>
             <div className="ri soon">Audit ledger <span className="n">Soon</span></div>
 
             <p className="rg">Intelligence</p>
-            <Link to="/admin/monitoring-spirit" className={`ri ${location.pathname.includes('/monitoring-spirit') ? 'on' : ''}`} style={{textDecoration: 'none'}}>Monitoring Spirit</Link>
+            <Link to={ROUTES.ADMIN_MONITORING} className={`ri ${location.pathname.includes(ROUTES.ADMIN_MONITORING) ? 'on' : ''}`} style={{textDecoration: 'none'}}>Monitoring Spirit</Link>
             <div className="ri soon">Outlets <span className="n">Soon</span></div>
-            <Link to="/admin/politicians" className={`ri ${location.pathname.includes('/politicians') ? 'on' : ''}`} style={{textDecoration: 'none'}}>Politicians</Link>
+            <Link to={ROUTES.ADMIN_POLITICIANS} className={`ri ${location.pathname.includes(ROUTES.ADMIN_POLITICIANS) ? 'on' : ''}`} style={{textDecoration: 'none'}}>Politicians</Link>
             <div className="ri soon">Stories <span className="n">Soon</span></div>
             <div className="ri soon">Taxonomy <span className="n">Soon</span></div>
 
