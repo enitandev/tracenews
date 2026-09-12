@@ -28,11 +28,11 @@ export default function StandardStoryItem({ cluster }) {
 
   return (
     <Link to={`/story/${cluster.slug || cluster.id}`} style={{ textDecoration: 'none' }} className="srow">
-      <div className="thumb">
-        {cluster.image_url && !imgError && (
+      {cluster.image_url && !imgError && (
+        <div className="thumb">
           <img src={cluster.image_url} onError={() => setImgError(true)} alt="" />
-        )}
-      </div>
+        </div>
+      )}
       <div className="b">
         <div className="t">{cluster.representative_title}</div>
         <div className="m">

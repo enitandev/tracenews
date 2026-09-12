@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Newspaper } from 'lucide-react';
 import CoverageBar, { getDominantTier } from './CoverageBar';
 import MonitoringSignals from './MonitoringSignals';
 import { COVERAGE_TIER_COLORS } from '../utils/helpers';
@@ -15,7 +15,11 @@ export default function HeroStoryCard({ cluster }) {
   return (
     <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', marginBottom: '24px' }}>
       <div style={{ width: '100%', height: '340px', position: 'relative', background: 'var(--bg-hover)', overflow: 'hidden' }}>
-        {cluster.image_url && !imgError && (
+        {(!cluster.image_url || imgError) ? (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', opacity: 0.2 }}>
+            <Newspaper size={100} />
+          </div>
+        ) : (
            <img src={cluster.image_url} onError={() => setImgError(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="hero" />
         )}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 60%)' }}></div>

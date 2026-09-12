@@ -51,8 +51,20 @@ function SkeletonCompactStoryItem() {
   );
 }
 
-
-
+function BriefingHeroImage({ src }) {
+  const [error, setError] = useState(false);
+  if (!src || error) return null;
+  return (
+    <div style={{ width: '100%', height: '160px', overflow: 'hidden' }}>
+      <img 
+        src={src} 
+        onError={() => setError(true)}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+        alt="" 
+      />
+    </div>
+  );
+}
 
 export default function Home() {
   const [clusters, setClusters] = useState([]);
@@ -182,23 +194,7 @@ export default function Home() {
                   overflow: 'hidden',
                   marginBottom: '12px'
                 }}>
-                  <div style={{ 
-                    width: '100%', 
-                    height: '160px', 
-                    background: 'var(--bg-hover)' 
-                  }}>
-                    {briefingStory.image_url && (
-                      <img 
-                        src={briefingStory.image_url} 
-                        style={{ 
-                          width: '100%', 
-                          height: '100%', 
-                          objectFit: 'cover' 
-                        }} 
-                        alt="" 
-                      />
-                    )}
-                  </div>
+                  <BriefingHeroImage src={briefingStory.image_url} />
                   <div style={{ padding: '16px' }}>
                     <div style={{ 
                       fontSize: '11px', 
