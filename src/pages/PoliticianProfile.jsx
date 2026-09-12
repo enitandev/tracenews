@@ -207,7 +207,7 @@ export default function PoliticianProfile() {
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ width: '72px', height: '72px', flexShrink: 0 }}>
             {politician.wikipedia_image_url ? (
-              <img src={politician.wikipedia_image_url} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }} />
+              <img referrerPolicy="no-referrer" src={politician.wikipedia_image_url} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }} />
             ) : (
               <div style={{ width: '100%', height: '100%', borderRadius: '10px', background: 'var(--bg-accent)', color: 'var(--text-accent)', fontSize: '22px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {getInitials(name)}
@@ -395,7 +395,7 @@ export default function PoliticianProfile() {
                   </div>
                   {story.image_url && (
                     <div style={{ width: '88px', height: '66px', flexShrink: 0 }}>
-                      <img src={story.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
+                      <img referrerPolicy="no-referrer" src={story.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
                     </div>
                   )}
                 </div>

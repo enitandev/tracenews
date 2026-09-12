@@ -727,7 +727,7 @@ export default function Story() {
                     
                     <Link to={`/outlets/${story.outlet_slug}`} style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }} onClick={e => e.stopPropagation()}>
                       {story.outlet_logo_url ? (
-                        <img src={story.outlet_logo_url} alt={story.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
+                        <img referrerPolicy="no-referrer" src={story.outlet_logo_url} alt={story.outlet_name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }} />
                       ) : (
                         <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: story.outlet_coverage_tier && story.outlet_coverage_tier !== 'unscored' ? COVERAGE_TIER_COLORS[story.outlet_coverage_tier] : '#888', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800 }}>
                           {story.outlet_name ? story.outlet_name.charAt(0).toUpperCase() : '?'}
@@ -866,7 +866,7 @@ export default function Story() {
               {firstOutlets.length === 1 ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {firstOutlets[0].outlet_logo_url && (
-                    <img src={firstOutlets[0].outlet_logo_url} alt="" style={{ width: '20px', height: '20px', borderRadius: '4px', objectFit: 'contain' }} />
+                    <img referrerPolicy="no-referrer" src={firstOutlets[0].outlet_logo_url} alt="" style={{ width: '20px', height: '20px', borderRadius: '4px', objectFit: 'contain' }} />
                   )}
                   <span style={{ fontSize: '13px' }}>
                     <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{firstOutlets[0].outlet_name}</span> broke this story <span style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(firstOutlets[0].published_at || firstOutlets[0].created_at)}</span>

@@ -140,7 +140,7 @@ export default function OutletProfile() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
           {outlet.logo_url ? (
             <div style={{ width: '72px', height: '72px', borderRadius: '10px', overflow: 'hidden', background: '#fff', border: '0.5px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img src={outlet.logo_url} alt={`${outlet.name} logo`} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+              <img referrerPolicy="no-referrer" src={outlet.logo_url} alt={`${outlet.name} logo`} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
             </div>
           ) : (
             <div style={{ width: '72px', height: '72px', borderRadius: '10px', background: 'var(--bg-hover)', border: '0.5px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 600, color: 'var(--text-muted)' }}>
@@ -387,7 +387,7 @@ export default function OutletProfile() {
                   
                   {story.image_url && (
                     <div style={{ width: '88px', height: '66px', borderRadius: '6px', overflow: 'hidden', flexShrink: 0, background: 'var(--bg-hover)' }}>
-                      <img src={story.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
+                      <img referrerPolicy="no-referrer" src={story.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
                     </div>
                   )}
                 </Link>

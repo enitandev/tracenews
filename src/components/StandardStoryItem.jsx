@@ -30,7 +30,7 @@ export default function StandardStoryItem({ cluster }) {
     <Link to={`/story/${cluster.slug || cluster.id}`} style={{ textDecoration: 'none' }} className="srow">
       {cluster.image_url && !imgError && (
         <div className="thumb">
-          <img src={cluster.image_url} onError={() => setImgError(true)} alt="" />
+          <img referrerPolicy="no-referrer" src={cluster.image_url} onError={() => setImgError(true)} alt="" />
         </div>
       )}
       <div className="b">

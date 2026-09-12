@@ -58,7 +58,7 @@ export default function TierDistributionTubes({ groups }) {
               }}
             >
               {logoUrl ? (
-                <img src={logoUrl} alt={s.outlet_name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img referrerPolicy="no-referrer" src={logoUrl} alt={s.outlet_name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               ) : (
                 initial
               )}

@@ -291,7 +291,7 @@ export default function DailyBriefingStory() {
           <div className="mobile-stack" style={{ display: 'flex', gap: '24px', marginBottom: '32px' }}>
             <div style={{ width: '40%', flexShrink: 0 }}>
               {image_url ? (
-                <img src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} />
+                <img referrerPolicy="no-referrer" src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} />
               ) : (
                 <div style={{ width: '100%', height: '320px', background: 'var(--bg-hover)', borderRadius: '8px' }}></div>
               )}
@@ -505,7 +505,7 @@ export default function DailyBriefingStory() {
                 <div style={{ display: 'flex', padding: '12px' }}>
                   <div style={{ width: '120px', height: '90px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
                     {m.image_url ? (
-                      <img src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img referrerPolicy="no-referrer" src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: 'var(--bg-hover)' }}></div>
                     )}

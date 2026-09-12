@@ -20,7 +20,7 @@ export default function HeroStoryCard({ cluster }) {
             <Newspaper size={100} />
           </div>
         ) : (
-           <img src={cluster.image_url} onError={() => setImgError(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="hero" />
+           <img referrerPolicy="no-referrer" src={cluster.image_url} onError={() => setImgError(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="hero" />
         )}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 60%)' }}></div>
         

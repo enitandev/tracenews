@@ -334,7 +334,7 @@ export default function Category() {
                         borderBottom: idx < covered_most_by.length - 1 ? '1px solid var(--border)' : 'none'
                       }}>
                         {outlet.logo_url ? (
-                          <img src={outlet.logo_url} alt="" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'contain', background: '#fff' }} />
+                          <img referrerPolicy="no-referrer" src={outlet.logo_url} alt="" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'contain', background: '#fff' }} />
                         ) : (
                           <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--bg-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
                             {outlet.name ? outlet.name.charAt(0) : '?'}
@@ -428,7 +428,7 @@ export default function Category() {
                 textDecoration: 'none', color: 'var(--text-primary)'
               }}>
                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--bg-hover)', overflow: 'hidden', flexShrink: 0 }}>
-                  {catHeroImage && <img src={catHeroImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
+                  {catHeroImage && <img referrerPolicy="no-referrer" src={catHeroImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
                 </div>
                 <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
                   {topicCat}

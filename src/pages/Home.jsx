@@ -57,6 +57,7 @@ function BriefingHeroImage({ src }) {
   return (
     <div style={{ width: '100%', height: '160px', overflow: 'hidden' }}>
       <img 
+        referrerPolicy="no-referrer"
         src={src} 
         onError={() => setError(true)}
         style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
