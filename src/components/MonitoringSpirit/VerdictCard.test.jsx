@@ -63,13 +63,6 @@ describe('VerdictCard Invariants', () => {
     WIRE_ATTRIBUTION.enabled = false;
   });
 
-  // I5: String literals come from strings file
-  it('I5: no user-facing string literals in VerdictCard.jsx', () => {
-    // We enforce this via grep in the bash shell. 
-    // This test ensures it passes the automated suite without failing, 
-    // but actual validation will be done with grep.
-    expect(true).toBe(true);
-  });
 
   // I6: Tap opens FULL evidence view with timeline over multiple reads
   it('I6: tap opens full evidence view, displaying timeline with all N available reads', () => {
