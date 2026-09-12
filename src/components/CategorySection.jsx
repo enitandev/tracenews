@@ -7,6 +7,8 @@ import CoverageBreadthCard from './CoverageBreadthCard';
 export default function CategorySection({ catName, treatment, stories }) {
   const [railClusters, setRailClusters] = useState([]);
   const [compactStories, setCompactStories] = useState([]);
+  const [compactLoading, setCompactLoading] = useState(treatment === 'COMPACT');
+  const [compactError, setCompactError] = useState(false);
 
   useEffect(() => {
     if (treatment === 'COMPACT') return;
@@ -28,16 +30,24 @@ export default function CategorySection({ catName, treatment, stories }) {
     if (treatment !== 'COMPACT') return;
 
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/by-category?category=${catName}&limit=8`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error("Failed to fetch");
+        return r.json();
+      })
       .then(data => {
         if (data.clusters) setCompactStories(data.clusters);
+        setCompactLoading(false);
       })
-      .catch(e => console.error(`Failed to fetch compact for ${catName}`, e));
+      .catch(e => {
+        console.error(`Failed to fetch compact for ${catName}`, e);
+        setCompactError(true);
+        setCompactLoading(false);
+      });
   }, [catName, treatment]);
 
   const activeStories = treatment === 'COMPACT' ? compactStories : stories;
 
-  if (!activeStories || activeStories.length === 0) return null;
+  if (treatment !== 'COMPACT' && (!activeStories || activeStories.length === 0)) return null;
 
   return (
     <section className="section">
@@ -88,7 +98,24 @@ export default function CategorySection({ catName, treatment, stories }) {
 
       {treatment === 'COMPACT' && (
         <div className="compact">
-          {activeStories.slice(0, 8).map(c => <CompactStoryItem key={c.id} cluster={c} />)}
+          {compactLoading ? (
+            Array(8).fill(null).map((_, i) => (
+              <div key={i} style={{ padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ width: '85%', height: '16px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
+                <div style={{ width: '60%', height: '16px', background: 'var(--border)', borderRadius: '4px', marginBottom: '16px' }}></div>
+              </div>
+            ))
+          ) : compactError ? (
+            <div style={{ padding: '24px 0', color: 'var(--text-muted)', fontSize: '14px', textAlign: 'center' }}>
+              Failed to load {catName} stories. Please refresh.
+            </div>
+          ) : activeStories.length === 0 ? (
+            <div style={{ padding: '24px 0', color: 'var(--text-muted)', fontSize: '14px', textAlign: 'center' }}>
+              No recent stories found in {catName}.
+            </div>
+          ) : (
+            activeStories.slice(0, 8).map(c => <CompactStoryItem key={c.id} cluster={c} />)
+          )}
         </div>
       )}
     </section>
