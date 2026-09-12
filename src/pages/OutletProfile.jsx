@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Tag } from '../components/ds/Marks';
 import { ROUTES } from '../constants/routes';
+import { getDistinctScoredCount } from '../utils/helpers';
 
 
 function timeAgo(dateStr) {
@@ -368,7 +369,11 @@ export default function OutletProfile() {
                         </span>
                       )}
                       <span>
-                        {story.cluster_outlet_count} sources · {timeAgo(story.published_at)}
+                        {(() => {
+                          const count = getDistinctScoredCount(story.cluster_coverage_stats);
+                          return count !== null ? `${count} sources · ` : '';
+                        })()}
+                        {timeAgo(story.published_at)}
                       </span>
                     </div>
                     
@@ -381,7 +386,13 @@ export default function OutletProfile() {
                       color: 'var(--text-muted)',
                       marginTop: '4px'
                     }}>
-                      {story.cluster_outlet_count} {story.cluster_outlet_count === 1 ? 'source' : 'sources'} covering this story
+                      {(() => {
+                        const count = getDistinctScoredCount(story.cluster_coverage_stats);
+                        if (count !== null) {
+                          return `${count} ${count === 1 ? 'source' : 'sources'} covering this story`;
+                        }
+                        return 'Sources unavailable';
+                      })()}
                     </div>
                   </div>
                   

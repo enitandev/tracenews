@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { X, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { getDistinctScoredCount } from '../utils/helpers';
 
 const LINKS = [
   'Login', 'About TraceNews', 'Subscribe', 'Website Settings', 'Contact us', 
@@ -117,7 +118,13 @@ export default function Sidebar({
                     style={{ display: 'block', padding: '12px 16px', borderBottom: '1px solid #333', textDecoration: 'none', color: '#fff', textAlign: 'left' }}
                   >
                     <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '4px', lineHeight: 1.3 }}>{c.representative_title}</div>
-                    <div style={{ fontSize: '11px', color: '#aaa' }}>{c.outlet_count} sources • {c.category || 'General'}</div>
+                    <div style={{ fontSize: '11px', color: '#aaa' }}>
+                      {(() => {
+                        const count = getDistinctScoredCount(c.coverage_stats);
+                        return count !== null ? `${count} sources • ` : '';
+                      })()}
+                      {c.category || 'General'}
+                    </div>
                   </Link>
                 ))}
               </div>

@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { AlertTriangle } from 'lucide-react';
 import CoverageBar, { getDominantTier } from '../components/CoverageBar';
 
-import { REGION_COLORS, formatTimeAgo } from '../utils/helpers';
+import { REGION_COLORS, formatTimeAgo, getDistinctScoredCount } from '../utils/helpers';
 import CoverageBreadthCard from '../components/CoverageBreadthCard';
 import HeroStoryCard from '../components/HeroStoryCard';
 import StandardStoryItem from '../components/StandardStoryItem';
@@ -203,7 +203,11 @@ export default function Home() {
                       marginBottom: '8px',
                       fontWeight: 600
                     }}>
-                      {briefingStory.outlet_count} sources · {formatTimeAgo(briefingStory.first_seen_at)}
+                      {(() => {
+                        const count = getDistinctScoredCount(briefingStory.coverage_stats);
+                        return count !== null ? `${count} sources · ` : 'Sources unavailable · ';
+                      })()}
+                      {formatTimeAgo(briefingStory.first_seen_at)}
                     </div>
                     <h3 style={{ 
                       margin: '0 0 10px 0', 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS, TIER_KEYS } from '../utils/constants';
+import { getDistinctScoredCount } from '../utils/helpers';
 
 const LEGACY_MAP = {
   'captured': 'govt_aligned',
@@ -21,7 +22,8 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
   const isHero = variant === 'hero';
 
   const rawDist = coverageStats?.coverage_tier_distribution || {};
-  let total = liveTotal !== undefined ? liveTotal : (coverageStats?.total_coverage || 0);
+  let total = liveTotal !== undefined ? liveTotal : getDistinctScoredCount(coverageStats);
+  if (total === null) total = 0;
   
   // Map legacy keys to new keys safely
   const dist = {};
@@ -151,7 +153,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
         })}
       </div>
       <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>
-        {dominantCount} {dominantLabel} · {total} sources
+        {dominantCount} {dominantLabel}{total > 0 ? ` · ${total} sources` : ''}
       </span>
     </div>
   );

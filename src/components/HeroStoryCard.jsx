@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AlertTriangle, Newspaper } from 'lucide-react';
 import CoverageBar, { getDominantTier } from './CoverageBar';
 import MonitoringSignals from './MonitoringSignals';
-import { COVERAGE_TIER_COLORS } from '../utils/helpers';
+import { COVERAGE_TIER_COLORS, getDistinctScoredCount } from '../utils/helpers';
 
 export default function HeroStoryCard({ cluster }) {
   const stats = cluster.coverage_stats || {};
@@ -45,7 +45,10 @@ export default function HeroStoryCard({ cluster }) {
       />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
         <div style={{ fontFamily: 'var(--font-body)', fontSize: '12px', color: 'var(--text-muted)' }}>
-          {cluster.category || 'General'} • {cluster.outlet_count} sources
+          {cluster.category || 'General'} • {(() => {
+            const count = getDistinctScoredCount(cluster.coverage_stats);
+            return count !== null ? `${count} sources` : 'Sources unavailable';
+          })()}
         </div>
       </div>
     </Link>

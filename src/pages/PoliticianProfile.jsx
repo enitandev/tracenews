@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { Tag } from '../components/ds/Marks';
 import { ROUTES } from '../constants/routes';
 import { TIERS, TIER_COLORS, TIER_LABELS } from '../utils/constants';
+import { getDistinctScoredCount } from '../utils/helpers';
 
 const DATA_SINCE = "22 June 2026";
 const SMALL_N_THRESHOLD = 25;
@@ -380,7 +381,13 @@ export default function PoliticianProfile() {
                           {story.cluster_category}
                         </span>
                       )}
-                      <span>{story.cluster_outlet_count} {story.cluster_outlet_count === 1 ? 'source' : 'sources'} · {timeAgo(story.published_at)}</span>
+                      <span>
+                        {(() => {
+                          const count = getDistinctScoredCount(story.cluster_coverage_stats);
+                          return count !== null ? `${count} ${count === 1 ? 'source' : 'sources'} · ` : '';
+                        })()}
+                        {timeAgo(story.published_at)}
+                      </span>
                     </div>
                     <div style={{ fontSize: '15px', fontWeight: 700, lineHeight: 1.4, color: 'var(--text-primary)' }}>
                       {story.title}
@@ -390,7 +397,13 @@ export default function PoliticianProfile() {
                       color: 'var(--text-muted)',
                       marginTop: '4px'
                     }}>
-                      {story.cluster_outlet_count} {story.cluster_outlet_count === 1 ? 'source' : 'sources'} covering this story
+                      {(() => {
+                        const count = getDistinctScoredCount(story.cluster_coverage_stats);
+                        if (count !== null) {
+                          return `${count} ${count === 1 ? 'source' : 'sources'} covering this story`;
+                        }
+                        return 'Sources unavailable';
+                      })()}
                     </div>
                   </div>
                   {story.image_url && (

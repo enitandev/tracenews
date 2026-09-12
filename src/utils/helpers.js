@@ -17,6 +17,14 @@ export const SEVERITY_COLORS = {
 
 export { TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS } from './constants';
 
+export function getDistinctScoredCount(coverageStats) {
+  if (!coverageStats) return null;
+  const dist = coverageStats.coverage_tier_distribution;
+  if (!dist) return null;
+  
+  return (dist.govt_aligned || 0) + (dist.mainstream || 0) + (dist.watchdog || 0);
+}
+
 export function formatTimeAgo(dateStr) {
   if (!dateStr) return '';
   const diff = Date.now() - new Date(dateStr).getTime();

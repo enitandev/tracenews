@@ -7,6 +7,7 @@ import Logo from './Logo';
 import { supabase } from '../lib/supabase';
 import { isStaffRole } from '../admin/permissions';
 import { ROUTES } from '../constants/routes';
+import { getDistinctScoredCount } from '../utils/helpers';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -168,7 +169,13 @@ export default function Header() {
                       style={{ display: 'block', padding: '12px 16px', borderBottom: '1px solid var(--border)', textDecoration: 'none', color: 'var(--text-primary)', textAlign: 'left' }}
                     >
                       <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '4px', lineHeight: 1.3 }}>{c.representative_title}</div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.outlet_count} sources • {c.category || 'General'}</div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        {(() => {
+                          const count = getDistinctScoredCount(c.coverage_stats);
+                          return count !== null ? `${count} sources • ` : '';
+                        })()}
+                        {c.category || 'General'}
+                      </div>
                     </Link>
                   ))}
                 </div>
