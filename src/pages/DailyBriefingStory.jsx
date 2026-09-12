@@ -221,12 +221,12 @@ export default function DailyBriefingStory() {
   // For the bias distribution tubes
   const getOutletTier = (out) => {
     if (!out) return 'unscored';
-    if (out.credibility_tier === 'blog') return 'blog';
-    const score = out.independence_score;
-    if (score === null || score === undefined) return 'unscored';
-    if (score < 35) return 'govt_aligned';
-    if (score < 60) return 'mainstream';
-    return 'watchdog';
+    if (out.is_blog) return 'blog';
+    const align = (out.government_alignment || '').toLowerCase();
+    if (align === 'pro_government') return 'govt_aligned';
+    if (align === 'neutral') return 'mainstream';
+    if (align === 'opposition') return 'watchdog';
+    return 'unscored';
   };
 
   const groupOutlets = () => {

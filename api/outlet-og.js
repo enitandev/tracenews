@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     .select(
       'name, slug, website, ' +
       'independence_score, ' +
-      'credibility_tier, ' +
+      'is_blog, ' +
       'ownership_name, ' +
       'ownership_type, ' +
       'geopolitical_lean, ' +
@@ -72,7 +72,16 @@ export default async function handler(req, res) {
   
   const outlet = outlets[0]
   const score = outlet.independence_score
-  const rawTier = (outlet.credibility_tier || 'unscored').toLowerCase()
+  const getOutletTier = (out) => {
+    if (!out) return 'unscored';
+    if (out.is_blog) return 'blog';
+    const align = (out.government_alignment || '').toLowerCase();
+    if (align === 'pro_government') return 'govt_aligned';
+    if (align === 'neutral') return 'mainstream';
+    if (align === 'opposition') return 'watchdog';
+    return 'unscored';
+  };
+  const rawTier = getOutletTier(outlet)
   const tier = TIER_MAP[rawTier] || rawTier
   const alignment = ALIGNMENT_MAP[outlet.government_alignment] || outlet.government_alignment
   
