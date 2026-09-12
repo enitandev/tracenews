@@ -1,16 +1,24 @@
-# React + Vite
+# TraceNews
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TraceNews is the reader-facing frontend for the TraceNews platform. It is a React application built with Vite, responsible for rendering breaking news stories, clusters, and the Monitoring Spirit Verdict Cards that indicate structural reporting anomalies.
 
-Currently, two official plugins are available:
+## Running Locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Install Node.js dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
 
-## React Compiler
+## Directory Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/` – Core React application logic, UI components, pages, routing, and styling definitions.
+- `public/` – Static assets that bypass the build pipeline.
+- `docs/` – Stores architecture documentation and legacy reference files (e.g., `design-references/`).
 
-## Expanding the ESLint configuration
+## Environment Variables
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Frontend configuration and secrets are documented and stored locally in the `.env` file at the project root (gitignored). These variables are typically prefixed with `VITE_` and include endpoint URLs for connecting to the tracenews-api backend and the Supabase instance.
