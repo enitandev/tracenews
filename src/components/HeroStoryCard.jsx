@@ -47,7 +47,7 @@ export default function HeroStoryCard({ cluster }) {
         <div style={{ fontFamily: 'var(--font-body)', fontSize: '12px', color: 'var(--text-muted)' }}>
           {cluster.category || 'General'} • {(() => {
             const count = getDistinctScoredCount(cluster.coverage_stats);
-            return count !== null ? `${count} sources` : 'Sources unavailable';
+            return count !== null ? `${count} sources` : '';
           })()}
         </div>
       </div>

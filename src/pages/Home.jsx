@@ -205,7 +205,7 @@ export default function Home() {
                     }}>
                       {(() => {
                         const count = getDistinctScoredCount(briefingStory.coverage_stats);
-                        return count !== null ? `${count} sources · ` : 'Sources unavailable · ';
+                        return count !== null ? `${count} sources · ` : '';
                       })()}
                       {formatTimeAgo(briefingStory.first_seen_at)}
                     </div>

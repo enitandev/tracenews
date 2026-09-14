@@ -23,7 +23,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
 
   const rawDist = coverageStats?.coverage_tier_distribution || {};
   let total = liveTotal !== undefined ? liveTotal : getDistinctScoredCount(coverageStats);
-  if (total === null) total = 0;
+  if (total === null) return null;
   
   // Map legacy keys to new keys safely
   const dist = {};

@@ -27,7 +27,7 @@ export default function CompactStoryItem({ cluster }) {
 
   return (
     <Link to={`/story/${cluster.slug || cluster.id}`} style={{ textDecoration: 'none' }} className="ci">
-      <span className="n">{totalOutlets !== null ? totalOutlets : '-'}</span>
+      <span className="n">{totalOutlets !== null ? totalOutlets : ''}</span>
       <span className="mb">
         {g === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(g), background: 'var(--tier-govt)' }} />}
         {m === 0 ? <i className="ghost" style={{ width: getWidth(0) }} /> : <i style={{ width: getWidth(m), background: 'var(--tier-main)' }} />}
