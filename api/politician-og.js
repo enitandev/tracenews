@@ -46,9 +46,9 @@ function tierText(name, dist, total) {
       `stories tracked by TraceNews ` +
       `since ${DATA_SINCE}.`
   }
-  const g = dist?.pro_establishment || 0
-  const m = dist?.institutional || 0
-  const w = dist?.adversarial || 0
+  const g = dist?.govt_aligned || 0
+  const m = dist?.mainstream || 0
+  const w = dist?.watchdog || 0
   const pct = (n) => 
     Math.round((n / total) * 100)
   return (

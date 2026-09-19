@@ -16,9 +16,9 @@ const BOT_USER_AGENTS = [
 ]
 
 const TIER_MAP = {
-  'adversarial': 'Watchdog',
-  'institutional': 'Mainstream',
-  'pro_establishment': 'Govt'
+  'watchdog': 'Watchdog',
+  'mainstream': 'Mainstream',
+  'govt_aligned': 'Govt'
 }
 
 const ALIGNMENT_MAP = {
