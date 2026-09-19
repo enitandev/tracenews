@@ -391,7 +391,7 @@ export default function OutletProfile() {
                         if (count !== null) {
                           return `${count} ${count === 1 ? 'source' : 'sources'} covering this story`;
                         }
-                        return 'Sources unavailable';
+                        return '';
                       })()}
                     </div>
                   </div>

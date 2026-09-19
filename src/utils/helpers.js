@@ -22,7 +22,8 @@ export function getDistinctScoredCount(coverageStats) {
   const dist = coverageStats.coverage_tier_distribution;
   if (!dist) return null;
   
-  return (dist.govt_aligned || 0) + (dist.mainstream || 0) + (dist.watchdog || 0);
+  const total = (dist.govt_aligned || 0) + (dist.mainstream || 0) + (dist.watchdog || 0);
+  return total === 0 ? null : total;
 }
 
 export function formatTimeAgo(dateStr) {
