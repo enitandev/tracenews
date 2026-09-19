@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatTimeAgo } from '../utils/helpers';
+import { Newspaper } from 'lucide-react';
 
 export default function StandardStoryItem({ cluster }) {
   const [imgError, setImgError] = useState(false);
@@ -28,7 +29,11 @@ export default function StandardStoryItem({ cluster }) {
 
   return (
     <Link to={`/story/${cluster.slug || cluster.id}`} style={{ textDecoration: 'none' }} className="srow">
-      {cluster.image_url && !imgError && (
+      {(!cluster.image_url || imgError) ? (
+        <div className="thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
+          <Newspaper size={32} />
+        </div>
+      ) : (
         <div className="thumb">
           <img referrerPolicy="no-referrer" src={cluster.image_url} onError={() => setImgError(true)} alt="" />
         </div>

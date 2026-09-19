@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Newspaper } from 'lucide-react';
 import CoverageBar, { getDominantTier } from '../components/CoverageBar';
 
 import { REGION_COLORS, formatTimeAgo, getDistinctScoredCount } from '../utils/helpers';
@@ -53,7 +53,11 @@ function SkeletonCompactStoryItem() {
 
 function BriefingHeroImage({ src }) {
   const [error, setError] = useState(false);
-  if (!src || error) return null;
+  if (!src || error) return (
+    <div style={{ width: '100%', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
+      <Newspaper size={48} />
+    </div>
+  );
   return (
     <div style={{ width: '100%', height: '160px', overflow: 'hidden' }}>
       <img 
@@ -302,8 +306,8 @@ export default function Home() {
           { cat: 'Health', type: 'STANDARD' },
           { cat: 'Education', type: 'STANDARD' },
           { cat: 'International', type: 'STANDARD' },
-          { cat: 'Technology', type: 'COMPACT' },
-          { cat: 'Religion', type: 'COMPACT' },
+          { cat: 'Technology', type: 'STANDARD' },
+          { cat: 'Religion', type: 'STANDARD' },
           { cat: 'Judiciary', type: 'STANDARD' },
           { cat: 'General', type: 'STANDARD' }
         ];

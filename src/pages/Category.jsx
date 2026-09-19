@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { AlertTriangle, ChevronRight, ChevronDown } from 'lucide-react';
+import { Search, ChevronDown, ListFilter, AlertTriangle, ChevronRight, CheckCircle2, XCircle, Info, Newspaper } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 import HeroStoryCard from '../components/HeroStoryCard';
@@ -428,7 +428,14 @@ export default function Category() {
                 textDecoration: 'none', color: 'var(--text-primary)'
               }}>
                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--bg-hover)', overflow: 'hidden', flexShrink: 0 }}>
-                  {catHeroImage && <img referrerPolicy="no-referrer" src={catHeroImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
+                  {catHeroImage && (
+                    <>
+                      <img referrerPolicy="no-referrer" src={catHeroImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                      <div style={{ width: '100%', height: '100%', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
+                        <Newspaper size={20} />
+                      </div>
+                    </>
+                  )}
                 </div>
                 <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
                   {topicCat}

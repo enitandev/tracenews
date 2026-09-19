@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ROUTES } from '../constants/routes';
-import { MapPin, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, FileText, ChevronDown, ChevronUp, Newspaper } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import { formatTimeAgo } from '../utils/helpers';
 import TierDistributionTubes from '../components/TierDistributionTubes';
@@ -291,7 +291,10 @@ export default function DailyBriefingStory() {
           <div className="mobile-stack" style={{ display: 'flex', gap: '24px', marginBottom: '32px' }}>
             <div style={{ width: '40%', flexShrink: 0 }}>
               {image_url ? (
-                <img referrerPolicy="no-referrer" src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} />
+                <img referrerPolicy="no-referrer" src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                <div style={{ width: '100%', height: '320px', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2, borderRadius: '8px' }}>
+                  <Newspaper size={64} />
+                </div>
               ) : (
                 <div style={{ width: '100%', height: '320px', background: 'var(--bg-hover)', borderRadius: '8px' }}></div>
               )}
@@ -505,7 +508,10 @@ export default function DailyBriefingStory() {
                 <div style={{ display: 'flex', padding: '12px' }}>
                   <div style={{ width: '120px', height: '90px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
                     {m.image_url ? (
-                      <img referrerPolicy="no-referrer" src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img referrerPolicy="no-referrer" src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                      <div style={{ width: '100%', height: '100%', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
+                        <Newspaper size={32} />
+                      </div>
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: 'var(--bg-hover)' }}></div>
                     )}

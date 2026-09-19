@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { Newspaper } from 'lucide-react';
 import { Tag } from '../components/ds/Marks';
 import { ROUTES } from '../constants/routes';
 import { TIERS, TIER_COLORS, TIER_LABELS } from '../utils/constants';
@@ -408,7 +409,10 @@ export default function PoliticianProfile() {
                   </div>
                   {story.image_url && (
                     <div style={{ width: '88px', height: '66px', flexShrink: 0 }}>
-                      <img referrerPolicy="no-referrer" src={story.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
+                      <img referrerPolicy="no-referrer" src={story.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                      <div style={{ width: '100%', height: '100%', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2, borderRadius: '6px' }}>
+                        <Newspaper size={48} />
+                      </div>
                     </div>
                   )}
                 </div>
