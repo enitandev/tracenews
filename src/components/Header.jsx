@@ -116,7 +116,14 @@ export default function Header() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <span>Saturday, June 6, 2026</span>
+            <span>
+              {new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+              })}
+            </span>
             <span style={{ cursor: 'pointer' }}>Set Location</span>
             <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>🌍 International Edition ⌄</span>
           </div>
