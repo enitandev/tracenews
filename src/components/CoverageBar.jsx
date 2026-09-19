@@ -64,8 +64,7 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
             const percentage = (count / total) * 100;
             const labelText = `${TIER_LABELS[tier]} ${count}`;
             const isLast = index === displayedTiers.length - 1;
-            const showAbbrev = percentage >= 15;
-            // using imported TIER_LABELS
+            const labelFitsInside = percentage >= 15;
             
             return (
               <div 
@@ -83,8 +82,12 @@ export default function CoverageBar({ coverageStats, variant = 'compact', liveTo
                   justifyContent: 'center'
                 }} 
               >
-                {showAbbrev && (
+                {labelFitsInside ? (
                   <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, pointerEvents: 'none', textAlign: 'center' }}>
+                    {TIER_LABELS[tier]} {count}
+                  </span>
+                ) : (
+                  <span style={{ position: 'absolute', bottom: '100%', marginBottom: '2px', color: 'var(--text-primary)', fontSize: '10px', fontWeight: 700, pointerEvents: 'none', whiteSpace: 'nowrap' }}>
                     {TIER_LABELS[tier]} {count}
                   </span>
                 )}
