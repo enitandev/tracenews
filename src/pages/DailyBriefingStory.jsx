@@ -291,10 +291,12 @@ export default function DailyBriefingStory() {
           <div className="mobile-stack" style={{ display: 'flex', gap: '24px', marginBottom: '32px' }}>
             <div style={{ width: '40%', flexShrink: 0 }}>
               {image_url ? (
-                <img referrerPolicy="no-referrer" src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                <div style={{ width: '100%', height: '320px', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2, borderRadius: '8px' }}>
-                  <Newspaper size={64} />
-                </div>
+                <>
+                  <img referrerPolicy="no-referrer" src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                  <div style={{ width: '100%', height: '320px', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2, borderRadius: '8px' }}>
+                    <Newspaper size={64} />
+                  </div>
+                </>
               ) : (
                 <div style={{ width: '100%', height: '320px', background: 'var(--bg-hover)', borderRadius: '8px' }}></div>
               )}
@@ -508,10 +510,12 @@ export default function DailyBriefingStory() {
                 <div style={{ display: 'flex', padding: '12px' }}>
                   <div style={{ width: '120px', height: '90px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
                     {m.image_url ? (
-                      <img referrerPolicy="no-referrer" src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                      <div style={{ width: '100%', height: '100%', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
-                        <Newspaper size={32} />
-                      </div>
+                      <>
+                        <img referrerPolicy="no-referrer" src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                        <div style={{ width: '100%', height: '100%', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
+                          <Newspaper size={32} />
+                        </div>
+                      </>
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: 'var(--bg-hover)' }}></div>
                     )}
