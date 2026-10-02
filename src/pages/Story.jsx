@@ -149,6 +149,7 @@ export default function Story() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [copyTooltip, setCopyTooltip] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [feedbackTier, setFeedbackTier] = useState('All');
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackStatus, setFeedbackStatus] = useState('');
 
@@ -927,6 +928,9 @@ export default function Story() {
                 <div style={{ textAlign: 'right', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px', marginTop: '4px' }}>
                   {feedbackComment.length}/500
                 </div>
+                {feedbackStatus === 'error' && (
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: '0 0 12px 0' }}>Your report couldn't be sent. Please try again.</p>
+                )}
 
                 <button 
                   disabled={feedbackStatus === 'sending'}
@@ -936,13 +940,13 @@ export default function Story() {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ cluster_id: cluster.id, tier: TAB_TO_KEY[feedbackTier] || feedbackTier, comment: feedbackComment })
-                    }).then(() => {
+                    }).then(res => {
+                      if (!res.ok) throw new Error(`Feedback POST failed: ${res.status}`);
                       setFeedbackStatus('sent');
                       setTimeout(() => setIsFeedbackModalOpen(false), 2000);
                     }).catch(err => {
                       console.error(err);
-                      setFeedbackStatus('sent'); // Close anyway
-                      setTimeout(() => setIsFeedbackModalOpen(false), 2000);
+                      setFeedbackStatus('error');
                     });
                   }}
                   style={{ width: '100%', padding: '12px', background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: feedbackStatus === 'sending' ? 'not-allowed' : 'pointer' }}
