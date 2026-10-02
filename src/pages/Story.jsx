@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, Info, MapPin } from 'lucide-react';
+import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, MapPin } from 'lucide-react';
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
-import MonitoringSignals from '../components/MonitoringSignals';
+import VerdictCard from '../components/MonitoringSpirit/VerdictCard';
 import { ROUTES } from '../constants/routes';
 import { supabase } from '../lib/supabase';
 
@@ -108,13 +108,6 @@ function OwnershipBadge({ outlet }) {
     </BadgeWithTooltip>
   );
 }
-
-const SEVERITY_COLORS = {
-  'high': '#a49889',
-  'critical': '#8f9a6f',
-  'medium': '#f39c12',
-  'low': '#2471a3'
-};
 
 const REGION_COLORS = {
   'North': '#2471A3',
@@ -246,7 +239,6 @@ export default function Story() {
 
   const { cluster, stories } = data;
   const stats = cluster.coverage_stats || {};
-  const flags = cluster.monitoring_flags || [];
   
   // Tabs filtering
   const getUniqueStories = (storiesList) => {
@@ -830,30 +822,8 @@ export default function Story() {
           
           <CoverageSidebar cluster={cluster} stories={stories} outletGroups={outletGroups} />
 
-          {/* Monitoring Spirit Layer */}
-          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '24px', color: 'var(--text-primary)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: flags.length > 0 ? '20px' : '0' }}>
-              <Info size={20} color="#a49889" />
-              <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0 }}>Monitoring Spirit</h3>
-            </div>
-            
-            <MonitoringSignals
-              coverageStats={cluster.coverage_stats || {}}
-              stories={stories}
-              compact={false}
-            />
-            
-            {flags.length === 0 ? (
-              <p style={{ fontSize: '13px', color: '#888', margin: '16px 0 0 0', fontStyle: 'italic' }}>No alerts detected for this story.</p>
-            ) : (
-              flags.map((flag, idx) => (
-                <div key={idx} style={{ marginBottom: idx === flags.length - 1 ? 0 : '16px', borderBottom: idx === flags.length - 1 ? 'none' : '1px solid var(--border)', paddingBottom: idx === flags.length - 1 ? 0 : '16px' }}>
-                  <h4 style={{ color: SEVERITY_COLORS[flag.severity] || '#fff', fontSize: '14px', fontWeight: 700, margin: '0 0 8px 0', textTransform: 'uppercase' }}>{flag.type.replace('_', ' ')}</h4>
-                  <p style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>{flag.message}</p>
-                </div>
-              ))
-            )}
-          </div>
+          {/* Monitoring Spirit verdict — renders nothing unless the payload passes the gate */}
+          <VerdictCard verdictData={cluster.monitoring_spirit_live} clusterStories={stories} />
 
           {/* ADDITION 1: Who broke the story? */}
           {firstOutlets.length > 0 && (
