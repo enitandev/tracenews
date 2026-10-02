@@ -87,7 +87,8 @@ export default function AdminShell({ children }) {
             <div className="ri soon">Counsel file <span className="n">Soon</span></div>
           </aside>
           
-          {children}
+          {/* Nothing under the desk mounts until a staff profile is confirmed */}
+          {profile ? children : null}
         </div>
       </div>
     </div>

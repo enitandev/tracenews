@@ -84,7 +84,6 @@ export default function App() {
             <Layout>
               <Routes>
                 <Route path={ROUTES.HOME} element={<Home />} />
-                <Route path="/test-verdict" element={<TestVerdict />} />
                 <Route path="/home" element={<HomepagePlaceholder />} />
                 <Route path="/registry" element={<Registry />} />
                 <Route path="/story/:slug" element={<Story />} />
@@ -112,6 +111,7 @@ export default function App() {
                 <Route path="corrections" element={<AdminCorrections />} />
                 <Route path="monitoring-spirit" element={<MonitoringSpiritAdmin />} />
                 <Route path="politicians" element={<AdminPoliticians />} />
+                <Route path="test-verdict" element={<TestVerdict />} />
               </Routes>
             </AdminShell>
           } />
