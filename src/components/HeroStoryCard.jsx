@@ -9,7 +9,9 @@ export default function HeroStoryCard({ cluster }) {
   const [imgError, setImgError] = useState(false);
   const domTier = getDominantTier(stats.coverage_tier_distribution);
   const borderColor = COVERAGE_TIER_COLORS[domTier] || 'var(--border)';
-  const hasAlerts = cluster.monitoring_flags?.length > 0;
+  // Only reader-facing flag objects badge a story. Internal markers such as the
+  // classifier's 'low_confidence_category' string are for staff review, not readers.
+  const hasAlerts = (cluster.monitoring_flags || []).some(f => f && typeof f === 'object');
 
   return (
     <Link to={`/story/${cluster.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', marginBottom: '24px' }}>

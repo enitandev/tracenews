@@ -134,9 +134,10 @@ export default function Dashboard() {
                         <div className="s">All tiers reported</div>
                       </div>
                       <div className="fig">
-                        <div className="l">Gaps exposure</div>
+                        {/* Counts MIXED reads: widely carried, mostly the same report. */}
+                        <div className="l">Same report</div>
                         <div className="v gap">{data.counters.one_tier_only}</div>
-                        <div className="s">One tier only</div>
+                        <div className="s">Mostly the same wire copy</div>
                       </div>
                       <div className="fig">
                         <div className="l">Following</div>
