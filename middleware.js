@@ -267,59 +267,41 @@ export default async function middleware(
     }
   }
 
-  // Bot on all other pages:
-  // proxy to Railway Chrome prerender
-  const PRERENDER_URL = 
-    process.env.PRERENDER_URL || 
-    'https://tracenews-prerender-production.up.railway.app'
-  const targetUrl = 
-    `${PRERENDER_URL}/${url.toString()}`
-  
-  const controller = new AbortController()
-  const timeoutId = setTimeout(
-    () => controller.abort(), 
-    8000
-  )
-  
-  try {
-    const prerenderResponse = await fetch(
-      targetUrl,
-      { 
-        headers: { 'User-Agent': ua },
-        signal: controller.signal
+  // Bot on a daily briefing story: same pattern as /story/
+  if (url.pathname.startsWith('/daily-briefing/')) {
+    const slug = url.pathname.replace('/daily-briefing/', '')
+    if (slug) {
+      const apiUrl = new URL(request.url)
+      apiUrl.pathname = '/api/briefing-og'
+      apiUrl.search = `?slug=${slug}`
+
+      try {
+        const apiResponse = await fetch(
+          apiUrl.toString(),
+          { headers: { 'user-agent': ua } }
+        )
+        const html = await apiResponse.text()
+        return new Response(html, {
+          status: apiResponse.status,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=900, stale-while-revalidate=3600'
+          }
+        })
+      } catch (error) {
+        console.error('briefing-og proxy failed:', error.message)
+        return new Response(null, {
+          headers: { 'x-middleware-next': '1' }
+        })
       }
-    )
-    clearTimeout(timeoutId)
-    
-    if (!prerenderResponse.ok) {
-      throw new Error(
-        `Prerender failed: ` + 
-        prerenderResponse.status
-      )
     }
-    
-    const html = await 
-      prerenderResponse.text()
-    return new Response(html, {
-      status: 200,
-      headers: {
-        'Content-Type': 
-          'text/html; charset=utf-8',
-        'Cache-Control': 
-          'public, max-age=0, ' +
-          'must-revalidate'
-      }
-    })
-  } catch (error) {
-    clearTimeout(timeoutId)
-    console.error(
-      'Prerender fallback:', 
-      error.message
-    )
-    return new Response(null, {
-      headers: { 
-        'x-middleware-next': '1' 
-      }
-    })
   }
+
+  // Bot on all other pages (app screens, files, unknown URLs): serve the
+  // normal site. These pages were sent to a Railway Chrome prerender, which
+  // was retired in Oct 2026: every content page now has its own OG function
+  // above, and the rest (login, dashboard, admin, files) needs no rendering.
+  return new Response(null, {
+    headers: { 'x-middleware-next': '1' }
+  })
 }

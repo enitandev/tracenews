@@ -32,7 +32,7 @@ export const BOT_USER_AGENTS = [
 
 // Shared description truncation logic
 // Must match Story.jsx exactly
-function truncateDesc(raw, maxLen = 155) {
+export function truncateDesc(raw, maxLen = 155) {
   const clean = (raw || '')
     .replace(/<[^>]+>/g, '')
     .replace(
@@ -55,7 +55,7 @@ function truncateDesc(raw, maxLen = 155) {
   ) + '...'
 }
 
-function safe(s) {
+export function safe(s) {
   return (s || '')
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
