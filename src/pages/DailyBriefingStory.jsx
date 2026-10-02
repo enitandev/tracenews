@@ -6,6 +6,7 @@ import { MapPin, FileText, ChevronDown, ChevronUp, Newspaper } from 'lucide-reac
 import CoverageBar from '../components/CoverageBar';
 import { formatTimeAgo } from '../utils/helpers';
 import TierDistributionTubes from '../components/TierDistributionTubes';
+import { getOutletTier } from '../constants/tiers';
 
 function AccordionQuestion({ item, defaultExpanded }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
@@ -219,15 +220,6 @@ export default function DailyBriefingStory() {
   const { cluster, stories, ground_summary, common_ground, perspectives_title, perspectives_sides, perspectives_table, followup_questions, location_context, more_from_briefing, image_url } = data;
 
   // For the bias distribution tubes
-  const getOutletTier = (out) => {
-    if (!out) return 'unscored';
-    if (out.is_blog) return 'blog';
-    const align = (out.government_alignment || '').toLowerCase();
-    if (align === 'pro_government') return 'govt_aligned';
-    if (align === 'neutral') return 'mainstream';
-    if (align === 'opposition') return 'watchdog';
-    return 'unscored';
-  };
 
   const groupOutlets = () => {
     const groups = { 'govt_aligned': [], 'mainstream': [], 'watchdog': [], 'blog': [], 'unscored': [] };

@@ -30,6 +30,7 @@ const ALIGNMENT_COLORS = {
 };
 
 import { TIERS, TIER_COLORS, TIER_LABELS } from '../utils/constants';
+import { getOutletTier } from '../constants/tiers';
 
 const TRANSPARENCY_COLORS = {
   'high': '#27B060',
@@ -82,15 +83,6 @@ export default function OutletProfile() {
   
   const score = outlet.independence_score !== null && outlet.independence_score !== undefined ? outlet.independence_score : 0;
 
-  const getOutletTier = (out) => {
-    if (!out) return 'unscored';
-    if (out.is_blog) return 'blog';
-    const align = (out.government_alignment || '').toLowerCase();
-    if (align === 'pro_government') return 'govt_aligned';
-    if (align === 'neutral') return 'mainstream';
-    if (align === 'opposition') return 'watchdog';
-    return 'unscored';
-  };
   let rawTier = getOutletTier(outlet);
 
   const tierLabel = TIER_LABELS[rawTier] || (rawTier.charAt(0).toUpperCase() + rawTier.slice(1));
