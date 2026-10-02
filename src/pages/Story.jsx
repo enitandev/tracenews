@@ -11,13 +11,6 @@ import { supabase } from '../lib/supabase';
 
 import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS, TIER_KEYS } from '../utils/constants';
 
-const TAB_TO_KEY = {
-  'All': 'all',
-  'Watchdog': 'watchdog',
-  'Mainstream': 'mainstream',
-  'Govt': 'govt_aligned'
-};
-
 const GOVERNMENT_COLORS = {
   'pro_government': '#008751',
   'critical': '#E74C3C',
@@ -149,7 +142,7 @@ export default function Story() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [copyTooltip, setCopyTooltip] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [feedbackTier, setFeedbackTier] = useState('All');
+  const [feedbackTopic, setFeedbackTopic] = useState('summary');
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackStatus, setFeedbackStatus] = useState('');
 
@@ -905,16 +898,16 @@ export default function Story() {
                   See something that seems off? Let us know, and we'll take care of the rest.
                 </p>
                 
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-primary)' }}>Which summary has an issue?</label>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-primary)' }}>What is the issue about?</label>
                 <select 
-                  value={feedbackTier} 
-                  onChange={(e) => setFeedbackTier(e.target.value)}
+                  value={feedbackTopic} 
+                  onChange={(e) => setFeedbackTopic(e.target.value)}
                   style={{ width: '100%', padding: '10px', borderRadius: '6px', background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-primary)', marginBottom: '16px' }}
                 >
-                  <option value="All">All / Event Briefing</option>
-                  <option value="Watchdog">Watchdog</option>
-                  <option value="Mainstream">Mainstream</option>
-                  <option value="Govt">Govt</option>
+                  <option value="summary">The "What happened" summary</option>
+                  <option value="verdict">The Monitoring Spirit card</option>
+                  <option value="coverage">Which outlets covered it, or their labels</option>
+                  <option value="other">Something else</option>
                 </select>
 
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-primary)' }}>Additional Comments</label>
@@ -939,7 +932,7 @@ export default function Story() {
                     fetch('https://uvicorn-appmain-production-79c6.up.railway.app/framing/feedback', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ cluster_id: cluster.id, tier: TAB_TO_KEY[feedbackTier] || feedbackTier, comment: feedbackComment })
+                      body: JSON.stringify({ cluster_id: cluster.id, tier: feedbackTopic, comment: feedbackComment })
                     }).then(res => {
                       if (!res.ok) throw new Error(`Feedback POST failed: ${res.status}`);
                       setFeedbackStatus('sent');
