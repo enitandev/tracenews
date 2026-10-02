@@ -5,6 +5,7 @@ import { AlertTriangle, Clock, ArrowLeft, ExternalLink, Shield, MapPin } from 'l
 import CoverageBar from '../components/CoverageBar';
 import CoverageSidebar from '../components/CoverageSidebar';
 import VerdictCard from '../components/MonitoringSpirit/VerdictCard';
+import { isVerdictShown } from '../components/MonitoringSpirit/verdictGate';
 import { ROUTES } from '../constants/routes';
 import { supabase } from '../lib/supabase';
 
@@ -164,7 +165,10 @@ export default function Story() {
       const mappedTier = tierMap[story.outlet_coverage_tier];
       if (!mappedTier) return;
       
-      const verdict = data?.cluster?.monitoring_spirit_live?.verdict;
+      // Count a verdict toward the reader's tallies only if the card showed it.
+      const verdict = isVerdictShown(data?.cluster?.monitoring_spirit_live, data?.stories || [])
+        ? data.cluster.monitoring_spirit_live.verdict
+        : undefined;
       
       await fetch('https://uvicorn-appmain-production-79c6.up.railway.app/api/reader/track-read', {
         method: 'POST',

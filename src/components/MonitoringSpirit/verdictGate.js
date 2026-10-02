@@ -93,3 +93,11 @@ export function countSameCopy(roster) {
   }));
   return { a, b };
 }
+
+/** Whether VerdictCard would render this payload for these stories. */
+export function isVerdictShown(verdictData, clusterStories) {
+  const roster = buildTierRoster(clusterStories || []);
+  const counts = {};
+  TIER_ORDER.forEach(t => { counts[t] = roster[t].length; });
+  return isVerdictRenderable(verdictData, counts, countSameCopy(roster), roster);
+}
