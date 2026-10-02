@@ -21,7 +21,9 @@
  * -----------------------------------------------------------------------------
  */
 export type VerdictState = "clear" | "mixed" | "dark";
-export type TierKey = "govt" | "mainstream" | "watchdog";
+/** Canonical tier keys — identical to TIERS in src/constants/tiers.js and the
+ *  values returned by the backend's get_outlet_tier. */
+export type TierKey = "govt_aligned" | "mainstream" | "watchdog";
 /* ----------------------------- DESIGN TOKENS ----------------------------- */
 export const TOKENS = {
   font: {
@@ -57,7 +59,7 @@ export const TOKENS = {
   /** Tier identity — categorical, non-valenced, consistent everywhere.
    *  None is red. None is a party-coded primary. Watchdog is never the alarm. */
   tier: {
-    govt: "#6d7f92",        // steel
+    govt_aligned: "#6d7f92", // steel
     mainstream: "#a49889",  // taupe
     watchdog: "#8f9a6f",    // sage
   },
@@ -65,18 +67,17 @@ export const TOKENS = {
 /** Gauge zones — left→right. The active zone (by state) takes the accent colour;
  *  the other two stay muted. Position: clear=0, mixed=1, dark=2. */
 export const GAUGE_ZONES = ["Broad", "Partial"] as const;
-import { TIER_LABELS } from '../../utils/constants';
-
+/** Tier labels. Values are the counsel-cleared wording (Gate B, Jul 2026);
+ *  only the keys follow the canonical tier names. */
 export const TIER_LABEL: Record<TierKey, string> = {
-  govt_aligned: 'government-aligned outlets',
-  mainstream: 'mainstream outlets',
-  watchdog: 'watchdog outlets'
+  govt_aligned: "Govt",            // face bar label + timeline legend
+  mainstream: "Mainstream",
+  watchdog: "Watchdog",
 };
-
 export const TIER_LABEL_FULL: Record<TierKey, string> = {
-  govt_aligned: 'Government',
-  mainstream: 'Mainstream',
-  watchdog: 'Watchdog'
+  govt_aligned: "Government-aligned", // evidence-view roster label
+  mainstream: "Mainstream",
+  watchdog: "Watchdog",
 };
 /* ------------------------- FROZEN VERDICT STRINGS ------------------------- */
 /* Templated tokens in {braces} are filled with LIVE counts at render time.
@@ -161,6 +162,15 @@ export const UI = {
   rosterNamesMore: "{names}, and {more} more",
   timelineNowLabel: "now",
   timelineAgoSuffix: "h ago",
+  /** Roster count unit: "{count} outlet" / "{count} outlets". */
+  outletUnitSingular: "outlet",
+  outletUnitPlural: "outlets",
+  /** Separator in the timeline's per-check Govt·Mainstream·Watchdog counts. */
+  timelineCountSeparator: "·",
+  /** PENDING COUNSEL REVIEW — new, not part of the July sign-off.
+   *  Stands in for a zero tier in the timeline's count column, which is too
+   *  narrow for "none recorded". The bar beside it carries the hatched ghost. */
+  timelineNoneMark: "–",
 } as const;
 /* --------------------- WIRE-SERVICE ATTRIBUTION (DORMANT) ---------------- */
 /**

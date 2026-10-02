@@ -9,42 +9,44 @@ import {
   UI,
   WIRE_ATTRIBUTION,
 } from './monitoringSpiritStrings';
+import { TIERS } from '../../constants/tiers';
+import { TIER_ORDER, buildTierRoster, countSameCopy, isVerdictRenderable } from './verdictGate';
+
+function hoursAgo(ts) {
+  return Math.round((new Date() - new Date(ts)) / 3600000);
+}
 
 export default function VerdictCard({ verdictData, clusterStories = [] }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // INVARIANT 1: Live atomic snapshot. If data is missing or computation failed, render NOTHING.
-  if (!verdictData || !verdictData.verdict) {
+  const rosterMap = buildTierRoster(clusterStories || []);
+  const liveCounts = {};
+  TIER_ORDER.forEach(t => { liveCounts[t] = rosterMap[t].length; });
+  const sameCopy = countSameCopy(rosterMap);
+
+  // INVARIANT 1: Live atomic snapshot. If data is missing, computation failed,
+  // or the strings would not be literally true, render NOTHING.
+  // DARK is gated here too — see DARK_ENABLED in verdictGate.js before touching.
+  if (!isVerdictRenderable(verdictData, liveCounts, sameCopy, rosterMap)) {
     return null;
   }
 
-  let state = verdictData.verdict;
-  if (state === 'dark') {
-    console.error('VerdictCard received DARK on a rendering surface — should never happen post-Gate-D-closure. Falling back to calm state.');
-    state = 'clear';
-  }
+  const state = verdictData.verdict;
   const accent = TOKENS.verdict[state];
   const gaugeActiveIndex = state === 'clear' ? 0 : state === 'mixed' ? 1 : 2;
 
   const cardStrings = CARD_STRINGS[state];
   const evidenceStrings = EVIDENCE_STRINGS[state];
 
-  // Derive counts live from clusterStories
-  const liveCounts = { govt: 0, mainstream: 0, watchdog: 0, unscored: 0, blog: 0 };
-  const rosterMap = { govt: [], mainstream: [], watchdog: [] };
+  const total = TIER_ORDER.reduce((sum, t) => sum + liveCounts[t], 0);
 
-  clusterStories.forEach(s => {
-    const tier = s.outlet_coverage_tier;
-    if (liveCounts[tier] !== undefined) {
-      liveCounts[tier]++;
-    }
-    if (rosterMap[tier]) {
-      rosterMap[tier].push(s);
-    }
-  });
+  // Snapshots, newest first. A snapshot without a full distribution is unknown,
+  // not empty — it is left out rather than drawn as zero coverage.
+  const snapshots = (verdictData.snapshots || [])
+    .filter(snap => snap && snap.snapshot_at && snap.coverage_tier_distribution
+      && TIER_ORDER.every(t => typeof snap.coverage_tier_distribution[t] === 'number'))
+    .sort((x, y) => new Date(y.snapshot_at) - new Date(x.snapshot_at));
 
-  const total = liveCounts.govt + liveCounts.mainstream + liveCounts.watchdog;
-  
   // INVARIANT 4 & 6: Wire attribution
   let wireAttributionLabel = WIRE_ATTRIBUTION.neutral;
   if (WIRE_ATTRIBUTION.enabled && state === 'mixed') {
@@ -53,40 +55,25 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
 
   const fillTemplate = (str) => {
     if (!str) return str;
-    const n = total;
-    let a = 0;
-    let b = total;
-    clusterStories.forEach(s => {
-       if (s.outlet_coverage_tier !== 'unscored' && s.outlet_coverage_tier !== 'blog') {
-         if (!s.outlet_s2_score || s.outlet_s2_score < 50) {
-           a++;
-         }
-       }
-    });
-
-    const k = verdictData.snapshots ? verdictData.snapshots.length : 0;
-    const h = k > 0 && verdictData.snapshots[k-1].snapshot_at 
-      ? Math.round((new Date() - new Date(verdictData.snapshots[k-1].snapshot_at)) / 3600000) 
-      : 0;
+    const k = snapshots.length;
+    const h = k > 0 ? hoursAgo(snapshots[k - 1].snapshot_at) : 0;
 
     return str
-      .replace('{n}', n.toString())
-      .replace('{a}', a.toString())
-      .replace('{b}', b.toString())
+      .replace('{n}', total.toString())
+      .replace('{a}', sameCopy.a.toString())
+      .replace('{b}', sameCopy.b.toString())
       .replace('{k}', k.toString())
       .replace('{h}', h.toString());
   };
 
   // INVARIANT 3: Zero tier gets fixed hatched sliver 8%.
   const renderTrack = () => {
-    const tiers = ['govt', 'mainstream', 'watchdog'];
-    const activeTiers = tiers.filter(t => liveCounts[t] > 0);
-    const zeroTiers = tiers.filter(t => liveCounts[t] === 0);
-    
+    const zeroTiers = TIER_ORDER.filter(t => liveCounts[t] === 0);
+
     const zeroSpace = zeroTiers.length * 8;
     const remainingSpace = 100 - zeroSpace;
-    
-    return tiers.map(t => {
+
+    return TIER_ORDER.map(t => {
       const count = liveCounts[t];
       if (count === 0) {
         return <i key={t} className="vc-ghost" style={{ width: '8%' }} data-testid={`track-ghost-${t}`}></i>;
@@ -98,55 +85,46 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
   };
 
   const renderTimeline = () => {
-    const snaps = verdictData.snapshots || [];
-    if (snaps.length < 2) {
+    if (snapshots.length < 2) {
       return <p className="vc-hold">{fillTemplate(cardStrings.footerNote)}</p>;
     }
     return (
       <>
         <div className="vc-legend">
-          <span><i className="vc-tdot" style={{background: TOKENS.tier.govt, width: '7px', height: '7px'}}></i>Govt</span>
-          <span><i className="vc-tdot" style={{background: TOKENS.tier.mainstream, width: '7px', height: '7px'}}></i>Mainstream</span>
-          <span><i className="vc-tdot" style={{background: TOKENS.tier.watchdog, width: '7px', height: '7px'}}></i>Watchdog</span>
+          {TIER_ORDER.map(t => (
+            <span key={t}><i className="vc-tdot" style={{background: TOKENS.tier[t], width: '7px', height: '7px'}}></i>{TIER_LABEL[t]}</span>
+          ))}
         </div>
-        {snaps.map((snap, i) => {
-          const g = snap.coverage_tier_distribution?.govt_aligned || 0;
-          const m = snap.coverage_tier_distribution?.mainstream || 0;
-          const w = snap.coverage_tier_distribution?.watchdog || 0;
-          const tot = g + m + w;
-          
-          let wG = 0, wM = 0, wW = 0;
-          if (tot > 0) {
-             const zG = g === 0 ? 8 : 0;
-             const zM = m === 0 ? 8 : 0;
-             const zW = w === 0 ? 8 : 0;
-             const r = 100 - (zG + zM + zW);
-             wG = g === 0 ? zG : (g / tot) * r;
-             wM = m === 0 ? zM : (m / tot) * r;
-             wW = w === 0 ? zW : (w / tot) * r;
-          } else {
-             wG = wM = wW = 8;
-          }
+        {snapshots.map((snap) => {
+          const dist = snap.coverage_tier_distribution;
+          const tot = TIER_ORDER.reduce((sum, t) => sum + dist[t], 0);
+          const zeroSpace = TIER_ORDER.filter(t => dist[t] === 0).length * 8;
+          const widthFor = (t) => {
+            if (tot === 0 || dist[t] === 0) return 8;
+            return (dist[t] / tot) * (100 - zeroSpace);
+          };
 
-          let label = UI.timelineNowLabel;
-          if (i > 0) {
-            const hrs = Math.round((new Date() - new Date(snap.snapshot_at)) / 3600000);
-            label = `${hrs}${UI.timelineAgoSuffix}`;
-          }
+          const hrs = hoursAgo(snap.snapshot_at);
+          const label = hrs <= 0 ? UI.timelineNowLabel : `${hrs}${UI.timelineAgoSuffix}`;
 
           return (
-            <div className="vc-trow" key={i} data-testid="timeline-row">
+            <div className="vc-trow" key={snap.snapshot_at} data-testid="timeline-row">
               <span className="vc-ttime">{label}</span>
               <div className="vc-tbar">
-                {g === 0 ? <i className="vc-ghost" style={{width: `${wG}%`}}></i> : <i style={{width: `${wG}%`, background: TOKENS.tier.govt}}></i>}
-                {m === 0 ? <i className="vc-ghost" style={{width: `${wM}%`}}></i> : <i style={{width: `${wM}%`, background: TOKENS.tier.mainstream}}></i>}
-                {w === 0 ? <i className="vc-ghost" style={{width: `${wW}%`}}></i> : <i style={{width: `${wW}%`, background: TOKENS.tier.watchdog}}></i>}
+                {TIER_ORDER.map(t => dist[t] === 0
+                  ? <i key={t} className="vc-ghost" style={{width: `${widthFor(t)}%`}}></i>
+                  : <i key={t} style={{width: `${widthFor(t)}%`, background: TOKENS.tier[t]}}></i>)}
               </div>
-              <span className="vc-tnums">{g}·{m}·{w}</span>
+              <span className="vc-tnums">
+                {TIER_ORDER.map(t => dist[t] === 0 ? UI.timelineNoneMark : dist[t].toString()).join(UI.timelineCountSeparator)}
+              </span>
             </div>
           );
         })}
-        <p className="vc-hold">{fillTemplate(evidenceStrings.held)}</p>
+        {/* "...all three tiers at every check" — shown only when literally true. */}
+        {snapshots.every(snap => TIER_ORDER.every(t => snap.coverage_tier_distribution[t] > 0)) && (
+          <p className="vc-hold">{fillTemplate(evidenceStrings.held)}</p>
+        )}
       </>
     );
   };
@@ -157,28 +135,28 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
     if (count === 0) {
       return (
         <React.Fragment key={key}>
-          <div className="vc-tier">
+          <div className="vc-tier" data-testid={`roster-none-${key}`}>
             <span className="vc-tname" style={{ color: TOKENS.tier[key] }}>
-              <i className="vc-tdot" style={{ background: TOKENS.tier[key] }}></i>
+              <i className="vc-tdot vc-ghost"></i>
               {TIER_LABEL_FULL[key]}
             </span>
-            <span className="vc-tcount">0 outlets</span>
           </div>
           <p className="vc-rnone">{UI.noneRecordedLong}</p>
         </React.Fragment>
       );
     }
-    
+
     let orig = 0, copy = 0;
     let origNames = [], copyNames = [];
     stories.forEach(s => {
-      const isOrig = s.outlet_s2_score >= 50;
-      if (isOrig) { orig++; origNames.push(s.outlet_name); }
-      else { copy++; copyNames.push(s.outlet_name); }
+      if (s.outlet_republishes === false) { orig++; origNames.push(s.outlet_name); }
+      else if (s.outlet_republishes === true) { copy++; copyNames.push(s.outlet_name); }
     });
-    
+
     let meta = "";
-    if (state === 'mixed') {
+    if (orig === 0 && copy === 0) {
+      // No outlet in this tier has a known status — make no claim about it.
+    } else if (state === 'mixed') {
       meta = UI.rosterMetaMixed.replace('{orig}', orig.toString()).replace('{copy}', copy.toString());
     } else {
       if (orig > 0 && copy > 0) meta = UI.rosterMetaClearMixed.replace('{orig}', orig.toString()).replace('{copy}', copy.toString());
@@ -190,7 +168,7 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
     if (origNames.length > 0 && copyNames.length > 0) {
       namesStr = UI.rosterNamesMixed.replace('{origNames}', origNames.slice(0,3).join(", ")).replace('{copyNames}', copyNames.slice(0,3).join(", "));
     } else {
-      const all = origNames.concat(copyNames);
+      const all = stories.map(s => s.outlet_name).filter(Boolean);
       namesStr = all.slice(0,5).join(", ");
       if (all.length > 5) {
         namesStr = UI.rosterNamesMore.replace('{names}', namesStr).replace('{more}', (all.length - 5).toString());
@@ -204,9 +182,9 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
             <i className="vc-tdot" style={{ background: TOKENS.tier[key] }}></i>
             {TIER_LABEL_FULL[key]}
           </span>
-          <span className="vc-tcount">{count} {count === 1 ? 'outlet' : 'outlets'}</span>
+          <span className="vc-tcount">{count} {count === 1 ? UI.outletUnitSingular : UI.outletUnitPlural}</span>
         </div>
-        <p className="vc-tmeta">{meta}</p>
+        {meta && <p className="vc-tmeta">{meta}</p>}
         <p className="vc-names">{namesStr}</p>
       </React.Fragment>
     );
@@ -231,7 +209,7 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
         .vc-sub.vc-tight{font-size:12.5px;margin:0}
         .vc-track{height:8px;border-radius:3px;background:${TOKENS.surface.trackBg};display:flex;overflow:hidden}
         .vc-track i{display:block;height:100%}
-        .vc-track .vc-ghost{background-image:repeating-linear-gradient(45deg,#2b2e35 0,#2b2e35 3px,#212429 3px,#212429 6px)}
+        .vc-track .vc-ghost,.vc-tbar .vc-ghost,.vc-tdot.vc-ghost{background-image:repeating-linear-gradient(45deg,#2b2e35 0,#2b2e35 3px,#212429 3px,#212429 6px)}
         .vc-blabels{display:flex;justify-content:space-between;margin-top:8px;font-family:${TOKENS.font.mono};font-size:11px;color:${TOKENS.text.muted}}
         .vc-blabels b{color:#a4a9b2;font-weight:500}
         .vc-blabels .vc-none{color:${TOKENS.text.faint};font-family:${TOKENS.font.body};font-size:10.5px}
@@ -291,7 +269,7 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
                 {renderTrack()}
               </div>
               <div className="vc-blabels">
-                {['govt', 'mainstream', 'watchdog'].map(t => (
+                {TIER_ORDER.map(t => (
                   <span key={t}>
                     <i className="vc-dot" style={{ background: TOKENS.tier[t] }}></i>
                     {TIER_LABEL[t]} {liveCounts[t] > 0 ? <b>{liveCounts[t].toString()}</b> : <span className="vc-none">{UI.noneRecordedShort}</span>}
@@ -308,7 +286,7 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
             </div>
             <div className="vc-foot">
               <span className="vc-fnote">{fillTemplate(cardStrings.footerNote)}</span>
-              <span className="vc-flink">{UI.methodologyLink}</span>
+              <a className="vc-flink" href="/methodology" style={{ textDecoration: 'none' }}>{UI.methodologyLink}</a>
             </div>
           </>
         ) : (
@@ -321,7 +299,7 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
             <div className="vc-sec">
               <p className="vc-sech">{evidenceStrings.sectionHeader}</p>
               {evidenceStrings.lead && <p className="vc-lead" dangerouslySetInnerHTML={{ __html: fillTemplate(evidenceStrings.lead).replace(/([0-9]+)/g, '<em>$1</em>') }}></p>}
-              {['mainstream', 'watchdog', 'govt']
+              {[TIERS.MAINSTREAM, TIERS.WATCHDOG, TIERS.GOVT]
                 .sort((a, b) => liveCounts[b] - liveCounts[a])
                 .map(t => renderRosterTier(t))}
             </div>
@@ -336,8 +314,8 @@ export default function VerdictCard({ verdictData, clusterStories = [] }) {
               <span>{UI.tapOpen}</span><i className="ti ti-chevron-up vc-chev" style={{transform: 'rotate(180deg)'}}></i>
             </div>
             <div className="vc-links">
-              <span className="vc-link-a">{UI.methodologyLink}</span>
-              <span className="vc-link-b">{UI.correctionLink}</span>
+              <a className="vc-link-a" href="/methodology" style={{ textDecoration: 'none' }}>{UI.methodologyLink}</a>
+              <a className="vc-link-b" href="/corrections" style={{ textDecoration: 'none' }}>{UI.correctionLink}</a>
             </div>
           </>
         )}
