@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import VerdictCard from './VerdictCard';
-import { DARK_ENABLED } from './verdictGate';
+import { DARK_ENABLED, MIXED_ENABLED } from './verdictGate';
 import { WIRE_ATTRIBUTION, UI } from './monitoringSpiritStrings';
 
 const hoursAgo = (h) => new Date(Date.now() - 3600000 * h).toISOString();
@@ -158,7 +158,12 @@ describe('VerdictCard Invariants', () => {
     };
     render(<VerdictCard verdictData={mockData} clusterStories={broadStories()} />);
     fireEvent.click(screen.getByText(UI.tap));
-    expect(screen.getAllByTestId('timeline-row')).toHaveLength(2);
+    const rows = screen.getAllByTestId('timeline-row');
+    expect(rows).toHaveLength(2);
+    // Counsel's condition on the dash: it marks a true zero in a complete
+    // check, never missing data. No complete check here has a zero, so no
+    // row may carry the mark.
+    rows.forEach(r => expect(r.textContent).not.toContain(UI.timelineNoneMark));
     expect(screen.getByText('Reported across all three tiers at every check.')).toBeDefined();
   });
 
@@ -205,20 +210,16 @@ describe('VerdictCard Invariants', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('MIXED counts same copy only over outlets with a known status, and never names unknowns as copy', () => {
+  // Counsel, 2 Oct 2026: "same copy" was never measured per story. Even a
+  // payload that satisfies every other MIXED rule renders nothing.
+  it('MIXED renders nothing while MIXED_ENABLED is false', () => {
+    expect(MIXED_ENABLED).toBe(false);
     const stories = [
       story('govt_aligned', true, 'CopyA'), story('mainstream', true, 'CopyB'),
-      story('mainstream', false, 'OrigC'), story('watchdog', null, 'UnknownD'),
-      { ...story('watchdog', null, 'BorderlineE'), outlet_s2_score: 45 },
+      story('mainstream', false, 'OrigC'), story('watchdog', true, 'CopyD'),
     ];
-    render(<VerdictCard verdictData={{ verdict: 'mixed', evidence: churnalismEvidence, snapshots: [] }} clusterStories={stories} />);
-    expect(screen.getByTestId('monitoring-spirit-card').textContent).toContain('2 of 4 outlets ran the same wire copy');
-
-    fireEvent.click(screen.getByText(UI.tap));
-    const text = screen.getByTestId('monitoring-spirit-card').textContent;
-    expect(text).toContain('OrigC — original; CopyB — same copy');
-    expect(text).toContain('UnknownD, BorderlineE');
-    expect(text).not.toMatch(/(UnknownD|BorderlineE) — same copy/);
-    expect(text).not.toContain('0 original · 0 same copy');
+    const { container } = render(<VerdictCard verdictData={{ verdict: 'mixed', evidence: churnalismEvidence, snapshots: [] }} clusterStories={stories} />);
+    expect(container.firstChild).toBeNull();
+    expect(document.body.textContent).not.toMatch(/same (wire )?copy|near-identical/i);
   });
 });

@@ -4,7 +4,7 @@ import { TIERS } from '../../constants/tiers';
  * DARK RENDERING GATE — LEGAL CONSTRAINT, NOT A STYLE CHOICE.
  *
  * Gate D (the suppression check) never closed: two shadow runs across 945
- * clusters produced zero verified findings. CLEAR and MIXED ship; DARK does not.
+ * clusters produced zero verified findings. CLEAR ships; DARK does not.
  * A DARK payload renders NOTHING — never a muted or "calm" fallback, because a
  * calm card would make a false positive claim about the story's coverage.
  *
@@ -13,6 +13,16 @@ import { TIERS } from '../../constants/tiers';
  * of any other change.
  */
 export const DARK_ENABLED = false;
+
+/**
+ * MIXED RENDERING GATE — LEGAL CONSTRAINT (counsel, 2 Oct 2026).
+ *
+ * The "same copy" claim rests on each outlet's 30-day originality score, not on
+ * a comparison of this story's text, so it can name an outlet as running the
+ * same copy on a story it reported itself. MIXED renders nothing until real
+ * per-story text comparison exists and its wording is cleared afresh.
+ */
+export const MIXED_ENABLED = false;
 
 export const TIER_ORDER = [TIERS.GOVT, TIERS.MAINSTREAM, TIERS.WATCHDOG];
 // Tiers that exist but sit outside the three-tier card by design.
@@ -70,6 +80,7 @@ export function isVerdictRenderable(verdictData, counts, sameCopy, roster) {
       counts[t] > 0 && roster[t].some(s => s.outlet_republishes === false));
   }
   if (state === 'mixed') {
+    if (!MIXED_ENABLED) return false;
     // "{a} of {b} outlets ran the same wire copy" — only the churnalism route
     // fits this copy; a silence-route MIXED has no approved wording yet.
     // "Covered across outlet types" / "Carried across all three tiers" need

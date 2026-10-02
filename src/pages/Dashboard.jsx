@@ -5,7 +5,7 @@ import { StateCoverage } from '../components/ds/StateCoverage';
 import DashboardShell from '../components/DashboardShell';
 import { ROUTES } from '../constants/routes';
 import './dashboard.css';
-import { DARK_ENABLED } from '../components/MonitoringSpirit/verdictGate';
+import { DARK_ENABLED, MIXED_ENABLED } from '../components/MonitoringSpirit/verdictGate';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
@@ -133,12 +133,15 @@ export default function Dashboard() {
                         <div className="v">{data.counters.broadly_covered}</div>
                         <div className="s">All tiers reported</div>
                       </div>
+                      {/* Counts MIXED reads. Hidden with the MIXED card: its "same wire
+                          copy" label is the same unmeasured per-story claim (counsel, 2 Oct). */}
+                      {MIXED_ENABLED && (
                       <div className="fig">
-                        {/* Counts MIXED reads: widely carried, mostly the same report. */}
                         <div className="l">Same report</div>
                         <div className="v gap">{data.counters.one_tier_only}</div>
                         <div className="s">Mostly the same wire copy</div>
                       </div>
+                      )}
                       <div className="fig">
                         <div className="l">Following</div>
                         <div className="v">{data.counters.following}</div>

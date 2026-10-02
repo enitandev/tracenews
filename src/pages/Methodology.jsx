@@ -700,18 +700,6 @@ export default function Methodology() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid rgba(192,57,43,0.15)' }}>
-              <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
-              <div>
-                <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '14px', fontFamily: "'Montserrat', sans-serif" }}>
-                  We do not assert that One-Sided Coverage signals represent deliberate suppression.
-                </p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: 1.6, margin: 0, fontFamily: "'Montserrat', sans-serif" }}>
-                  "Government-aligned outlets have not reported this" is a fact about which outlets published stories in a given window. It is not an assertion that any outlet chose to suppress the story. The reader supplies the inference; we supply the measurement.
-                </p>
-              </div>
-            </div>
-
             <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid transparent' }}>
               <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
               <div>
