@@ -5,6 +5,7 @@ import { StateCoverage } from '../components/ds/StateCoverage';
 import DashboardShell from '../components/DashboardShell';
 import { ROUTES } from '../constants/routes';
 import './dashboard.css';
+import { DARK_ENABLED } from '../components/MonitoringSpirit/verdictGate';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
@@ -144,6 +145,10 @@ export default function Dashboard() {
                       </div>
                     </div>
 
+                    {/* This feed lists DARK verdicts. It stays hidden while DARK_ENABLED
+                        is false; its heading, "One tier" mark and evidence line need counsel
+                        review (and evidence is a list of objects, not text) before it can show. */}
+                    {DARK_ENABLED && (
                     <div className="ds">
                       <div className="ds-h">
                         <span className="t">Stories only one tier carried this month</span>
@@ -175,6 +180,7 @@ export default function Dashboard() {
                         ));
                       })()}
                     </div>
+                    )}
                   </>
                 ) : (
                   <div style={{ padding: 'var(--s6) var(--s5)', border: '1px solid var(--border)', borderRadius: '3px', marginTop: 'var(--s5)' }}>
