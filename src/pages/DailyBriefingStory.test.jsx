@@ -12,6 +12,7 @@ const ui = {
   coverage_heading: 'Outlets that reported this story',
   coverage_as_of: 'Counted at {time} WAT',
   tier_labels: { govt_aligned: 'Govt', mainstream: 'Mainstream', watchdog: 'Watchdog' },
+  sections: { what_happened: 'What happened', quotes: 'Who said what', next: 'What happens next', background: 'Background' },
   empty: "Today's briefing is not ready yet.",
 };
 const FORBIDDEN = ['bias', 'dramatic', 'side a', 'side b', 'sides', 'common ground', 'why it matters', '%', 'percent'];
@@ -73,5 +74,33 @@ describe('reviewer-only data (counsel review of 3 Oct samples, item 7)', () => {
     const panel = container.textContent.slice(container.textContent.indexOf(ui.coverage_heading));
     expect(panel).not.toMatch(/%|bias/i);
     expect(panel).toMatch(/Govt\s*2/);
+  });
+});
+
+describe('fuller sections (counsel ruling, 3 Oct 2026, item 6)', () => {
+  const withSections = {
+    ...item,
+    sections: {
+      quotes: [{ speaker: 'Godswill Akpabio', role: 'Senate President', quote: 'The bill will help the economy', line: 'Godswill Akpabio, Senate President, said: "The bill will help the economy"' }],
+      next: ['The President is to sign the bill on Monday, the Senate said.'],
+      background: [],
+    },
+  };
+
+  it('renders What happened, Who said what and What happens next; hides empty sections', () => {
+    renderItem(withSections);
+    expect(screen.getByText('What happened')).toBeTruthy();
+    expect(screen.getByText('Who said what')).toBeTruthy();
+    expect(screen.getByText('Godswill Akpabio, Senate President, said: "The bill will help the economy"')).toBeTruthy();
+    expect(screen.getByText('What happens next')).toBeTruthy();
+    expect(screen.queryByText('Background')).toBeNull();
+  });
+
+  it('quotes use the verb "said" only, and no forbidden words appear', () => {
+    const { container } = renderItem(withSections);
+    const quoteText = container.querySelector('[data-testid="section-quotes"]').textContent;
+    expect(quoteText).toMatch(/ said: /);
+    const text = container.textContent.toLowerCase();
+    for (const tok of ['bias', 'common ground', 'why it matters', 'sides']) expect(text).not.toContain(tok);
   });
 });

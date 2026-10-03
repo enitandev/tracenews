@@ -58,9 +58,28 @@ function ReaderPreview({ item, ui }) {
       <p className="t-label" style={{ marginBottom: 'var(--s2)' }}>As readers would see it</p>
       <h3 className="br-hl">{item.title}</h3>
       <p className="t-meta">{ui.attribution_label}</p>
+      <p className="t-label" style={{ marginTop: 'var(--s3)' }}>{ui.sections?.what_happened}</p>
       <ul className="br-bul">
         {(item.bullets || []).filter(b => typeof b === 'string').map((b, i) => <li key={i}>{b}</li>)}
       </ul>
+      {(item.sections?.quotes || []).length > 0 && (
+        <>
+          <p className="t-label">{ui.sections.quotes}</p>
+          <ul className="br-bul">{item.sections.quotes.map((q, i) => <li key={i}>{q.line}</li>)}</ul>
+        </>
+      )}
+      {(item.sections?.next || []).length > 0 && (
+        <>
+          <p className="t-label">{ui.sections.next}</p>
+          <ul className="br-bul">{item.sections.next.map((n, i) => <li key={i}>{n}</li>)}</ul>
+        </>
+      )}
+      {(item.sections?.background || []).length > 0 && (
+        <>
+          <p className="t-label">{ui.sections.background}</p>
+          <ul className="br-bul">{item.sections.background.map((b, i) => <li key={i}>{b}</li>)}</ul>
+        </>
+      )}
       <p className="t-meta" style={{ marginBottom: 'var(--s1)' }}>{ui.coverage_heading}: {total}</p>
       <div className="tierlabels" style={{ marginTop: 0 }}>
         {TIERS.map(([t, dot]) => (
@@ -71,15 +90,30 @@ function ReaderPreview({ item, ui }) {
   );
 }
 
+const quoteToLine = q => `${q.speaker} | ${q.role} | ${q.quote}`;
+function lineToQuote(line) {
+  const [speaker = '', role = '', ...rest] = line.split('|').map(p => p.trim());
+  return { speaker, role, quote: rest.join(' | ') };
+}
+const lines = text => text.split('\n').map(l => l.trim()).filter(Boolean);
+
 function RewriteForm({ item, onDone, onCancel }) {
+  const sec = item.sections || {};
   const [title, setTitle] = useState(item.title);
   const [bullets, setBullets] = useState((item.bullets || []).join('\n'));
+  const [quotes, setQuotes] = useState((sec.quotes || []).map(quoteToLine).join('\n'));
+  const [next, setNext] = useState((sec.next || []).join('\n'));
+  const [background, setBackground] = useState((sec.background || []).join('\n'));
   const [note, setNote] = useState('');
   const [state, setState] = useState({});
   const save = async () => {
     setState({ busy: true });
     try {
-      await api(`/${item.id}/rewrite`, { title, bullets: bullets.split('\n').map(b => b.trim()).filter(Boolean), note });
+      await api(`/${item.id}/rewrite`, {
+        title, note,
+        bullets: lines(bullets),
+        sections: { quotes: lines(quotes).map(lineToQuote), next: lines(next), background: lines(background) },
+      });
       onDone();
     } catch (e) {
       setState({ error: e.message });
@@ -88,8 +122,17 @@ function RewriteForm({ item, onDone, onCancel }) {
   return (
     <div className="br-sec">
       <Field label="Headline"><Input value={title} onChange={e => setTitle(e.target.value)} /></Field>
-      <Field label="Bullets" hint="One bullet per line, 1 to 5. Name every person in full on first mention.">
+      <Field label="What happened" hint="One point per line, up to 8. Name every person in full on first mention.">
         <Textarea rows={8} value={bullets} onChange={e => setBullets(e.target.value)} />
+      </Field>
+      <Field label="Who said what" hint="One quote per line: Speaker | Role | exact words. The words must appear in a source exactly as written.">
+        <Textarea rows={4} value={quotes} onChange={e => setQuotes(e.target.value)} />
+      </Field>
+      <Field label="What happens next" hint="One per line. Only dates and steps a source states, with who stated them. No predictions.">
+        <Textarea rows={3} value={next} onChange={e => setNext(e.target.value)} />
+      </Field>
+      <Field label="Background" hint="Up to 3, from the sources only. Nothing about a named person's conduct or party history unless it is an attributed public record.">
+        <Textarea rows={3} value={background} onChange={e => setBackground(e.target.value)} />
       </Field>
       <Field label="Note for the change log" hint="Which source articles you used.">
         <Input value={note} onChange={e => setNote(e.target.value)} />
@@ -103,13 +146,45 @@ function RewriteForm({ item, onDone, onCancel }) {
   );
 }
 
+const EMPTY_CHECK = { descriptor: '', source: '', checked_at: '' };
+
+function PartyChecks({ checks, setChecks, none, setNone }) {
+  const update = (i, key, value) => setChecks(checks.map((c, j) => (j === i ? { ...c, [key]: value } : c)));
+  return (
+    <div style={{ margin: 'var(--s2) 0 var(--s3) 22px' }}>
+      {!none && checks.map((c, i) => (
+        <div key={i} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.5fr) minmax(0,1fr) auto', gap: 'var(--s2)', marginBottom: 'var(--s3)', paddingBottom: 'var(--s3)', borderBottom: '1px solid var(--hair)' }}>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <Input placeholder="Descriptor, e.g. Atiku Abubakar, ADC presidential candidate" value={c.descriptor} onChange={e => update(i, 'descriptor', e.target.value)} />
+          </div>
+          <Input placeholder="Source checked (link or name)" value={c.source} onChange={e => update(i, 'source', e.target.value)} />
+          <Input placeholder="When, e.g. 3 Oct 17:20 WAT" value={c.checked_at} onChange={e => update(i, 'checked_at', e.target.value)} />
+          <Button size="sm" variant="ghost" onClick={() => setChecks(checks.filter((_, j) => j !== i))}>Remove</Button>
+        </div>
+      ))}
+      <div className="br-actions">
+        {!none && <Button size="sm" variant="ghost" onClick={() => setChecks([...checks, { ...EMPTY_CHECK }])}>Add descriptor</Button>}
+        <label style={{ padding: 0 }}>
+          <input type="checkbox" checked={none} onChange={e => setNone(e.target.checked)} />
+          <span>This item has no party or candidacy descriptors</span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
 function EditorPanel({ item, checklist, reload }) {
   const [mode, setMode] = useState(null);          // 'rewrite' | 'leave'
   const [ticks, setTicks] = useState({});
+  const [checks, setChecks] = useState([{ ...EMPTY_CHECK }]);
+  const [noDescriptors, setNoDescriptors] = useState(false);
   const [reason, setReason] = useState('');
   const [state, setState] = useState({});
   const held = item.lane === 'review' || item.lane === 'senior_review';
-  const allTicked = checklist.every(c => ticks[c.key]);
+  const filledChecks = checks.filter(c => c.descriptor.trim() && c.source.trim() && c.checked_at.trim());
+  const partyOk = noDescriptors || (filledChecks.length > 0 && filledChecks.length === checks.length);
+  const allTicked = checklist.every(c => ticks[c.key]) && partyOk;
+  const awaitingSecond = item.needs_second_approver;
 
   const run = async (path, body) => {
     setState({ busy: path });
@@ -137,7 +212,15 @@ function EditorPanel({ item, checklist, reload }) {
         <p className="t-label">Record</p>
         <p className="t-meta">Source headline: {item.source_headline}</p>
         {item.edited_by && <p className="t-meta">Rewritten by {item.edited_by}</p>}
-        {item.approved_by && <p className="br-ok">Approved by {item.approved_by}</p>}
+        {item.approved_by && <p className="br-ok">Approved by {item.approved_by}{item.second_approved_by ? ` and ${item.second_approved_by}` : ''}</p>}
+        {awaitingSecond && <p className="br-err">Senior review: a second approver, other than {item.approved_by}, must approve.</p>}
+        {(item.approval_checklist?.party_checks || []).map((c, i) => (
+          <p key={i} className="t-meta">Checked: {c.descriptor} — {c.source}, {c.checked_at}</p>
+        ))}
+        {item.extras_error && <p className="br-err">Fuller sections could not be generated: {item.extras_error}</p>}
+        {(item.extras_dropped || []).length > 0 && (
+          <p className="t-meta">Removed by the section checks: {item.extras_dropped.join('; ')}</p>
+        )}
         {item.stale_approval_by && <p className="br-err">Approval by {item.stale_approval_by} no longer applies: the text changed. Approve again if it is right.</p>}
         {item.left_out_by && <p className="t-meta">Left out by {item.left_out_by}</p>}
         {item.named_in_sources.length > 0 && <p className="t-meta">Named in the source articles: {item.named_in_sources.join(', ')}</p>}
@@ -165,19 +248,28 @@ function EditorPanel({ item, checklist, reload }) {
         </div>
       )}
 
-      {held && !item.approved_by && !item.left_out_by && !mode && (
+      {held && (!item.approved_by || awaitingSecond) && !item.left_out_by && !mode && (
         <div className="br-sec br-check">
-          <p className="t-label">Editor's checklist</p>
+          <p className="t-label">{awaitingSecond ? 'Second approver' : "Editor's checklist"}</p>
           {checklist.map(c => (
-            <label key={c.key}>
-              <input type="checkbox" checked={!!ticks[c.key]} onChange={e => setTicks({ ...ticks, [c.key]: e.target.checked })} />
-              <span>{c.label}</span>
-            </label>
+            <React.Fragment key={c.key}>
+              <label>
+                <input type="checkbox" checked={!!ticks[c.key]} onChange={e => setTicks({ ...ticks, [c.key]: e.target.checked })} />
+                <span>{c.label}</span>
+              </label>
+              {c.key === 'party_live' && ticks.party_live && (
+                <PartyChecks checks={checks} setChecks={setChecks} none={noDescriptors} setNone={setNoDescriptors} />
+              )}
+            </React.Fragment>
           ))}
           <div className="br-actions" style={{ marginTop: 'var(--s3)' }}>
-            <Button size="sm" disabled={!allTicked} loading={state.busy === `/${item.id}/approve`}
-              onClick={() => run(`/${item.id}/approve`, { checklist: ticks })}>Approve for publication</Button>
-            {!allTicked && <span className="t-meta">Tick every line to approve.</span>}
+            <Button size="sm" disabled={!allTicked || !!state.busy} loading={state.busy === `/${item.id}/approve`}
+              onClick={() => run(`/${item.id}/approve`, {
+                checklist: ticks,
+                party_checks: noDescriptors ? [] : filledChecks,
+                no_party_descriptors: noDescriptors,
+              })}>{awaitingSecond ? 'Give second approval' : 'Approve for publication'}</Button>
+            {!allTicked && <span className="t-meta">Tick every line, and enter each descriptor's source and time, to approve.</span>}
           </div>
         </div>
       )}
