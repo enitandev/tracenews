@@ -140,6 +140,11 @@
       "surface": "Shared tier helpers",
       "kind": "infrastructure",
       "clearance": "Renders nothing"
+    },
+    "src/constants/scores.js": {
+      "surface": "TII visibility switch (TII_SCORES_VISIBLE = false)",
+      "kind": "infrastructure",
+      "clearance": "Renders nothing; hides the score on profiles and previews"
     }
   }
 }
