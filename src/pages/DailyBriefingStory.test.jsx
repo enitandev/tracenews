@@ -49,3 +49,29 @@ describe('BriefingItem (counsel B)', () => {
     expect(container.textContent).toContain('Watchdog 0');
   });
 });
+
+describe('reviewer-only data (counsel review of 3 Oct samples, item 7)', () => {
+  it('never renders "Named in the source articles", routing reasons or sources to readers', () => {
+    const staffItem = {
+      ...item,
+      named_in_sources: ['Aliko Dangote'],
+      reasons: ['political review lane: APC'],
+      sources: [{ title: 'Source headline', summary: 'Source summary', url: 'https://example.com' }],
+      source_headline: 'BREAKING: Senate passes bill',
+    };
+    const { container } = renderItem(staffItem);
+    const text = container.textContent;
+    expect(text).not.toContain('Named in the source articles');
+    expect(text).not.toContain('Aliko Dangote');
+    expect(text).not.toContain('political review lane');
+    expect(text).not.toContain('Source summary');
+    expect(text).not.toContain('BREAKING');
+  });
+
+  it('the coverage panel is counts only: no % and no "bias"', () => {
+    const { container } = renderItem();
+    const panel = container.textContent.slice(container.textContent.indexOf(ui.coverage_heading));
+    expect(panel).not.toMatch(/%|bias/i);
+    expect(panel).toMatch(/Govt\s*2/);
+  });
+});
