@@ -18,7 +18,6 @@ export default function DashboardShell({ children }) {
           <Link to={ROUTES.HOME}>Home</Link>
           <div className="nav-item soon" style={{ opacity: 0.5, fontSize: '13px', cursor: 'default' }}>For You</div>
           <div className="nav-item soon" style={{ opacity: 0.5, fontSize: '13px', cursor: 'default' }}>Local</div>
-          <Link to="/daily-briefing">Daily Briefing</Link>
           <Link to="/methodology">Methodology</Link>
           <Link to={ROUTES.DASHBOARD} className="on">Account</Link>
         </nav>

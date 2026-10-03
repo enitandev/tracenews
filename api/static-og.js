@@ -23,15 +23,6 @@ const STATIC_PAGES = {
       'decision behind the scores.',
     url: 'https://tracenews.ng/methodology'
   },
-  'daily-briefing': {
-    title: 'Daily Briefing | TraceNews',
-    description: 'Your daily Nigerian ' +
-      'media intelligence briefing — ' +
-      'the top 9 stories, how they were ' +
-      'covered, and what the coverage ' +
-      'patterns reveal.',
-    url: 'https://tracenews.ng/daily-briefing'
-  },
   'corrections': {
     title: 'Request a Correction | TraceNews',
     description: 'If you believe something on a TraceNews page is factually wrong, tell us and we will look into it promptly.',
