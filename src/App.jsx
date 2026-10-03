@@ -21,6 +21,7 @@ import PoliticianProfile from './pages/PoliticianProfile'
 import AdminCorrections from './admin/AdminCorrections';
 import MonitoringSpiritAdmin from './admin/MonitoringSpiritAdmin';
 import AdminPoliticians from './admin/AdminPoliticians';
+import AdminBriefing from './admin/AdminBriefing';
 import AdminOverview from './admin/AdminOverview';
 
 import Signup from './pages/Signup';
@@ -57,6 +58,7 @@ export default function App() {
                 <Route path="/home" element={<HomepagePlaceholder />} />
                 <Route path="/story/:slug" element={<Story />} />
                 {REGISTRY_PUBLIC && <Route path="/registry" element={<Registry />} />}
+                {BRIEFING_PUBLIC && <Route path="/daily-briefing" element={<DailyBriefingStory />} />}
                 {BRIEFING_PUBLIC && <Route path="/daily-briefing/:slug" element={<DailyBriefingStory />} />}
                 <Route path="/outlets" element={<HomepagePlaceholder />} />
                 <Route path="/outlets/:slug" element={<OutletProfile />} />
@@ -80,6 +82,7 @@ export default function App() {
                 <Route path="corrections" element={<AdminCorrections />} />
                 <Route path="monitoring-spirit" element={<MonitoringSpiritAdmin />} />
                 <Route path="politicians" element={<AdminPoliticians />} />
+                <Route path="briefing" element={<AdminBriefing />} />
                 <Route path="test-verdict" element={<TestVerdict />} />
               </Routes>
             </AdminShell>

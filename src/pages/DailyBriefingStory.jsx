@@ -1,539 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ROUTES } from '../constants/routes';
-import { MapPin, FileText, ChevronDown, ChevronUp, Newspaper } from 'lucide-react';
-import CoverageBar from '../components/CoverageBar';
-import { formatTimeAgo } from '../utils/helpers';
-import TierDistributionTubes from '../components/TierDistributionTubes';
-import { getOutletTier } from '../constants/tiers';
+import { TIER_COLORS } from '../utils/constants';
 
-function AccordionQuestion({ item, defaultExpanded }) {
-  const [expanded, setExpanded] = useState(defaultExpanded);
-  return (
-    <div 
-      onClick={() => setExpanded(!expanded)}
-      style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', marginBottom: '8px', cursor: 'pointer' }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', flex: 1, paddingRight: '8px' }}>
-          {item.question}
-        </div>
-        <div style={{ color: 'var(--text-muted)' }}>
-          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </div>
-      </div>
-      {expanded && (
-        <div style={{ fontSize: '16px', color: 'var(--text-muted)', lineHeight: 1.7, marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
-          {item.answer}
-        </div>
-      )}
-    </div>
-  );
+/**
+ * Rebuilt Daily Briefing (counsel, 3 Oct 2026, section B). Each item is the
+ * story's cleared event summary, labelled as AI-generated, with outlet counts
+ * by tier beside it. Every label comes from the API (app/briefingStrings.py);
+ * nothing user-facing is defined here. Routed only while BRIEFING_PUBLIC is on.
+ */
+const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
+const TIERS = ['govt_aligned', 'mainstream', 'watchdog'];
+
+function countedAt(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleString('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
-function SkeletonBriefingStory() {
+export function BriefingItem({ item, ui }) {
+  const counts = item.coverage_counts || {};
+  const total = TIERS.reduce((sum, t) => sum + (counts[t] || 0), 0);
   return (
-    <div style={{ 
-      maxWidth: '1400px', 
-      margin: '0 auto', 
-      padding: '32px 24px'
-    }}>
-      {/* Back link skeleton */}
-      <div style={{ 
-        width: '120px', height: '16px',
-        background: 'var(--bg-hover)',
-        borderRadius: '4px',
-        marginBottom: '32px'
-      }} />
-      
-      <div className="mobile-stack" 
-        style={{ 
-          display: 'flex', 
-          gap: '48px'
-        }}>
-        {/* Left column */}
-        <div style={{ 
-          width: 'calc(65% - 24px)'
-        }}>
-          {/* Hero skeleton */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '24px',
-            marginBottom: '32px'
-          }}>
-            <div style={{ 
-              width: '40%', 
-              height: '320px',
-              background: 'var(--bg-hover)',
-              borderRadius: '8px',
-              flexShrink: 0
-            }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ 
-                width: '40%', height: '14px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px',
-                marginBottom: '16px'
-              }} />
-              <div style={{ 
-                width: '100%', height: '40px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px',
-                marginBottom: '12px'
-              }} />
-              <div style={{ 
-                width: '80%', height: '40px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px',
-                marginBottom: '24px'
-              }} />
-              <div style={{ 
-                width: '100%', height: '28px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px',
-                marginTop: 'auto'
-              }} />
-            </div>
-          </div>
-          {/* Content skeleton */}
-          {[1,2,3].map(i => (
-            <div key={i} style={{ 
-              marginBottom: '32px'
-            }}>
-              <div style={{ 
-                width: '200px', 
-                height: '26px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px',
-                marginBottom: '20px'
-              }} />
-              {[1,2,3].map(j => (
-                <div key={j} style={{ 
-                  width: j === 3 
-                    ? '60%' : '100%',
-                  height: '16px',
-                  background: 'var(--bg-hover)',
-                  borderRadius: '4px',
-                  marginBottom: '12px'
-                }} />
-              ))}
-            </div>
+    <article data-testid="briefing-item" style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '20px', marginBottom: '20px', background: 'var(--bg-surface)' }}>
+      {item.image_url && (
+        <img src={item.image_url} alt="" referrerPolicy="no-referrer" style={{ width: '100%', maxHeight: '280px', objectFit: 'cover', borderRadius: '6px', marginBottom: '16px' }} />
+      )}
+      <h2 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '22px', margin: '0 0 6px', color: 'var(--text-primary)' }}>
+        <Link to={`/story/${item.slug}`} style={{ color: 'inherit', textDecoration: 'none' }}>{item.title}</Link>
+      </h2>
+      <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '0 0 12px', fontFamily: "'IBM Plex Mono', monospace" }}>{ui.attribution_label}</p>
+      <ul style={{ margin: '0 0 16px', paddingLeft: '20px', lineHeight: 1.6, color: 'var(--text-primary)', fontSize: '15px' }}>
+        {(item.bullets || []).filter(b => typeof b === 'string').map((b, i) => <li key={i}>{b}</li>)}
+      </ul>
+      <div style={{ borderTop: '0.5px solid var(--border)', paddingTop: '12px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+        <div style={{ fontWeight: 600, marginBottom: '6px' }}>{ui.coverage_heading}: {total}</div>
+        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+          {TIERS.map(t => (
+            <span key={t} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS[t] }} />
+              {ui.tier_labels[t]} <b style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{counts[t] ?? 0}</b>
+            </span>
           ))}
         </div>
-        
-        {/* Divider */}
-        <div className="hide-on-mobile" 
-          style={{ 
-            width: '1px',
-            background: 'var(--border)',
-            alignSelf: 'stretch'
-          }} 
-        />
-        
-        {/* Right column */}
-        <div style={{ 
-          width: 'calc(35% - 24px)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px'
-        }}>
-          {[1,2,3].map(i => (
-            <div key={i} style={{ 
-              background: 'var(--bg-elevated)',
-              border: '1px solid var(--border)',
-              borderRadius: '8px',
-              padding: '16px',
-              height: '120px'
-            }}>
-              <div style={{ 
-                width: '60%', height: '14px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px',
-                marginBottom: '12px'
-              }} />
-              <div style={{ 
-                width: '90%', height: '12px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px',
-                marginBottom: '8px'
-              }} />
-              <div style={{ 
-                width: '70%', height: '12px',
-                background: 'var(--bg-hover)',
-                borderRadius: '4px'
-              }} />
-            </div>
-          ))}
-        </div>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px' }}>{ui.coverage_as_of.replace('{time}', countedAt(item.counts_as_of))}</div>
       </div>
-    </div>
-  )
+      <div style={{ display: 'flex', gap: '16px', marginTop: '12px', fontSize: '13px' }}>
+        <Link to={`/corrections?page=${encodeURIComponent(`/daily-briefing/${item.slug}`)}`} style={{ color: 'var(--text-secondary)' }}>{ui.correction_link}</Link>
+        <Link to="/methodology#section-03" style={{ color: 'var(--text-secondary)' }}>{ui.methodology_link}</Link>
+      </div>
+    </article>
+  );
 }
 
 export default function DailyBriefingStory() {
   const { slug } = useParams();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [state, setState] = useState({ loading: true });
 
   useEffect(() => {
-    setLoading(true);
-    fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/daily-briefing/${slug}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Briefing not found");
-        return res.json();
-      })
-      .then(res => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch daily briefing story", err);
-        setError(err.message);
-        setLoading(false);
-      });
+    const url = slug ? `${API_BASE}/daily-briefing/${encodeURIComponent(slug)}` : `${API_BASE}/daily-briefing`;
+    fetch(url)
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(d => setState({ loading: false, data: d }))
+      .catch(() => setState({ loading: false, error: true }));
   }, [slug]);
 
-  if (loading) return <SkeletonBriefingStory />
-  
-  if (error || !data) return (
-    <div style={{ 
-      maxWidth: '1400px',
-      margin: '0 auto',
-      padding: '60px 24px',
-      textAlign: 'center',
-      color: 'var(--text-muted)',
-      fontFamily: 'var(--font-body)',
-      fontSize: '16px'
-    }}>
-      This briefing is not available. 
-      <Link to="/" style={{ 
-        color: 'var(--text-primary)',
-        marginLeft: '8px'
-      }}>
-        Return to homepage
-      </Link>
-    </div>
-  )
+  if (state.loading) return <div style={{ padding: '80px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>…</div>;
+  if (state.error || !state.data) return <div style={{ padding: '80px 20px', textAlign: 'center' }}><Link to="/">TraceNews home</Link></div>;
 
-  const { cluster, stories, ground_summary, common_ground, perspectives_title, perspectives_sides, perspectives_table, followup_questions, location_context, more_from_briefing, image_url } = data;
-
-  // For the bias distribution tubes
-
-  const groupOutlets = () => {
-    const groups = { 'govt_aligned': [], 'mainstream': [], 'watchdog': [], 'blog': [], 'unscored': [] };
-    const seenOutlets = new Set();
-    stories.forEach(s => {
-      const out = s.outlets || {};
-      let tier = getOutletTier(out);
-      
-      const outletId = out.slug || s.outlet_slug;
-      if (groups[tier] && !seenOutlets.has(outletId)) {
-        seenOutlets.add(outletId);
-        // Shape object for TierDistributionTubes
-        groups[tier].push({
-          outlet_name: out.name || s.outlet_slug || s.outlet_name,
-          outlets: out
-        });
-      }
-    });
-    return groups;
-  };
-  const outletGroups = groupOutlets();
-
-  const metaTitle = `${cluster.representative_title} | TraceNews Briefing`;
-  
-  let metaDesc = cluster.ground_summary || cluster.summary || "See every side of every Nigerian story.";
-  if (metaDesc.length > 155) {
-    const truncated = metaDesc.substring(0, 155);
-    metaDesc = truncated.substring(0, Math.min(truncated.length, truncated.lastIndexOf(" "))) + "...";
-  }
-
+  const { ui } = state.data;
+  const items = slug ? [state.data.item] : state.data.items;
+  const first = items[0];
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
+    <div style={{ maxWidth: '760px', margin: '0 auto', padding: '32px 20px', fontFamily: 'var(--font-body)' }}>
       <Helmet>
-        <title>{metaTitle}</title>
-        <meta name="description" content={metaDesc} />
-        <meta property="og:title" content={metaTitle} />
-        <meta property="og:description" content={metaDesc} />
-        <meta property="og:image" content={cluster.hero_image_url || "https://tracenews.ng/og-default.png"} />
-        <meta property="og:url" content={`https://tracenews.ng/daily-briefing/${cluster.cluster_slug}`} />
-        <meta property="og:site_name" content="TraceNews" />
-        <meta property="article:published_time" content={cluster.published_at || new Date().toISOString()} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={metaTitle} />
-        <meta name="twitter:description" content={metaDesc} />
-        <meta name="twitter:image" content={cluster.hero_image_url || "https://tracenews.ng/og-default.png"} />
-        <link rel="canonical" href={`https://tracenews.ng/daily-briefing/${cluster.cluster_slug}`} />
+        <title>{slug && first ? `${first.title} | ${ui.title} | TraceNews` : `${ui.title} | TraceNews`}</title>
+        {first && <meta name="description" content={`${ui.attribution_label}: ${(first.bullets || []).join(' ')}`} />}
       </Helmet>
-      
-      {/* Back link */}
-      <Link to="/daily-briefing" style={{ 
-        display: 'inline-flex', 
-        alignItems: 'center', 
-        gap: '6px', color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, fontSize: '13px', marginBottom: '32px' }}>
-        ← Daily Briefing
-      </Link>
-
-      <div className="mobile-stack" style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
-        {/* LEFT COLUMN */}
-        <div style={{ width: 'calc(65% - 24px)' }}>
-          {/* SECTION 1 - Hero */}
-          <div className="mobile-stack" style={{ display: 'flex', gap: '24px', marginBottom: '32px' }}>
-            <div style={{ width: '40%', flexShrink: 0 }}>
-              {image_url ? (
-                <>
-                  <img referrerPolicy="no-referrer" src={image_url} alt="" style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '8px' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                  <div style={{ width: '100%', height: '320px', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2, borderRadius: '8px' }}>
-                    <Newspaper size={64} />
-                  </div>
-                </>
-              ) : (
-                <div style={{ width: '100%', height: '320px', background: 'var(--bg-hover)', borderRadius: '8px' }}></div>
-              )}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                {cluster?.outlet_count} articles · {formatTimeAgo(cluster?.first_seen_at)}
-              </div>
-              <h1 style={{ fontSize: '40px', fontWeight: 800, lineHeight: 1.2, color: 'var(--text-primary)', fontFamily: 'var(--font-body)', margin: '0 0 24px 0' }}>
-                {cluster?.representative_title}
-              </h1>
-              <div style={{ marginTop: 'auto' }}>
-                <CoverageBar coverageStats={cluster?.coverage_stats} variant="hero" />
-              </div>
-            </div>
-          </div>
-
-          {/* SECTION 2 - Ground Summary */}
-          {ground_summary && (
-            <div style={{ marginTop: '40px' }}>
-              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
-                Trace Summary
-              </div>
-              <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
-                <li style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
-                  <strong>What's happening:</strong>{" "}{ground_summary.whats_happening}
-                </li>
-                <li style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
-                  <strong>Why it matters:</strong>{" "}{ground_summary.why_it_matters}
-                </li>
-              </ul>
-              <div style={{ height: '1px', background: 'var(--border)', marginTop: '32px' }}></div>
-            </div>
-          )}
-
-          {/* SECTION 3 - Common Ground */}
-          {common_ground && common_ground.length > 0 && (
-            <div style={{ marginTop: '40px' }}>
-              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
-                Where Everyone Agrees
-              </div>
-              <ul style={{ listStyle: 'disc', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
-                {common_ground.map((cg, i) => (
-                  <li key={i} style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)' }}>
-                    <strong>{cg.label}:</strong>{" "}{cg.text}
-                  </li>
-                ))}
-              </ul>
-              <div style={{ height: '1px', background: 'var(--border)', marginTop: '32px' }}></div>
-            </div>
-          )}
-
-          {/* SECTION 4 - Perspectives */}
-          {perspectives_title && perspectives_table && (
-            <div style={{ marginTop: '40px' }}>
-              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
-                Perspectives
-              </div>
-              
-              <div style={{ 
-                background: 'linear-gradient(to bottom right, var(--bg-elevated), rgba(0,0,0,0.2))',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                padding: '40px 32px',
-                marginBottom: '32px',
-                minHeight: '120px',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <div style={{ fontSize: '36px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2, maxWidth: '100%' }}>
-                  {perspectives_title}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {/* Header Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '25% 37.5% 37.5%', paddingBottom: '8px', borderBottom: '2px solid var(--border)', marginBottom: '8px' }}>
-                  <div></div>
-                  <div style={{ fontSize: '18px', fontWeight: 700, textAlign: 'center', color: 'var(--text-primary)' }}>
-                    {perspectives_sides?.side_a}
-                  </div>
-                  <div style={{ fontSize: '18px', fontWeight: 700, textAlign: 'center', color: 'var(--text-primary)' }}>
-                    {perspectives_sides?.side_b}
-                  </div>
-                </div>
-
-                {/* Data Rows */}
-                {perspectives_table.map((row, i) => (
-                  <div key={i} style={{ display: 'grid', gridTemplateColumns: '25% 37.5% 37.5%', padding: '16px 0', borderBottom: i < perspectives_table.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-muted)', paddingRight: '16px' }}>
-                      {row.dimension}
-                    </div>
-                    <div style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)', paddingRight: '12px' }}>
-                      {row.side_a}
-                    </div>
-                    <div style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--text-primary)', paddingLeft: '12px' }}>
-                      {row.side_b}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Divider */}
-        <div className="hide-on-mobile" style={{ width: '1px', background: 'var(--border)', alignSelf: 'stretch' }}></div>
-
-        {/* RIGHT COLUMN */}
-        <div style={{ width: 'calc(35% - 24px)' }}>
-          {/* CARD 1 - Location Context */}
-          {location_context && location_context.city && (
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                <MapPin 
-                  size={18} 
-                  color="var(--text-muted)"
-                  style={{ 
-                    flexShrink: 0,
-                    marginTop: '3px'
-                  }} 
-                />
-                <div>
-                  <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    {location_context.city}, {location_context.country}
-                  </div>
-                  <div style={{ fontSize: '16px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    {location_context.note}
-                  </div>
-                </div>
-              </div>
-              <div style={{ height: '1px', background: 'var(--border)', margin: '16px 0' }}></div>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                <FileText 
-                  size={18} 
-                  color="var(--text-muted)"
-                  style={{ 
-                    flexShrink: 0,
-                    marginTop: '3px'
-                  }} 
-                />
-                <div>
-                  <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    {cluster?.outlet_count} Articles
-                  </div>
-                  <div style={{ fontSize: '16px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    {stories.slice(0, 3).map(s => s.outlets?.name || s.outlet_slug || s.outlet_name).join(', ')}
-                    {stories.length > 3 ? ' and more' : ''}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CARD 2 - Follow-up Questions */}
-          {followup_questions && followup_questions.length > 0 && (
-            <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '16px' }}>
-                Follow-up Questions
-              </div>
-              {followup_questions.map((q, i) => (
-                <AccordionQuestion key={i} item={q} defaultExpanded={i === 0} />
-              ))}
-            </div>
-          )}
-
-          {/* CARD 3 - Bias Distribution */}
-          <div>
-            <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '16px' }}>
-              Bias Distribution
-            </div>
-            <div style={{ marginBottom: '24px', borderRadius: '6px', overflow: 'hidden' }}>
-              <CoverageBar coverageStats={cluster?.coverage_stats} variant="hero" />
-            </div>
-            <div style={{ marginBottom: '24px' }}>
-              <TierDistributionTubes groups={outletGroups} />
-            </div>
-            
-            {/* Untracked bias row */}
-            {outletGroups['blog'].length > 0 || outletGroups['unscored'].length > 0 ? (
-              <div style={{ marginBottom: '24px' }}>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                  Untracked bias
-                </div>
-                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                  {[...outletGroups['blog'], ...outletGroups['unscored']].map((s, idx) => (
-                    <div key={idx} title={s.outlet_name} style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#888', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 800 }}>
-                      {s.outlet_name ? s.outlet_name.charAt(0).toUpperCase() : '?'}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            <Link to={`/story/${cluster?.slug}`} style={{ display: 'block', width: '100%', textAlign: 'center', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-primary)', padding: '10px', borderRadius: '6px', fontWeight: 600, fontSize: '13px', textDecoration: 'none', boxSizing: 'border-box' }}>
-              View All Sources →
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* BOTTOM SECTION */}
-      {more_from_briefing && more_from_briefing.length > 0 && (
-        <div style={{ marginTop: '64px' }}>
-          <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '24px' }}>
-            More from Today's Briefing
-          </div>
-          <div className="briefing-more-grid">
-            {more_from_briefing.map((m, i) => (
-              <Link key={i} to={`/daily-briefing/${m.cluster_slug}`} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', textDecoration: 'none', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', padding: '12px' }}>
-                  <div style={{ width: '120px', height: '90px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
-                    {m.image_url ? (
-                      <>
-                        <img referrerPolicy="no-referrer" src={m.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                        <div style={{ width: '100%', height: '100%', display: 'none', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
-                          <Newspaper size={32} />
-                        </div>
-                      </>
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', background: 'var(--bg-hover)' }}></div>
-                    )}
-                  </div>
-                  <div style={{ paddingLeft: '12px', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                      {m.outlet_count} articles
-                    </div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {m.representative_title}
-                    </div>
-                  </div>
-                </div>
-                <div style={{ padding: '0 12px 12px 12px' }}>
-                  <div style={{ marginTop: '12px', overflow: 'hidden' }}>
-                    <CoverageBar coverageStats={m.coverage_stats} variant="compact" />
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic' }}>
-                    {m.perspectives_title}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <h1 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '30px', margin: '0 0 24px', color: 'var(--text-primary)' }}>
+        {slug ? <Link to="/daily-briefing" style={{ color: 'inherit', textDecoration: 'none' }}>{ui.title}</Link> : ui.title}
+      </h1>
+      {items.length === 0 ? <p style={{ color: 'var(--text-muted)' }}>{ui.empty}</p> : items.map(item => <BriefingItem key={item.id} item={item} ui={ui} />)}
     </div>
   );
 }
