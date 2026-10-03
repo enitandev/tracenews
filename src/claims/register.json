@@ -1,0 +1,33 @@
+{
+  "_about": "Every public component that makes a claim about an outlet, tier or person, with its clearance reference (counsel's scoping note, 3 Oct 2026, section 6). register.test.js fails the build on any file that renders claim data and is not listed here. Adding an entry is not clearance: a new surface goes in as NOT CLEARED until counsel has seen it.",
+  "entries": {
+    "src/components/MonitoringSpirit/VerdictCard.jsx": { "surface": "Verdict card on story pages", "kind": "public", "clearance": "CLEARED — Gate B addendum 7 Jul 2026; display rules confirmed 3 Oct 2026. MIXED withheld (counsel 2 Oct); DARK never renders." },
+    "src/components/MonitoringSpirit/monitoringSpiritStrings.ts": { "surface": "Verdict card string inventory", "kind": "public", "clearance": "CLEARED — Gate B addendum 7 Jul 2026; '–' approved 3 Oct 2026." },
+    "src/components/MonitoringSpirit/verdictGate.js": { "surface": "Verdict card display gate", "kind": "public", "clearance": "CLEARED — display rules confirmed 3 Oct 2026." },
+    "src/pages/Methodology.jsx": { "surface": "/methodology", "kind": "public", "clearance": "NOT CLEARED — counsel 3 Oct §6: to be reviewed sentence by sentence." },
+    "src/pages/OutletProfile.jsx": { "surface": "/outlets/:slug — TII score, tier, ownership", "kind": "public", "clearance": "NOT CLEARED — counsel 3 Oct §4." },
+    "api/outlet-og.js": { "surface": "Outlet preview served to search engines and social apps — TII score, tier", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/pages/PoliticianProfile.jsx": { "surface": "/politicians/:slug — coverage of a named person by tier (percentages)", "kind": "public", "clearance": "NOT CLEARED" },
+    "api/politician-og.js": { "surface": "Politician preview for search engines and social apps — tier percentages", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/pages/Registry.jsx": { "surface": "/registry — outlet list with party colours (unlinked public route)", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/pages/Story.jsx": { "surface": "/story/:slug — coverage panels, outlet tiers", "kind": "public", "clearance": "NOT CLEARED (verdict card inside it is cleared separately)" },
+    "src/pages/DailyBriefingStory.jsx": { "surface": "/daily-briefing/:slug — 'Bias Distribution' by tier", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/pages/Category.jsx": { "surface": "/topics/:topic — 'covered mostly by X sources (N%)'", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/pages/Dashboard.jsx": { "surface": "/dashboard — reader's coverage diet by tier", "kind": "public", "clearance": "NOT CLEARED (MIXED tile withheld 2 Oct)" },
+    "src/components/CoverageSidebar.jsx": { "surface": "Story/briefing sidebar — outlets by tier", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/components/CoverageBar.jsx": { "surface": "Tier bar on story lists", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/components/CoverageBreadthCard.jsx": { "surface": "Coverage breadth card", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/components/CategoryBiasBar.jsx": { "surface": "Topic tier bar", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/components/HeroStoryCard.jsx": { "surface": "Homepage lead card", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/components/StandardStoryItem.jsx": { "surface": "Homepage/topic story row", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/components/CompactStoryItem.jsx": { "surface": "Compact story row", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/components/TierDistributionTubes.jsx": { "surface": "Tier distribution graphic", "kind": "public", "clearance": "NOT CLEARED" },
+    "src/pages/TestVerdict.jsx": { "surface": "/admin/test-verdict — sample data", "kind": "staff", "clearance": "Staff only (admin route)" },
+    "src/admin/AdminOverview.jsx": { "surface": "Staff console", "kind": "staff", "clearance": "Staff only" },
+    "src/admin/MonitoringSpiritAdmin.jsx": { "surface": "Staff verdict console", "kind": "staff", "clearance": "Staff only" },
+    "src/admin/permissions.js": { "surface": "Permission map", "kind": "infrastructure", "clearance": "Renders nothing" },
+    "src/App.jsx": { "surface": "Routes", "kind": "infrastructure", "clearance": "Renders nothing itself" },
+    "src/constants/tiers.js": { "surface": "Tier names and colours", "kind": "infrastructure", "clearance": "Shared labels; the labels themselves are cleared (counsel 3 Oct §2)" },
+    "src/utils/helpers.js": { "surface": "Shared tier helpers", "kind": "infrastructure", "clearance": "Renders nothing" }
+  }
+}
