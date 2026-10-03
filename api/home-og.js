@@ -46,8 +46,8 @@ export default async function handler(
     'independence across Nigerian ' +
     'news outlets. We score how ' +
     'outlets behave — who they ' +
-    'quote, what they cover, and ' +
-    'what they avoid. We are an ' +
+    'quote and what they cover. ' +
+    'We are an ' +
     'analytical instrument: we ' +
     'observe and measure coverage. ' +
     'We do not produce news.'

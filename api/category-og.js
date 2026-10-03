@@ -19,7 +19,7 @@ const BOT_USER_AGENTS = [
 ]
 
 const CATEGORY_META = {
-  Politics: 'Track how Nigerian media covers politics — bias, silences, and coverage gaps across government-aligned and watchdog outlets.',
+  Politics: 'Track how Nigerian media covers politics across government-aligned, mainstream and watchdog outlets.',
   Security: 'See how Nigerian media covers security — banditry, terrorism, and police accountability across all editorial tiers.',
   Economy: 'Monitor Nigerian business and economy coverage — who reports on fiscal policy, inflation, and corporate accountability.',
   Sports: 'Nigerian sports news coverage across all major outlets — football, athletics, and more.',
@@ -74,8 +74,7 @@ export default async function handler(
   const metaDesc = CATEGORY_META[
     categoryName
   ] || `See how Nigerian media covers ` +
-    `${categoryName} — track bias, ` +
-    `silences and coverage gaps on TraceNews.`
+    `${categoryName} on TraceNews.`
   
   const metaTitle = 
     `${categoryName} News Coverage ` +

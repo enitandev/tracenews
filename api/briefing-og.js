@@ -1,6 +1,5 @@
-const BRIEFING_WITHDRAWN = true
-
 import { createClient } from '@supabase/supabase-js'
+import { BRIEFING_PUBLIC } from '../src/constants/features.js'
 import { BOT_USER_AGENTS, truncateDesc, safe } from './story-og.js'
 
 const supabase = createClient(
@@ -16,10 +15,10 @@ const API_BASE =
   'https://uvicorn-appmain-production-79c6.up.railway.app'
 
 export default async function handler(req, res) {
-  // Withdrawn on counsel's instruction (3 Oct 2026). Code kept for the record.
-  if (BRIEFING_WITHDRAWN) {
+  // Off until the rebuilt Briefing is cleared (src/constants/features.js).
+  if (!BRIEFING_PUBLIC) {
     res.setHeader('X-Robots-Tag', 'noindex')
-    return res.status(410).send('Gone')
+    return res.status(404).send('Not found')
   }
 
   const { slug } = req.query

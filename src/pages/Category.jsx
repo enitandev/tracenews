@@ -9,7 +9,7 @@ import CompactStoryItem from '../components/CompactStoryItem';
 
 import CoverageBar from '../components/CoverageBar';
 import CategoryBiasBar from '../components/CategoryBiasBar';
-import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS, TIER_LABELS, TIER_KEYS } from '../utils/constants';
+import { TIERS, TIER_COLORS as COVERAGE_TIER_COLORS } from '../utils/constants';
 
 
 function SkeletonHeroStoryCard() {
@@ -155,15 +155,8 @@ export default function Category() {
     total_coverage: tierSum || 1
   };
 
-  let biasSummary = '';
-  if (data && tierSum > 0) {
-    const tiers = TIER_KEYS.slice(0, 3);
-    const dominant = tiers.reduce((a,b) => (bias_breakdown[a] || 0) > (bias_breakdown[b] || 0) ? a : b);
-    const pct = Math.round(((bias_breakdown[dominant] || 0) / tierSum) * 100);
-    biasSummary = pct > 50 ? 
-      `${categoryName} is covered mostly by ${TIER_LABELS[dominant]} sources (${pct}%).` : 
-      `Coverage of ${categoryName} is relatively balanced across tiers.`;
-  }
+  // The "[Topic] is covered mostly by [tier] sources (N%)" line is withdrawn
+  // until rewritten (counsel, 3 Oct 2026).
 
   const sortedTopStories = top_stories ? [...top_stories].sort((a,b) => (b.outlet_count || 0) - (a.outlet_count || 0)) : [];
   const heroStory = sortedTopStories.length > 0 ? sortedTopStories[0] : null;
@@ -178,7 +171,7 @@ export default function Category() {
       {(() => {
         const categoryDisplayName = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
         const categoryMeta = {
-          Politics: 'Track how Nigerian media covers politics — bias, silences, and coverage gaps across government-aligned and watchdog outlets.',
+          Politics: 'Track how Nigerian media covers politics across government-aligned, mainstream and watchdog outlets.',
           Security: 'See how Nigerian media covers security — banditry, terrorism, and police accountability across all editorial tiers.',
           Economy: 'Monitor Nigerian business and economy coverage — who reports on fiscal policy, inflation, and corporate accountability.',
           Sports: 'Nigerian sports news coverage across all major outlets — football, athletics, and more.',
@@ -190,7 +183,7 @@ export default function Category() {
           Judiciary: 'Court cases, legal accountability, and judicial coverage in Nigerian media.',
           Religion: 'Religious affairs coverage across Nigerian media outlets.'
         };
-        const metaDesc = categoryMeta[categoryDisplayName] || `See how Nigerian media covers ${categoryDisplayName} — track bias, silences and coverage gaps on TraceNews.`;
+        const metaDesc = categoryMeta[categoryDisplayName] || `See how Nigerian media covers ${categoryDisplayName} on TraceNews.`;
         const canonicalUrl = `https://tracenews.ng/topics/${topicSlug}`;
 
         return (
@@ -396,9 +389,6 @@ export default function Category() {
               <div>
                 <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: 'var(--text-muted)' }}>
                   How is the Nigerian media covering {categoryName}?
-                </p>
-                <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.4 }}>
-                  {biasSummary}
                 </p>
                 <div style={{ width: '100%', display: 'block', borderRadius: '4px' }}>
                   <CategoryBiasBar coverageStats={synthCoverageStats} />

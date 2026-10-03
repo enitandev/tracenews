@@ -23,7 +23,7 @@ export default function About() {
         <h1 style={{ fontFamily: 'Spectral, Georgia, serif', fontSize: '36px', fontWeight: 600, margin: '0 0 24px 0', color: 'var(--text-primary)' }}>A media intelligence platform, not a news publisher</h1>
         
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '16px' }}>
-          TraceNews measures editorial independence across Nigerian news outlets. We score how outlets behave — who they quote, what they cover, and what they avoid — and make those measurements publicly searchable.
+          TraceNews measures editorial independence across Nigerian news outlets. We measure how outlets behave — who they quote and what they cover — and make those measurements publicly searchable.
         </p>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '16px' }}>
           We do not produce news. We do not have reporters or editorial positions. We are an analytical instrument: we observe and measure what Nigerian media publishes, the same way an audiometer measures sound.

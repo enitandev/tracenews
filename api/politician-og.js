@@ -1,9 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
-)
+// Reads the same backend endpoint as the page, so the preview can only say
+// what the page says, and held, private and no-data people are 404 here too.
+const API = 'https://uvicorn-appmain-production-79c6.up.railway.app'
 
 const BOT_USER_AGENTS = [
   'googlebot', 'gptbot', 'claudebot',
@@ -15,8 +12,6 @@ const BOT_USER_AGENTS = [
   'whatsapp', 'telegrambot', 'discordbot'
 ]
 
-const DATA_SINCE = "22 June 2026"
-const SMALL_N_THRESHOLD = 25
 
 const CATEGORY_DISPLAY = {
   Legislature: "Legislator",
@@ -40,26 +35,6 @@ function safe(s) {
     .replace(/>/g, '&gt;')
 }
 
-function tierText(name, dist, total) {
-  if (!total || total < SMALL_N_THRESHOLD) {
-    return `Mentioned in ${total || 0} ` +
-      `stories tracked by TraceNews ` +
-      `since ${DATA_SINCE}.`
-  }
-  const g = dist?.govt_aligned || 0
-  const m = dist?.mainstream || 0
-  const w = dist?.watchdog || 0
-  const pct = (n) => 
-    Math.round((n / total) * 100)
-  return (
-    `Of ${total} stories mentioning ` +
-    `${name} since ${DATA_SINCE}, ` +
-    `${pct(g)}% appeared in ` +
-    `government-aligned outlets, ` +
-    `${pct(m)}% in mainstream outlets, ` +
-    `and ${pct(w)}% in watchdog outlets.`
-  )
-}
 
 export default async function handler(
   req, res
@@ -83,47 +58,13 @@ export default async function handler(
     return res.status(200).send(html)
   }
 
-  const { data: politicians } =
-    await supabase
-      .from('politicians')
-      .select(
-        'full_name, common_name, ' +
-        'slug, party, state, ' +
-        'current_position, category, ' +
-        'wikipedia_image_url, ' +
-        'publication_status'
-      )
-      .eq('slug', slug)
-      .eq('active', true)
-      .limit(1)
-
-  if (!politicians || 
-      !politicians.length) {
-    return res.redirect(
-      302, 'https://tracenews.ng'
-    )
+  const apiRes = await fetch(`${API}/politicians/${encodeURIComponent(slug || '')}`)
+  if (!apiRes.ok) {
+    res.setHeader('X-Robots-Tag', 'noindex')
+    return res.status(404).send('Not found')
   }
-
-  const p = politicians[0]
-
-  // Check publication status
-  const pubStatus = 
-    p.publication_status || 'published'
-
-  if (pubStatus === 'excluded') {
-    res.status(410).json({
-      detail: 'Gone — this page has ' +
-        'been permanently withdrawn.'
-    })
-    return
-  }
-
-  if (pubStatus === 'pending_review') {
-    res.status(404).json({
-      detail: 'Not found'
-    })
-    return
-  }
+  const data = await apiRes.json()
+  const p = data.politician
   const name = p.common_name || 
     p.full_name
   const canonical =
@@ -134,13 +75,13 @@ export default async function handler(
     `${name} — Media Coverage ` +
     `Record | TraceNews`
 
+  const c = data.article_counts || {}
   const metaDesc =
-    `How Nigerian media has covered ` +
-    `stories mentioning ${name}, ` +
-    `as recorded by TraceNews since ` +
-    `${DATA_SINCE}. This page ` +
-    `describes coverage behaviour, ` +
-    `not the person.`
+    `As of ${data.as_of}, TraceNews has recorded ${data.total_articles} articles ` +
+    `that name ${name}: ${c.govt_aligned || 0} from government-aligned outlets, ` +
+    `${c.mainstream || 0} from mainstream outlets and ${c.watchdog || 0} from watchdog outlets` +
+    (c.untiered ? `, and ${c.untiered} from outlets not assigned a tier.` : '.') +
+    ` This page describes coverage, not the person.`
 
   const categoryLabel =
     CATEGORY_DISPLAY[p.category] ||

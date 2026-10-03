@@ -22,6 +22,8 @@ const BOT_USER_AGENTS = [
   'discordbot'
 ]
 
+import { BRIEFING_PUBLIC, REGISTRY_PUBLIC } from './src/constants/features.js'
+
 export const config = {
   matcher: '/((?!api|_next/static|_next/image|favicon.ico|assets|logo.png|favicon-32.png|apple-touch-icon.png|.*\\.svg$).*)',
 }
@@ -38,16 +40,37 @@ export default async function middleware(
     bot => ua.toLowerCase().includes(bot)
   )
 
-  // Withdrawn on counsel's instruction (3 Oct 2026): the Daily Briefing and
-  // the outlet registry return 410 Gone to browsers and crawlers alike. The
-  // underlying data is preserved; nothing here deletes it.
-  if (/^\/(daily-briefing|registry)(\/|$)/.test(url.pathname)) {
+  // Surfaces switched off in src/constants/features.js return 404 to
+  // browsers and crawlers alike. Code and data are kept; nothing is deleted.
+  const flaggedOff =
+    (!BRIEFING_PUBLIC && /^\/daily-briefing(\/|$)/.test(url.pathname)) ||
+    (!REGISTRY_PUBLIC && /^\/registry(\/|$)/.test(url.pathname))
+  if (flaggedOff) {
     return new Response(
-      '<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>Gone | TraceNews</title><p>This page is no longer available. <a href="/">TraceNews home</a></p>',
-      { status: 410, headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } }
+      '<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>Not found | TraceNews</title><p>Page not found. <a href="/">TraceNews home</a></p>',
+      { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } }
     )
   }
   
+  // Politician pages: held, private and no-data people are 404 for every
+  // client, browser or crawler (counsel, 3 Oct 2026). The backend decides.
+  const polMatch = url.pathname.match(/^\/politicians\/([^/]+)\/?$/)
+  if (polMatch) {
+    let visible = false
+    try {
+      const v = await fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/politicians/${encodeURIComponent(polMatch[1])}/visibility`)
+      visible = v.ok && (await v.json()).visible === true
+    } catch (error) {
+      console.error('politician visibility check failed:', error.message)
+    }
+    if (!visible) {
+      return new Response(
+        '<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>Not found | TraceNews</title><p>Page not found. <a href="/">TraceNews home</a></p>',
+        { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } }
+      )
+    }
+  }
+
   if ((url.pathname === '/' || 
        url.pathname === '') && isBot) {
     const apiUrl = new URL(request.url)
@@ -216,10 +239,10 @@ export default async function middleware(
         )
         const html = await apiResponse.text()
         return new Response(html, {
-          status: 200,
+          status: apiResponse.status,
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400'
+            'Cache-Control': apiResponse.ok ? 'public, max-age=3600, stale-while-revalidate=86400' : 'no-store'
           }
         })
       } catch (error) {

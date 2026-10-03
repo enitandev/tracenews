@@ -301,32 +301,6 @@ export default function Story() {
   };
 
 
-  // Layer 2: Editorial Independence Gauge
-  const renderLayer2 = () => {
-    const avgScore = stats.average_independence_score || 0;
-    
-    // Determine which segment the average score falls into
-    const isStatePR = avgScore <= 34;
-    const isMainstream = avgScore > 34 && avgScore <= 69;
-    const isIndependent = avgScore >= 70;
-
-    return (
-      <div style={{ marginBottom: '32px' }}>
-        <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Layer 2: Editorial Independence</h4>
-        <div style={{ display: 'flex', height: '16px', borderRadius: '4px', overflow: 'hidden', gap: '2px' }}>
-          <div style={{ flex: '1', background: isStatePR ? '#8f9a6f' : '#333' }} title={`State PR (0-34)`} />
-          <div style={{ flex: '1', background: isMainstream ? '#a49889' : '#333' }} title={`Mainstream (35-69)`} />
-          <div style={{ flex: '1', background: isIndependent ? '#008751' : '#333' }} title={`Independent (70-100)`} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-          <span style={{ color: isStatePR ? '#8f9a6f' : '#888' }}>State PR</span>
-          <span style={{ color: isMainstream ? '#a49889' : '#888' }}>Mainstream</span>
-          <span style={{ color: isIndependent ? '#008751' : '#888' }}>Independent</span>
-        </div>
-      </div>
-    );
-  };
-
   // Layer 3: Regional Focus
   const renderLayer3 = () => {
     const dist = stats.geopolitical_distribution || {};
