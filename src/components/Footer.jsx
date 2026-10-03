@@ -1,4 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
+// Every link here must point at a page that exists. Pages we do not have yet
+// (privacy policy, terms, newsletter, apps) are left out rather than linked to "#".
+const COLUMNS = [
+  { title: 'Company', links: [['About', '/about'], ['Contact us', '/about#contact'], ['Request a correction', '/corrections']] },
+  { title: 'How it works', links: [['Methodology', '/methodology'], ['Daily Briefing', '/daily-briefing']] },
+  { title: 'Topics', links: [['Politics', '/topics/politics'], ['Economy', '/topics/economy'], ['Security', '/topics/security']] },
+];
+const linkStyle = { color: '#aaa', textDecoration: 'none', fontSize: '14px' };
 
 export default function Footer() {
   return (
@@ -15,41 +25,24 @@ export default function Footer() {
           </p>
         </div>
 
-        <div style={{ flex: '1', minWidth: '150px' }}>
-          <h4 style={{ color: '#fff', fontSize: '14px', marginBottom: '24px', fontWeight: 700 }}>Company</h4>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>About</a></li>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Careers</a></li>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Our Mission</a></li>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Contact Us</a></li>
-          </ul>
-        </div>
-
-        <div style={{ flex: '1', minWidth: '150px' }}>
-          <h4 style={{ color: '#fff', fontSize: '14px', marginBottom: '24px', fontWeight: 700 }}>Help</h4>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>FAQ</a></li>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Methodology</a></li>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Bias Categories</a></li>
-          </ul>
-        </div>
-
-        <div style={{ flex: '1', minWidth: '150px' }}>
-          <h4 style={{ color: '#fff', fontSize: '14px', marginBottom: '24px', fontWeight: 700 }}>Tools</h4>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Browser Extension</a></li>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Mobile App</a></li>
-            <li><a href="#" style={{ color: '#aaa', textDecoration: 'none', fontSize: '14px' }}>Newsletter</a></li>
-          </ul>
-        </div>
+        {COLUMNS.map(col => (
+          <div key={col.title} style={{ flex: '1', minWidth: '150px' }}>
+            <h4 style={{ color: '#fff', fontSize: '14px', marginBottom: '24px', fontWeight: 700 }}>{col.title}</h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {col.links.map(([label, to]) => (
+                <li key={to}><Link to={to} style={linkStyle}>{label}</Link></li>
+              ))}
+            </ul>
+          </div>
+        ))}
 
       </div>
 
       <div style={{ maxWidth: '1400px', margin: '32px auto 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '12px', color: '#888' }}>
         <div>&copy; 2026 TraceNews. All rights reserved.</div>
         <div style={{ display: 'flex', gap: '24px' }}>
-          <a href="#" style={{ color: '#888', textDecoration: 'none' }}>Privacy Policy</a>
-          <a href="#" style={{ color: '#888', textDecoration: 'none' }}>Terms of Service</a>
+          <Link to="/methodology" style={{ color: '#888', textDecoration: 'none' }}>Methodology</Link>
+          <Link to="/corrections" style={{ color: '#888', textDecoration: 'none' }}>Corrections</Link>
         </div>
       </div>
     </footer>

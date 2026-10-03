@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function About() {
+  // The footer and menu link to /about#contact; the router does not scroll to anchors.
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView();
+  }, [hash]);
+
   return (
     <div style={{ maxWidth: '680px', margin: '0 auto', padding: '48px 24px 80px', fontFamily: 'var(--font-body)' }}>
       <Helmet>
@@ -44,7 +50,7 @@ export default function About() {
 
       {/* SECTION 3 — Contact */}
       <div>
-        <h2 style={{ fontFamily: 'Spectral, Georgia, serif', fontSize: '20px', fontWeight: 600, marginTop: '40px', marginBottom: '16px', color: 'var(--text-primary)' }}>Contact</h2>
+        <h2 id="contact" style={{ fontFamily: 'Spectral, Georgia, serif', fontSize: '20px', fontWeight: 600, marginTop: '40px', marginBottom: '16px', color: 'var(--text-primary)' }}>Contact</h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '16px' }}>
           TraceNews is based in Lagos, Nigeria.
         </p>

@@ -379,7 +379,7 @@ export default function Methodology() {
           The TII is a 0–100 behavioural score applied to Nigerian news outlets. This page explains every signal, every threshold, and every editorial decision behind the numbers — because a media intelligence instrument you cannot examine is one you should not trust.
         </p>
         <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', color: 'var(--text-muted)', margin: '0' }}>
-          Last updated: June 2026
+          Last updated: October 2026
         </p>
       </div>
 
@@ -439,14 +439,8 @@ export default function Methodology() {
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Original Reporting</h3>
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
-              What proportion of stories are original reporting versus republished wire copy or press releases? We compare each story against NAN wire content and detect semantic near-duplicates — stories where the outlet added no original reporting and simply reformatted a government wire or press release.
+              What proportion of stories are original reporting versus republished wire copy or press releases?
             </p>
-            <div style={{ borderLeft: '2px solid #1D9E75', padding: '8px 12px', marginTop: '16px', background: 'rgba(29,158,117,0.06)', borderRadius: '0 4px 4px 0' }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#1D9E75', display: 'block', marginBottom: '4px' }}>example</span>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
-                An outlet running 13 of 14 stories as near-identical NAN wire copy scores very low. An outlet where most stories carry original bylines and new information scores high.
-              </p>
-            </div>
           </div>
 
           {/* S3 */}
@@ -709,7 +703,7 @@ export default function Methodology() {
           </div>
 
           <p style={styles.prose}>
-            Coverage snapshots are taken every 10 minutes per cluster and retained permanently, enabling historical analysis of how coverage patterns changed over time. This accumulated data makes it possible to track whether coverage of a story broadens or narrows over its lifecycle.
+            Coverage snapshots are recorded about once an hour for each story, and sooner when the number of outlets covering it or its tier mix changes significantly. Snapshots for stories carried by only one outlet are deleted after 24 hours; the rest are kept, enabling historical analysis of how coverage patterns changed over time. This accumulated data makes it possible to track whether coverage of a story broadens or narrows over its lifecycle.
           </p>
           <p style={styles.prose}>
             The entity registry covers 10 categories: Legislature (450 members), Governors (217 current and former since 1999), Security apparatus (73), Executive (33), Party leadership (28), Judiciary (27), Power brokers (24), Civil society (15), Traditional rulers (10), and Business crossovers (5). The registry is updated as appointments, elections, and party changes occur.
@@ -731,7 +725,7 @@ export default function Methodology() {
               If you believe a TII score is inaccurate — whether you represent a scored outlet or are a researcher who has identified a methodological flaw — we will review the challenge and publish our response. We take methodological accountability seriously: this instrument cannot demand it of others if it does not practise it.
             </p>
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '15px', lineHeight: 1.6, color: 'var(--text-secondary)', margin: '0 0 24px 0' }}>
-              Researchers, NGOs, and funders may request the full scoring dataset for specific outlets or date ranges, including historical TII score records and coverage snapshot data. This data is what makes TraceNews citable — the numbers behind the numbers, timestamped and permanent.
+              Researchers, NGOs, and funders may request the full scoring dataset for specific outlets or date ranges, including coverage snapshot data. This data is what makes TraceNews citable — the numbers behind the numbers.
             </p>
             
             <a href="mailto:methodology@tracenews.ng" style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '16px', color: '#D85A30', textDecoration: 'none', borderBottom: '1px solid rgba(216,90,48,0.4)', paddingBottom: '2px' }}>
