@@ -81,4 +81,33 @@
 .hb .v{font-family:var(--f-mono);font-size:10px;color:var(--t-sub)}
 .hb .ok{color:var(--v-clear)} .hb .warn{color:var(--v-mixed)}
 
+/* daily briefing review (/admin/briefing) */
+.br-row{cursor:pointer}
+.br-row:hover .tt{color:var(--t-display)}
+.br-row.open{border-bottom-color:transparent}
+.br-detail{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:var(--s6);padding:var(--s5);margin:0 0 var(--s4);background:var(--sunk);border:1px solid var(--hair);border-radius:3px}
+@media (max-width:1100px){.br-detail{grid-template-columns:1fr}}
+.br-sec{margin-bottom:var(--s5)}
+.br-sec:last-child{margin-bottom:0}
+.br-sec>.t-label{margin-bottom:var(--s2)}
+.br-hl{font-family:var(--f-display);font-size:19px;line-height:1.3;font-weight:600;color:var(--t-display);margin:0 0 var(--s1);letter-spacing:-.2px}
+.br-bul{margin:var(--s3) 0;padding-left:18px}
+.br-bul li{font-size:13px;line-height:1.55;color:var(--t-body);margin-bottom:6px}
+.br-why{margin:0;padding:0;list-style:none}
+.br-why li{font-size:12px;line-height:1.5;color:var(--t-body);padding:5px 0 5px 12px;border-left:2px solid var(--v-mixed);margin-bottom:4px}
+.br-why li.out{border-left-color:var(--t-faint);color:var(--t-muted)}
+.br-check label{display:flex;gap:var(--s2);align-items:flex-start;font-size:12px;line-height:1.45;color:var(--t-body);padding:4px 0;cursor:pointer}
+.br-check input{margin-top:2px;accent-color:var(--v-clear)}
+.br-actions{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+.br-src{margin:0;padding-left:18px}
+.br-src li{font-size:12px;line-height:1.5;color:var(--t-muted);margin-bottom:var(--s2)}
+.br-src li a{color:var(--t-primary);text-decoration:none;border-bottom:1px solid var(--border)}
+.br-src li a:hover{color:var(--v-clear);border-bottom-color:var(--v-clear)}
+.br-err{font-size:12px;color:var(--danger);margin-top:var(--s2)}
+.br-ok{font-size:12px;color:var(--v-clear)}
+.br-date{display:flex;justify-content:space-between;align-items:baseline;width:100%;font-size:12px;color:var(--t-sub);padding:6px 0;border:none;border-bottom:1px solid var(--hair);background:none;cursor:pointer;font-family:var(--f-ui);text-align:left}
+.br-date:hover{color:var(--t-primary)}
+.br-date.on{color:var(--t-display);font-weight:600}
+.br-date .n{font-family:var(--f-mono);font-size:9.5px;color:var(--t-faint);font-weight:400}
+
 }

@@ -1,170 +1,313 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { BriefingItem } from '../pages/DailyBriefingStory';
+import { Button } from '../components/ds/Button';
+import { Pill } from '../components/ds/Marks';
+import { Field, Input, Textarea } from '../components/ds/Form';
 
 /**
- * Staff review of the Daily Briefing (counsel, 3 Oct 2026, B6, and counsel's
- * review of the 3 Oct samples, items 2, 7, 8, 9). Items held for review
- * appear in the public edition only after a named editor ticks the checklist
- * and approves. Editors can rewrite an item from its sources, leave it out or
- * restore it; every action goes to the change log. Everything in the shaded
- * panel is reviewer-only and never shown to readers.
+ * Daily Briefing — edition review on the Desk (counsel, 3 Oct 2026, B6, and
+ * counsel's review of the 3 Oct samples, items 2, 7, 8, 9). Items held for
+ * review reach readers only after a named editor ticks the checklist and
+ * approves. Editors can rewrite an item from its sources, leave it out or
+ * restore it; every action goes to the change log. Everything on this page
+ * is staff-only; readers see only the published text.
  */
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
+
 const LANE = {
-  auto: 'Publishes automatically',
-  review: 'Held for a named editor',
-  senior_review: 'Held for a named editor — senior review: adverse context involving a principal office-holder',
-  left_out: 'Left out',
+  senior_review: { label: 'Senior review', pill: 'dark', note: 'Adverse context involving a principal office-holder' },
+  review: { label: 'Review', pill: 'mixed' },
+  auto: { label: 'Auto', pill: 'clear' },
+  left_out: { label: 'Left out', pill: 'neutral' },
 };
+const SECTIONS = [
+  { key: 'held', title: 'Needs an editor', match: i => (i.lane === 'review' || i.lane === 'senior_review') && !i.approved_by,
+    empty: 'Nothing is waiting for an editor.' },
+  { key: 'approved', title: 'Approved', match: i => (i.lane === 'review' || i.lane === 'senior_review') && i.approved_by,
+    empty: 'No approvals yet.' },
+  { key: 'auto', title: 'Publishes automatically', match: i => i.lane === 'auto', empty: 'None.' },
+  { key: 'out', title: 'Left out', match: i => i.lane === 'left_out', empty: 'None.' },
+];
+const TIERS = [['govt_aligned', 'd-govt'], ['mainstream', 'd-main'], ['watchdog', 'd-watch']];
 
-async function authHeaders() {
+async function api(path, body) {
   const { data: { session } } = await supabase.auth.getSession();
-  return { Authorization: `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' };
-}
-
-async function post(path, body) {
-  const res = await fetch(`${API_BASE}/api/admin/briefing/${path}`, {
-    method: 'POST', headers: await authHeaders(), body: body ? JSON.stringify(body) : undefined,
+  const res = await fetch(`${API_BASE}/api/admin/briefing${path}`, {
+    method: body === undefined ? 'GET' : 'POST',
+    headers: { Authorization: `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || `HTTP ${res.status}`);
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.detail || `HTTP ${res.status}`);
+  return json;
 }
 
-function RewriteForm({ item, onSave }) {
-  const [title, setTitle] = useState(item.title);
-  const [bullets, setBullets] = useState((item.bullets || []).join('\n'));
-  const [note, setNote] = useState('');
+function shortDate(iso) {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+function longDate(iso) {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function ReaderPreview({ item, ui }) {
+  const counts = item.coverage_counts || {};
+  const total = TIERS.reduce((n, [t]) => n + (counts[t] || 0), 0);
   return (
-    <details style={{ marginTop: '8px' }}>
-      <summary style={{ cursor: 'pointer' }}>Rewrite from the sources</summary>
-      <label style={{ display: 'block', marginTop: '8px' }}>Headline
-        <input value={title} onChange={e => setTitle(e.target.value)} style={{ width: '100%' }} />
-      </label>
-      <label style={{ display: 'block', marginTop: '8px' }}>Bullets (one per line, 1 to 5)
-        <textarea value={bullets} onChange={e => setBullets(e.target.value)} rows={6} style={{ width: '100%' }} />
-      </label>
-      <label style={{ display: 'block', marginTop: '8px' }}>Note for the change log (which sources you used)
-        <input value={note} onChange={e => setNote(e.target.value)} style={{ width: '100%' }} />
-      </label>
-      <button style={{ marginTop: '8px' }}
-        onClick={() => onSave({ title, bullets: bullets.split('\n').map(b => b.trim()).filter(Boolean), note })}>
-        Save rewrite
-      </button>
-    </details>
+    <div>
+      <p className="t-label" style={{ marginBottom: 'var(--s2)' }}>As readers would see it</p>
+      <h3 className="br-hl">{item.title}</h3>
+      <p className="t-meta">{ui.attribution_label}</p>
+      <ul className="br-bul">
+        {(item.bullets || []).filter(b => typeof b === 'string').map((b, i) => <li key={i}>{b}</li>)}
+      </ul>
+      <p className="t-meta" style={{ marginBottom: 'var(--s1)' }}>{ui.coverage_heading}: {total}</p>
+      <div className="tierlabels" style={{ marginTop: 0 }}>
+        {TIERS.map(([t, dot]) => (
+          <span key={t}><i className={`dot ${dot}`} />{ui.tier_labels[t]}<b>{counts[t] ?? 0}</b></span>
+        ))}
+      </div>
+    </div>
   );
 }
 
-function ReviewerPanel({ item, checklist, act }) {
+function RewriteForm({ item, onDone, onCancel }) {
+  const [title, setTitle] = useState(item.title);
+  const [bullets, setBullets] = useState((item.bullets || []).join('\n'));
+  const [note, setNote] = useState('');
+  const [state, setState] = useState({});
+  const save = async () => {
+    setState({ busy: true });
+    try {
+      await api(`/${item.id}/rewrite`, { title, bullets: bullets.split('\n').map(b => b.trim()).filter(Boolean), note });
+      onDone();
+    } catch (e) {
+      setState({ error: e.message });
+    }
+  };
+  return (
+    <div className="br-sec">
+      <Field label="Headline"><Input value={title} onChange={e => setTitle(e.target.value)} /></Field>
+      <Field label="Bullets" hint="One bullet per line, 1 to 5. Name every person in full on first mention.">
+        <Textarea rows={8} value={bullets} onChange={e => setBullets(e.target.value)} />
+      </Field>
+      <Field label="Note for the change log" hint="Which source articles you used.">
+        <Input value={note} onChange={e => setNote(e.target.value)} />
+      </Field>
+      <div className="br-actions">
+        <Button size="sm" loading={state.busy} onClick={save}>Save rewrite</Button>
+        <Button size="sm" variant="ghost" onClick={onCancel}>Cancel</Button>
+      </div>
+      {state.error && <p className="br-err">{state.error}</p>}
+    </div>
+  );
+}
+
+function EditorPanel({ item, checklist, reload }) {
+  const [mode, setMode] = useState(null);          // 'rewrite' | 'leave'
   const [ticks, setTicks] = useState({});
+  const [reason, setReason] = useState('');
+  const [state, setState] = useState({});
   const held = item.lane === 'review' || item.lane === 'senior_review';
   const allTicked = checklist.every(c => ticks[c.key]);
+
+  const run = async (path, body) => {
+    setState({ busy: path });
+    try {
+      await api(path, body);
+      setMode(null);
+      setState({});
+      reload();
+    } catch (e) {
+      setState({ error: e.message });
+    }
+  };
+
   return (
-    <div style={{ background: 'var(--bg-subtle, #f6f3ea)', borderLeft: '3px solid #b08900', padding: '12px', fontSize: '13px', marginBottom: '28px' }}>
-      <div style={{ fontWeight: 600, marginBottom: '6px' }}>Reviewer only — never shown to readers</div>
-      <div>Source headline: {item.source_headline}</div>
-      {item.reasons.length > 0 && (
-        <ul style={{ margin: '6px 0', paddingLeft: '18px' }}>{item.reasons.map(r => <li key={r}>{r}</li>)}</ul>
+    <div>
+      <div className="br-sec">
+        <p className="t-label">Why it is here</p>
+        {item.reasons.length === 0
+          ? <p className="t-meta">No checks fired.</p>
+          : <ul className="br-why">{item.reasons.map(r => <li key={r} className={item.lane === 'left_out' ? 'out' : ''}>{r}</li>)}</ul>}
+        {LANE[item.lane].note && <p className="t-meta" style={{ marginTop: 'var(--s2)' }}>{LANE[item.lane].note}.</p>}
+      </div>
+
+      <div className="br-sec">
+        <p className="t-label">Record</p>
+        <p className="t-meta">Source headline: {item.source_headline}</p>
+        {item.edited_by && <p className="t-meta">Rewritten by {item.edited_by}</p>}
+        {item.approved_by && <p className="br-ok">Approved by {item.approved_by}</p>}
+        {item.stale_approval_by && <p className="br-err">Approval by {item.stale_approval_by} no longer applies: the text changed. Approve again if it is right.</p>}
+        {item.left_out_by && <p className="t-meta">Left out by {item.left_out_by}</p>}
+        {item.named_in_sources.length > 0 && <p className="t-meta">Named in the source articles: {item.named_in_sources.join(', ')}</p>}
+      </div>
+
+      {mode === 'rewrite' && <RewriteForm item={item} onDone={() => { setMode(null); reload(); }} onCancel={() => setMode(null)} />}
+
+      {mode === 'leave' && (
+        <div className="br-sec">
+          <Field label="Why leave this item out?"><Input value={reason} onChange={e => setReason(e.target.value)} /></Field>
+          <div className="br-actions">
+            <Button size="sm" variant="secondary" disabled={!reason.trim()} loading={state.busy === `/${item.id}/leave-out`}
+              onClick={() => run(`/${item.id}/leave-out`, { reason })}>Leave out</Button>
+            <Button size="sm" variant="ghost" onClick={() => setMode(null)}>Cancel</Button>
+          </div>
+        </div>
       )}
-      {item.named_in_sources.length > 0 && <div>Named in the source articles: {item.named_in_sources.join(', ')}</div>}
-      {item.edited_by && <div>Rewritten by {item.edited_by} at {item.edited_at}</div>}
-      {item.stale_approval_by && <div style={{ color: '#c0392b' }}>The approval by {item.stale_approval_by} no longer applies: the text changed since. Approve again if it is right.</div>}
-      {item.left_out_by && <div>Left out by {item.left_out_by}</div>}
-      <details style={{ marginTop: '8px' }}>
-        <summary style={{ cursor: 'pointer' }}>Source articles ({item.sources.length})</summary>
-        <ol style={{ paddingLeft: '18px' }}>
+
+      {!mode && (
+        <div className="br-sec br-actions">
+          <Button size="sm" variant="secondary" onClick={() => setMode('rewrite')}>Rewrite from sources</Button>
+          {item.left_out_by
+            ? <Button size="sm" variant="secondary" loading={state.busy === `/${item.id}/restore`} onClick={() => run(`/${item.id}/restore`, {})}>Restore</Button>
+            : <Button size="sm" variant="ghost" onClick={() => setMode('leave')}>Leave out</Button>}
+        </div>
+      )}
+
+      {held && !item.approved_by && !item.left_out_by && !mode && (
+        <div className="br-sec br-check">
+          <p className="t-label">Editor's checklist</p>
+          {checklist.map(c => (
+            <label key={c.key}>
+              <input type="checkbox" checked={!!ticks[c.key]} onChange={e => setTicks({ ...ticks, [c.key]: e.target.checked })} />
+              <span>{c.label}</span>
+            </label>
+          ))}
+          <div className="br-actions" style={{ marginTop: 'var(--s3)' }}>
+            <Button size="sm" disabled={!allTicked} loading={state.busy === `/${item.id}/approve`}
+              onClick={() => run(`/${item.id}/approve`, { checklist: ticks })}>Approve for publication</Button>
+            {!allTicked && <span className="t-meta">Tick every line to approve.</span>}
+          </div>
+        </div>
+      )}
+      {state.error && <p className="br-err">{state.error}</p>}
+
+      <details className="br-sec">
+        <summary className="t-label" style={{ cursor: 'pointer' }}>Source articles ({item.sources.length})</summary>
+        <ol className="br-src" style={{ marginTop: 'var(--s3)' }}>
           {item.sources.map((s, i) => (
-            <li key={i} style={{ marginBottom: '6px' }}>
-              <a href={s.url} target="_blank" rel="noreferrer">{s.title}</a>
-              <div style={{ color: 'var(--text-muted)' }}>{s.summary}</div>
-            </li>
+            <li key={i}><a href={s.url} target="_blank" rel="noreferrer">{s.title}</a><br />{s.summary}</li>
           ))}
         </ol>
       </details>
-      <RewriteForm item={item} onSave={body => act(() => post(`${item.id}/rewrite`, body))} />
-      <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-        {item.left_out_by
-          ? <button onClick={() => act(() => post(`${item.id}/restore`))}>Restore</button>
-          : <button onClick={() => { const reason = window.prompt('Why leave this item out?'); if (reason) act(() => post(`${item.id}/leave-out`, { reason })); }}>Leave out</button>}
-      </div>
-      {held && !item.approved_by && !item.left_out_by && (
-        <div style={{ marginTop: '12px' }}>
-          <div style={{ fontWeight: 600 }}>Editor's checklist</div>
-          {checklist.map(c => (
-            <label key={c.key} style={{ display: 'block' }}>
-              <input type="checkbox" checked={!!ticks[c.key]} onChange={e => setTicks({ ...ticks, [c.key]: e.target.checked })} /> {c.label}
-            </label>
-          ))}
-          <button disabled={!allTicked} style={{ marginTop: '8px' }}
-            onClick={() => act(() => post(`${item.id}/approve`, { checklist: ticks }))}>
-            Approve for publication
-          </button>
-        </div>
-      )}
     </div>
   );
 }
 
 export default function AdminBriefing() {
-  const [day, setDay] = useState(() => new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Lagos' }));
+  const [dates, setDates] = useState(null);
+  const [day, setDay] = useState(null);
   const [state, setState] = useState({ loading: true });
+  const [open, setOpen] = useState(null);
+
+  const loadDates = useCallback(async () => {
+    try {
+      const { dates: list } = await api('/dates');
+      setDates(list);
+      setDay(d => d || list[0]?.date || new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Lagos' }));
+    } catch (e) {
+      setState({ loading: false, error: e.message });
+    }
+  }, []);
 
   const load = useCallback(async () => {
+    if (!day) return;
     try {
-      const headers = await authHeaders();
-      const [res, logRes] = await Promise.all([
-        fetch(`${API_BASE}/api/admin/briefing?day=${day}`, { headers }),
-        fetch(`${API_BASE}/api/admin/briefing/log`, { headers }),
-      ]);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      if (!logRes.ok) throw new Error(`change log: HTTP ${logRes.status}`);
-      const log = (await logRes.json()).entries.filter(e => e.date === day);
-      setState({ loading: false, data: await res.json(), log });
+      const [edition, log] = await Promise.all([api(`?day=${day}`), api('/log')]);
+      setState({ loading: false, data: edition, log: log.entries.filter(e => e.date === day) });
     } catch (e) {
       setState({ loading: false, error: e.message });
     }
   }, [day]);
 
+  useEffect(() => { loadDates(); }, [loadDates]);
   useEffect(() => { load(); }, [load]);
 
-  const act = async (fn) => {
-    try { await fn(); await load(); } catch (e) { alert(`Not saved: ${e.message}`); }
-  };
-
   const data = state.data;
+  const items = data?.items || [];
+  const count = key => items.filter(SECTIONS.find(s => s.key === key).match).length;
+  const isSample = items.some(i => i.is_sample);
+
   return (
-    <div style={{ padding: '24px', maxWidth: '860px' }}>
-      <h1 style={{ fontSize: '22px', marginBottom: '8px' }}>Daily Briefing — edition review</h1>
-      <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-        Not public until counsel clears the Briefing (BRIEFING_PUBLIC). Read every held item against its sources before approving.
-        Check any candidacy or party descriptor live today. Every action is recorded with your name.
-      </p>
-      <input type="date" value={day} onChange={e => setDay(e.target.value)} style={{ marginBottom: '16px' }} />
-      {state.loading && <p>Loading…</p>}
-      {state.error && <p style={{ color: '#c0392b' }}>Could not load the edition: {state.error}</p>}
-      {data && data.items.length === 0 && <p>No edition was built for this day.</p>}
-      {data && data.items.some(i => i.is_sample) && <p style={{ fontWeight: 600 }}>Sample edition for counsel — never shown to readers.</p>}
-      {data && data.items.map(item => (
-        <div key={item.id}>
-          <div style={{ fontSize: '12px', fontFamily: "'IBM Plex Mono', monospace", marginBottom: '6px',
-                        color: item.lane === 'senior_review' || item.lane === 'left_out' ? '#c0392b' : 'var(--text-secondary)' }}>
-            #{item.position} · {LANE[item.lane]}
-            {' · '}{item.publishable ? 'will publish' : 'not publishable'}
-            {item.approved_by && ` · approved by ${item.approved_by} at ${item.approved_at}`}
-          </div>
-          <div style={{ opacity: item.lane === 'left_out' ? 0.5 : 1 }}>
-            <BriefingItem item={item} ui={data.ui} />
-          </div>
-          <ReviewerPanel item={item} checklist={data.checklist} act={act} />
+    <>
+      <div className="desk-col">
+        <p className="dateline">Newsroom · Daily Briefing{isSample ? ' · Sample edition for counsel' : ''}</p>
+        <h1 className="lede" style={{ maxWidth: '26ch' }}>{day ? longDate(day) : 'Daily Briefing'}</h1>
+        <div className="byline">
+          Not public until counsel clears the Briefing. Read every held item against its sources and check any party or
+          candidacy descriptor live today. Every action is recorded with your name.
         </div>
-      ))}
-      {state.log && state.log.length > 0 && (
-        <>
-          <h2 style={{ fontSize: '17px' }}>Change log for {day}</h2>
-          <ul style={{ fontSize: '12px', fontFamily: "'IBM Plex Mono', monospace" }}>
-            {state.log.map(e => <li key={e.id}>{e.created_at} · {e.editor} · {e.action}{e.note ? ` · ${e.note}` : ''}</li>)}
-          </ul>
-        </>
-      )}
-    </div>
+
+        {state.error && <p className="br-err">Could not load: {state.error}</p>}
+        {state.loading && !state.error && <p className="t-meta">Loading…</p>}
+
+        {data && (
+          <>
+            <div className="figs">
+              <div className="fig"><div className="l">Needs an editor</div><div className={`v ${count('held') ? 'att' : ''}`}>{count('held')}</div><div className="s">Held for review</div></div>
+              <div className="fig"><div className="l">Approved</div><div className="v">{count('approved')}</div><div className="s">By a named editor</div></div>
+              <div className="fig"><div className="l">Automatic</div><div className="v">{count('auto')}</div><div className="s">No check fired</div></div>
+              <div className="fig"><div className="l">Left out</div><div className="v">{count('out')}</div><div className="s">By the rules or an editor</div></div>
+            </div>
+
+            {items.length === 0 && <p className="t-meta">No edition was built for this day.</p>}
+
+            {items.length > 0 && SECTIONS.map(sec => {
+              const rows = items.filter(sec.match);
+              return (
+                <div className="ds" key={sec.key}>
+                  <div className="ds-h"><span className="t">{sec.title}</span><span className="ln" /><span className="lk">{rows.length}</span></div>
+                  {rows.length === 0 && <p className="t-meta" style={{ padding: 'var(--s2) 0' }}>{sec.empty}</p>}
+                  {rows.map(item => (
+                    <React.Fragment key={item.id}>
+                      <div className={`it br-row ${open === item.id ? 'open' : ''}`} onClick={() => setOpen(open === item.id ? null : item.id)}>
+                        <Pill variant={item.approved_by ? 'clear' : LANE[item.lane].pill}>{item.approved_by ? 'Approved' : LANE[item.lane].label}</Pill>
+                        <div className="bd">
+                          <div className="tt">{item.title}</div>
+                          <div className="mt">
+                            {item.reasons.length > 0 ? item.reasons[0] : 'No checks fired'}
+                            {item.reasons.length > 1 && ` · +${item.reasons.length - 1} more`}
+                            {item.edited_by && ' · rewritten'}
+                          </div>
+                        </div>
+                        <span className="ag">#{item.position}</span>
+                      </div>
+                      {open === item.id && (
+                        <div className="br-detail">
+                          <ReaderPreview item={item} ui={data.ui} />
+                          <EditorPanel item={item} checklist={data.checklist} reload={() => { load(); loadDates(); }} />
+                        </div>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              );
+            })}
+          </>
+        )}
+      </div>
+
+      <aside className="stand">
+        <p className="st-h">Editions</p>
+        {dates && dates.length === 0 && <p className="t-meta">No editions yet.</p>}
+        {dates && dates.map(d => (
+          <button key={d.date} className={`br-date ${d.date === day ? 'on' : ''}`} onClick={() => { setOpen(null); setDay(d.date); }}>
+            <span>{shortDate(d.date)}</span>
+            <span className="n">{d.is_sample ? 'sample · ' : ''}{d.items}</span>
+          </button>
+        ))}
+
+        <p className="st-h" style={{ marginTop: 'var(--s6)' }}>Change log</p>
+        {state.log && state.log.length === 0 && <p className="t-meta">No editor actions on this edition.</p>}
+        {state.log && state.log.map(e => (
+          <div className="led" key={e.id}>
+            <b>{e.editor}</b> {e.action.replace('_', ' ')}
+            {e.note && <> — <q>{e.note}</q></>}
+            <span className="ts">{new Date(e.created_at).toLocaleString('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+        ))}
+      </aside>
+    </>
   );
 }
