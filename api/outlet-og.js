@@ -56,7 +56,6 @@ export default async function handler(req, res) {
     .from('outlets')
     .select(
       'name, slug, website, ' +
-      'independence_score, ' +
       'is_blog, ' +
       'ownership_name, ' +
       'ownership_type, ' +
@@ -73,6 +72,8 @@ export default async function handler(req, res) {
   }
   
   const outlet = outlets[0]
+  // The score column is no longer readable with the public key (withdrawn,
+  // counsel 3 Oct 2026); it returns with TII_SCORES_VISIBLE.
   const score = outlet.independence_score
   const showScore = TII_SCORES_VISIBLE && score !== null && score !== undefined
   const rawTier = getOutletTier(outlet)
