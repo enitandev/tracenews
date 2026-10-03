@@ -1,7 +1,8 @@
 /**
  * TII SCORE VISIBILITY — HIDDEN ON PURPOSE (3 Oct 2026). DO NOT FORGET TO
  * TURN BACK ON when every condition below holds; tracked in the GitHub issue
- * "Unhide TII scores on outlet profiles".
+ * "Unhide TII scores on outlet profiles":
+ * https://github.com/enitandev/tracenews/issues/10
  *
  * Why hidden: counsel's scoping note of 3 Oct 2026 (§4) did not clear the
  * score as displayed. The scores on show were computed by hand around June
