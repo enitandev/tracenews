@@ -456,14 +456,6 @@ export default function OutletProfile() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Last scored</span>
-                <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Jun 2026</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Sample window</span>
-                <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>30 days</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Score version</span>
                 <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>TII v1.1</span>
               </div>

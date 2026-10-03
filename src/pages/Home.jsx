@@ -106,22 +106,22 @@ export default function Home() {
     "sameAs": [
       "https://twitter.com/TraceNewsNG"
     ],
-    "description": "See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria."
+    "description": "See every side of every Nigerian story. TraceNews tracks how Nigerian news outlets cover each story."
   };
 
   return (
     <div className="page">
       <Helmet>
         <title>TraceNews — Nigerian Media Intelligence</title>
-        <meta name="description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
+        <meta name="description" content="See every side of every Nigerian story. TraceNews tracks how Nigerian news outlets cover each story." />
         <meta property="og:title" content="TraceNews — Nigerian Media Intelligence" />
-        <meta property="og:description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
+        <meta property="og:description" content="See every side of every Nigerian story. TraceNews tracks how Nigerian news outlets cover each story." />
         <meta property="og:image" content="https://tracenews.ng/og-default.png" />
         <meta property="og:url" content="https://tracenews.ng/" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="TraceNews — Nigerian Media Intelligence" />
-        <meta name="twitter:description" content="See every side of every Nigerian story. Media bias tracking, fact-checking and misinformation detection for Nigeria." />
+        <meta name="twitter:description" content="See every side of every Nigerian story. TraceNews tracks how Nigerian news outlets cover each story." />
         <meta name="twitter:image" content="https://tracenews.ng/og-default.png" />
         <link rel="canonical" href="https://tracenews.ng/" />
         <script type="application/ld+json">

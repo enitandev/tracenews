@@ -7,8 +7,6 @@ import { ROUTES } from '../constants/routes';
 import { TIERS, TIER_COLORS, TIER_LABELS } from '../utils/constants';
 import { getDistinctScoredCount } from '../utils/helpers';
 
-const DATA_SINCE = "22 June 2026";
-const SMALL_N_THRESHOLD = 25;
 
 const CATEGORY_DISPLAY = {
   Legislature: "Legislator",
@@ -62,21 +60,16 @@ function getInitials(name) {
     .toUpperCase();
 }
 
-function tierDistributionText(name, dist, total) {
-  if (total < SMALL_N_THRESHOLD) {
-    const g = dist.govt_aligned || 0;
-    const m = dist.mainstream || 0;
-    const w = dist.watchdog || 0;
-    return assertNoForbiddenTokens(
-      `Of ${total} stories mentioning ${name} since ${DATA_SINCE}, ${g} appeared in government-aligned outlets, ${m} in mainstream outlets, and ${w} in watchdog outlets.`
-    );
-  }
-  const g = dist.govt_aligned || 0;
-  const m = dist.mainstream || 0;
-  const w = dist.watchdog || 0;
-  const pct = (n) => Math.round((n / total) * 100);
+// Counts only (counsel, 3 Oct 2026): articles naming the person, by the tier
+// of the outlet that published each one, as of a stated date. No percentages.
+function articleCountsText(name, counts, total, asOf) {
+  const g = counts.govt_aligned || 0;
+  const m = counts.mainstream || 0;
+  const w = counts.watchdog || 0;
+  const u = counts.untiered || 0;
   return assertNoForbiddenTokens(
-    `Of ${total} stories mentioning ${name} since ${DATA_SINCE}, ${pct(g)}% appeared in government-aligned outlets, ${pct(m)}% in mainstream outlets, and ${pct(w)}% in watchdog outlets.`
+    `As of ${asOf}, TraceNews has recorded ${total} articles that name ${name}: ${g} from government-aligned outlets, ${m} from mainstream outlets and ${w} from watchdog outlets` +
+    (u ? `, and ${u} from outlets not assigned a tier.` : '.')
   );
 }
 
@@ -91,7 +84,7 @@ export default function PoliticianProfile() {
   useEffect(() => {
     fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/politicians/${slug}`)
       .then(res => {
-        if (res.status === 410) {
+        if (res.status === 404 || res.status === 410) {
           setGone(true);
           setLoading(false);
           return null;
@@ -172,16 +165,15 @@ export default function PoliticianProfile() {
     );
   }
 
-  const { politician, total_story_count, tier_distribution, recent_stories } = data;
+  const { politician, total_articles: total_story_count, article_counts, as_of, recent_stories } = data;
   const name = politician.common_name || politician.full_name || '';
   const total = total_story_count || 0;
   
   const title = assertNoForbiddenTokens(`${name} — Media Coverage Record | TraceNews`);
   const description = assertNoForbiddenTokens(
-    `How Nigerian media has covered stories mentioning ${name}: ${total} stories tracked and how that coverage was distributed across editorial tiers, as recorded by TraceNews since ${DATA_SINCE}. This page describes coverage behaviour, not the person.`
+    `Articles naming ${name} recorded by TraceNews as of ${as_of}: ${total}, counted by the editorial tier of the publishing outlet. This page describes coverage, not the person.`
   );
 
-  const totalDist = (tier_distribution?.govt_aligned || 0) + (tier_distribution?.mainstream || 0) + (tier_distribution?.watchdog || 0);
 
   // Compute most common category
   let topCategory = '—';
@@ -242,60 +234,31 @@ export default function PoliticianProfile() {
             {total_story_count}
           </div>
           <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', color: 'var(--text-primary)', marginTop: '8px', fontWeight: 600 }}>
-            Stories mentioned in
+            Articles naming this person
           </div>
           <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-            since {DATA_SINCE}
+            as of {as_of}
           </div>
         </div>
 
         {/* RIGHT */}
         <div style={{ flex: '2 1 500px', background: 'var(--bg-surface)', border: '0.5px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
           <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase' }}>
-            Coverage distribution across editorial tiers
+            Articles by outlet tier
           </div>
-          
-          {totalDist > 0 && (
-            <div style={{ display: 'flex', width: '100%', height: '32px', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
-              {(tier_distribution.govt_aligned / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.govt_aligned / totalDist) * 100}%`, background: TIER_COLORS.govt_aligned, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
-                  {((tier_distribution.govt_aligned / totalDist) * 100) > 15 ? 'Govt-aligned' : ''}
-                </div>
-              )}
-              {(tier_distribution.mainstream / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.mainstream / totalDist) * 100}%`, background: TIER_COLORS.mainstream, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
-                  {((tier_distribution.mainstream / totalDist) * 100) > 15 ? 'Mainstream' : ''}
-                </div>
-              )}
-              {(tier_distribution.watchdog / totalDist) * 100 > 0 && (
-                <div style={{ width: `${(tier_distribution.watchdog / totalDist) * 100}%`, background: TIER_COLORS.watchdog, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: 600 }}>
-                  {((tier_distribution.watchdog / totalDist) * 100) > 15 ? 'Watchdog' : ''}
-                </div>
-              )}
-            </div>
-          )}
-          
-          <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
-            <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS.govt_aligned }} /> Govt-aligned
-            </Link>
-            <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS.mainstream }} /> Mainstream
-            </Link>
-            <Link to="/methodology" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS.watchdog }} /> Watchdog
-            </Link>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', fontSize: '13px' }}>
+            {[['govt_aligned', 'Government-aligned'], ['mainstream', 'Mainstream'], ['watchdog', 'Watchdog'], ['untiered', 'Not assigned a tier']].map(([key, label]) => (
+              <div key={key} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '0.5px solid var(--border)', paddingBottom: '6px' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-primary)' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: TIER_COLORS[key] || 'var(--text-muted)' }} /> {label}
+                </span>
+                <span style={{ fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", color: 'var(--text-primary)' }}>{article_counts?.[key] ?? 0}</span>
+              </div>
+            ))}
           </div>
-          
           <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-            {tierDistributionText(name, tier_distribution || {}, totalDist)}
+            {articleCountsText(name, article_counts || {}, total_story_count, as_of)}
           </p>
-          
-          {totalDist > 0 && totalDist < SMALL_N_THRESHOLD && (
-            <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
-              Percentages are not shown below 25 stories, as small samples are not statistically reliable.
-            </p>
-          )}
         </div>
       </div>
 
@@ -325,7 +288,7 @@ export default function PoliticianProfile() {
           <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: 600, textTransform: 'uppercase' }}>Coverage Summary</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Stories tracked</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Articles naming this person</div>
               <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600 }}>{total_story_count}</div>
             </div>
             <div>
@@ -333,8 +296,8 @@ export default function PoliticianProfile() {
               <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600 }}>{topCategory}</div>
             </div>
             <div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Data since</div>
-              <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace" }}>{DATA_SINCE}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>As of</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace" }}>{as_of}</div>
             </div>
           </div>
         </div>
@@ -437,8 +400,8 @@ export default function PoliticianProfile() {
           <div style={{ background: 'var(--bg-surface)', border: '0.5px solid var(--border)', borderRadius: '12px', padding: '20px' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 12px 0', color: 'var(--text-primary)' }}>What this page shows</h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
-              Stories tracked by TraceNews that mention this person, and how that coverage was distributed across editorial tiers. This page describes coverage behaviour — not the person, and not any outlet's editorial intent.<br/><br/>
-              Data recorded since {DATA_SINCE}.
+              Articles recorded by TraceNews that name this person, counted by the editorial tier of the outlet that published each one. This page describes coverage — not the person, and not any outlet's editorial intent.<br/><br/>
+              Counts as of {as_of}.
             </p>
             <Link to="/methodology" style={{ fontSize: '13px', color: '#a49889', textDecoration: 'none', fontWeight: 600 }}>How TraceNews classifies outlets →</Link>
           </div>
@@ -448,12 +411,12 @@ export default function PoliticianProfile() {
             <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 16px 0', color: 'var(--text-primary)' }}>Coverage details</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '0.5px solid var(--border)', paddingBottom: '8px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Stories tracked</span>
+                <span style={{ color: 'var(--text-muted)' }}>Articles naming this person</span>
                 <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{total_story_count}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '0.5px solid var(--border)', paddingBottom: '8px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Data since</span>
-                <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontFamily: "'IBM Plex Mono', monospace" }}>{DATA_SINCE}</span>
+                <span style={{ color: 'var(--text-muted)' }}>As of</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontFamily: "'IBM Plex Mono', monospace" }}>{as_of}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Distribution threshold</span>

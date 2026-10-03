@@ -7,6 +7,9 @@ import MinimalLayout from "./components/MinimalLayout";
 import AdminShell from "./admin/AdminShell";
 import Category from "./pages/Category";
 import Methodology from "./pages/Methodology";
+import Registry from "./pages/Registry";
+import DailyBriefingStory from "./pages/DailyBriefingStory";
+import { BRIEFING_PUBLIC, REGISTRY_PUBLIC } from "./constants/features";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ROUTES } from "./constants/routes";
 import "./App.css";
@@ -53,6 +56,8 @@ export default function App() {
                 <Route path={ROUTES.HOME} element={<Home />} />
                 <Route path="/home" element={<HomepagePlaceholder />} />
                 <Route path="/story/:slug" element={<Story />} />
+                {REGISTRY_PUBLIC && <Route path="/registry" element={<Registry />} />}
+                {BRIEFING_PUBLIC && <Route path="/daily-briefing/:slug" element={<DailyBriefingStory />} />}
                 <Route path="/outlets" element={<HomepagePlaceholder />} />
                 <Route path="/outlets/:slug" element={<OutletProfile />} />
                 <Route path="/politicians/:slug" element={<PoliticianProfile />} />

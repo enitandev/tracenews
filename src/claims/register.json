@@ -57,9 +57,9 @@
       "clearance": "WITHDRAWN 3 Oct 2026 on counsel's instruction — route removed; /daily-briefing* returns 410 (middleware.js). Code kept for the record."
     },
     "src/pages/Category.jsx": {
-      "surface": "/topics/:topic — 'covered mostly by X sources (N%)'",
+      "surface": "/topics/:topic — tier bar for the topic",
       "kind": "public",
-      "clearance": "NOT CLEARED"
+      "clearance": "NOT CLEARED. 'covered mostly by X sources (N%)' line withdrawn 3 Oct 2026 pending rewrite; Politics preview text corrected."
     },
     "src/pages/Dashboard.jsx": {
       "surface": "/dashboard — reader's coverage diet by tier",
