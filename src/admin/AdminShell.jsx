@@ -71,7 +71,7 @@ export default function AdminShell({ children }) {
 
             <p className="rg">Newsroom</p>
             <div className="ri soon">Reports <span className="n">Soon</span></div>
-            <div className="ri soon">Daily Briefing <span className="n">Soon</span></div>
+            <Link to={ROUTES.ADMIN_BRIEFING} className={`ri ${location.pathname.includes(ROUTES.ADMIN_BRIEFING) ? 'on' : ''}`} style={{textDecoration: 'none'}}>Daily Briefing</Link>
             <div className="ri soon">Newsletter <span className="n">Soon</span></div>
             <div className="ri soon">Site copy <span className="n">Soon</span></div>
 

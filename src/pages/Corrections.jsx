@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function Corrections() {
+  // "Report an error" links pass the page they came from.
+  const [searchParams] = useSearchParams();
   const [form, setForm] = useState({
-    page: '',
+    page: searchParams.get('page') ? `tracenews.ng${searchParams.get('page')}` : '',
     what: '',
     correct: '',
     name: '',

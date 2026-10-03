@@ -52,9 +52,9 @@
       "clearance": "NOT CLEARED (verdict card inside it is cleared separately)"
     },
     "src/pages/DailyBriefingStory.jsx": {
-      "surface": "/daily-briefing/:slug — 'Bias Distribution' by tier",
+      "surface": "/daily-briefing and /daily-briefing/:slug — rebuilt Briefing: cleared story summary labelled 'AI-generated summary of the sources', outlet counts by tier with as-of time, correction and methodology links (strings in tracenews-api app/briefingStrings.py)",
       "kind": "public",
-      "clearance": "WITHDRAWN 3 Oct 2026 on counsel's instruction — route removed; /daily-briefing* returns 410 (middleware.js). Code kept for the record."
+      "clearance": "NOT CLEARED — off behind BRIEFING_PUBLIC (404) until counsel clears section B (constants file and sample editions)."
     },
     "src/pages/Category.jsx": {
       "surface": "/topics/:topic — tier bar for the topic",
@@ -145,6 +145,16 @@
       "surface": "TII visibility switch (TII_SCORES_VISIBLE = false)",
       "kind": "infrastructure",
       "clearance": "Renders nothing; hides the score on profiles and previews"
+    },
+    "api/briefing-og.js": {
+      "surface": "Crawler/link preview for /daily-briefing/:slug — same text as the page",
+      "kind": "public",
+      "clearance": "NOT CLEARED — 404 while BRIEFING_PUBLIC is off."
+    },
+    "src/admin/AdminBriefing.jsx": {
+      "surface": "/admin/briefing — staff review and approval of Briefing items",
+      "kind": "staff",
+      "clearance": "Staff only (admin route)"
     }
   }
 }
