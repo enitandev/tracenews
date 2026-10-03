@@ -17,6 +17,42 @@ function countedAt(iso) {
   return new Date(iso).toLocaleString('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
+const H4 = { fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '18px 0 8px', fontWeight: 500 };
+const LIST = { margin: '0 0 8px', paddingLeft: '20px', lineHeight: 1.6, color: 'var(--text-primary)', fontSize: '15px' };
+
+// The fuller sections (counsel's ruling, 3 Oct 2026, item 6). Each heading and
+// every word comes from the API; a section with nothing in it is not shown.
+function Sections({ sections, ui }) {
+  const heads = ui.sections || {};
+  const quotes = sections?.quotes || [];
+  const next = sections?.next || [];
+  const background = sections?.background || [];
+  return (
+    <>
+      {quotes.length > 0 && (
+        <section data-testid="section-quotes">
+          <h3 style={H4}>{heads.quotes}</h3>
+          {quotes.map((q, i) => (
+            <p key={i} style={{ margin: '0 0 10px', paddingLeft: '12px', borderLeft: '2px solid var(--border)', fontSize: '15px', lineHeight: 1.55, color: 'var(--text-primary)' }}>{q.line}</p>
+          ))}
+        </section>
+      )}
+      {next.length > 0 && (
+        <section data-testid="section-next">
+          <h3 style={H4}>{heads.next}</h3>
+          <ul style={LIST}>{next.map((n, i) => <li key={i}>{n}</li>)}</ul>
+        </section>
+      )}
+      {background.length > 0 && (
+        <section data-testid="section-background">
+          <h3 style={H4}>{heads.background}</h3>
+          <ul style={LIST}>{background.map((b, i) => <li key={i}>{b}</li>)}</ul>
+        </section>
+      )}
+    </>
+  );
+}
+
 export function BriefingItem({ item, ui }) {
   const counts = item.coverage_counts || {};
   const total = TIERS.reduce((sum, t) => sum + (counts[t] || 0), 0);
@@ -29,9 +65,12 @@ export function BriefingItem({ item, ui }) {
         <Link to={`/story/${item.slug}`} style={{ color: 'inherit', textDecoration: 'none' }}>{item.title}</Link>
       </h2>
       <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '0 0 12px', fontFamily: "'IBM Plex Mono', monospace" }}>{ui.attribution_label}</p>
-      <ul style={{ margin: '0 0 16px', paddingLeft: '20px', lineHeight: 1.6, color: 'var(--text-primary)', fontSize: '15px' }}>
+      {ui.sections?.what_happened && <h3 style={{ ...H4, marginTop: '4px' }}>{ui.sections.what_happened}</h3>}
+      <ul style={{ ...LIST, margin: '0 0 8px' }}>
         {(item.bullets || []).filter(b => typeof b === 'string').map((b, i) => <li key={i}>{b}</li>)}
       </ul>
+      <Sections sections={item.sections} ui={ui} />
+      <div style={{ height: '8px' }} />
       <div style={{ borderTop: '0.5px solid var(--border)', paddingTop: '12px', fontSize: '13px', color: 'var(--text-secondary)' }}>
         <div style={{ fontWeight: 600, marginBottom: '6px' }}>{ui.coverage_heading}: {total}</div>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
