@@ -354,11 +354,10 @@ export default function Methodology() {
             ['01', 'what the tii measures', 'section-01'],
             ['02', 'the six signals', 'section-02'],
             ['03', 'the three tiers', 'section-03'],
-            ['04', 'monitoring spirit', 'section-04'],
-            ['05', 'special cases', 'section-05'],
-            ['06', 'what we do not claim', 'section-06'],
-            ['07', 'data sources', 'section-07'],
-            ['08', 'contact', 'section-08'],
+            ['04', 'special cases', 'section-05'],
+            ['05', 'what we do not claim', 'section-06'],
+            ['06', 'data sources', 'section-07'],
+            ['07', 'contact', 'section-08'],
           ].map(([num, label, id]) => (
             <a key={id}
               href={`#${id}`}
@@ -533,41 +532,10 @@ export default function Methodology() {
         <div style={{ marginTop: '0' }} dangerouslySetInnerHTML={{ __html: DISTRIBUTION_COMPONENT_HTML }} />
       </div>
 
-      {/* 04 — Monitoring Spirit Signals */}
-      <div id="section-04" style={styles.section}>
-        <div style={styles.narrow}>
-          <p style={styles.eyebrow}>04 / monitoring spirit</p>
-          <h2 style={styles.h2Visual}>Monitoring Spirit Signals</h2>
-        </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px', marginBottom: '24px' }}>
-          {/* Card 2 */}
-          <div style={{ background: 'var(--bg-base)', border: '0.5px solid var(--border)', borderRadius: '8px', padding: '16px' }}>
-            <div style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', fontWeight: 600, color: '#a49889', background: 'rgba(230,126,34,0.1)', padding: '4px 8px', borderRadius: '4px', marginBottom: '12px' }}>
-              COPY-AND-PASTE
-            </div>
-            <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
-              Most outlets ran the same report
-            </h3>
-            <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: '0 0 16px 0' }}>
-              Fires when the majority of outlets covering a story published substantially identical content — indicating the story propagated without independent verification. When the original source is a government wire (NAN, VON), this is specifically noted: the government effectively authored the story that multiple outlets ran.
-            </p>
-            <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '12px', borderRadius: '6px', color: 'var(--text-muted)' }}>
-              Fires when: ≥ 60% of scored outlets in the cluster have S2 &lt; 40 (wire-republishing pattern), with minimum 4 scored outlets.
-            </div>
-          </div>
-        </div>
-        <div style={styles.narrow}>
-          <p style={styles.prose}>
-            This signal focuses on information provenance. A monitoring system must flag when multiple outlets run the exact same text without independent verification, particularly when that text originates from a government wire.
-          </p>
-        </div>
-      </div>
-
       {/* 05 — Special Cases */}
       <div id="section-05" style={styles.section}>
         <div style={styles.narrow}>
-          <p style={styles.eyebrow}>05 / special cases</p>
+          <p style={styles.eyebrow}>04 / special cases</p>
           <h2 style={styles.h2Visual}>Special Cases</h2>
         </div>
         
@@ -656,7 +624,7 @@ export default function Methodology() {
       {/* 06 — What We Do Not Claim */}
       <div id="section-06" style={styles.section}>
         <div style={styles.narrow}>
-          <p style={styles.eyebrow}>06 / what we do not claim</p>
+          <p style={styles.eyebrow}>05 / what we do not claim</p>
           <h2 style={styles.h2}>What We Do Not Claim</h2>
           
           <div style={{ background: 'rgba(192,57,43,0.04)', border: '0.5px solid rgba(192,57,43,0.15)', borderRadius: '12px', padding: '32px' }}>
@@ -718,7 +686,7 @@ export default function Methodology() {
       {/* 07 — Data Sources */}
       <div id="section-07" style={styles.section}>
         <div style={styles.narrow}>
-          <p style={styles.eyebrow}>07 / data sources</p>
+          <p style={styles.eyebrow}>06 / data sources</p>
           <h2 style={styles.h2}>Data Sources</h2>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '32px' }}>
@@ -752,7 +720,7 @@ export default function Methodology() {
       {/* 08 — Disputes and Contact */}
       <div id="section-08" style={styles.section}>
         <div style={styles.narrow}>
-          <p style={styles.eyebrow}>08 / disputes and contact</p>
+          <p style={styles.eyebrow}>07 / disputes and contact</p>
           <h2 style={styles.h2}>Disputes and Contact</h2>
           
           <div style={{ background: 'var(--bg-elevated)', border: '0.5px solid var(--border)', borderRadius: '12px', padding: '28px' }}>
