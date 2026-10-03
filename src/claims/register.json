@@ -44,7 +44,7 @@
     "src/pages/Registry.jsx": {
       "surface": "/registry — outlet list with party colours (unlinked public route)",
       "kind": "public",
-      "clearance": "NOT CLEARED"
+      "clearance": "WITHDRAWN 3 Oct 2026 on counsel's instruction — route removed; /registry returns 410 (middleware.js). Code kept for the record."
     },
     "src/pages/Story.jsx": {
       "surface": "/story/:slug — coverage panels, outlet tiers",
@@ -54,7 +54,7 @@
     "src/pages/DailyBriefingStory.jsx": {
       "surface": "/daily-briefing/:slug — 'Bias Distribution' by tier",
       "kind": "public",
-      "clearance": "NOT CLEARED"
+      "clearance": "WITHDRAWN 3 Oct 2026 on counsel's instruction — route removed; /daily-briefing* returns 410 (middleware.js). Code kept for the record."
     },
     "src/pages/Category.jsx": {
       "surface": "/topics/:topic — 'covered mostly by X sources (N%)'",

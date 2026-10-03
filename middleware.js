@@ -37,6 +37,16 @@ export default async function middleware(
   const isBot = BOT_USER_AGENTS.some(
     bot => ua.toLowerCase().includes(bot)
   )
+
+  // Withdrawn on counsel's instruction (3 Oct 2026): the Daily Briefing and
+  // the outlet registry return 410 Gone to browsers and crawlers alike. The
+  // underlying data is preserved; nothing here deletes it.
+  if (/^\/(daily-briefing|registry)(\/|$)/.test(url.pathname)) {
+    return new Response(
+      '<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>Gone | TraceNews</title><p>This page is no longer available. <a href="/">TraceNews home</a></p>',
+      { status: 410, headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } }
+    )
+  }
   
   if ((url.pathname === '/' || 
        url.pathname === '') && isBot) {

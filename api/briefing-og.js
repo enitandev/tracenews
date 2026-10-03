@@ -1,3 +1,5 @@
+const BRIEFING_WITHDRAWN = true
+
 import { createClient } from '@supabase/supabase-js'
 import { BOT_USER_AGENTS, truncateDesc, safe } from './story-og.js'
 
@@ -14,6 +16,12 @@ const API_BASE =
   'https://uvicorn-appmain-production-79c6.up.railway.app'
 
 export default async function handler(req, res) {
+  // Withdrawn on counsel's instruction (3 Oct 2026). Code kept for the record.
+  if (BRIEFING_WITHDRAWN) {
+    res.setHeader('X-Robots-Tag', 'noindex')
+    return res.status(410).send('Gone')
+  }
+
   const { slug } = req.query
 
   const ua = (req.headers['user-agent'] || '').toLowerCase()

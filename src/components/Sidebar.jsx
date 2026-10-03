@@ -6,7 +6,7 @@ import { getDistinctScoredCount } from '../utils/helpers';
 
 // Every entry must point at a page that exists.
 const LINKS = [
-  ['Home', '/'], ['Daily Briefing', '/daily-briefing'], ['Methodology', '/methodology'],
+  ['Home', '/'], ['Methodology', '/methodology'],
   ['Politics', '/topics/politics'], ['Economy', '/topics/economy'], ['Security', '/topics/security'],
   ['Entertainment', '/topics/entertainment'], ['Sports', '/topics/sports'],
   ['Technology', '/topics/technology'], ['Health', '/topics/health'],

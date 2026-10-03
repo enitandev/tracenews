@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { AlertTriangle, Newspaper } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import CoverageBar, { getDominantTier } from '../components/CoverageBar';
 
-import { REGION_COLORS, formatTimeAgo, getDistinctScoredCount } from '../utils/helpers';
+import { REGION_COLORS } from '../utils/helpers';
 import CoverageBreadthCard from '../components/CoverageBreadthCard';
 import HeroStoryCard from '../components/HeroStoryCard';
 import StandardStoryItem from '../components/StandardStoryItem';
@@ -51,44 +50,9 @@ function SkeletonCompactStoryItem() {
   );
 }
 
-function BriefingHeroImage({ src }) {
-  const [error, setError] = useState(false);
-  if (!src || error) return (
-    <div style={{ width: '100%', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-hover)', color: 'var(--text-muted)', opacity: 0.2 }}>
-      <Newspaper size={48} />
-    </div>
-  );
-  return (
-    <div style={{ width: '100%', height: '160px', overflow: 'hidden' }}>
-      <img 
-        referrerPolicy="no-referrer"
-        src={src} 
-        onError={() => setError(true)}
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-        alt="" 
-      />
-    </div>
-  );
-}
-
 export default function Home() {
   const [clusters, setClusters] = useState([]);
   const [loadingTop, setLoadingTop] = useState(true);
-  const [briefingData, setBriefingData] = useState(null);
-  const [loadingBriefing, setLoadingBriefing] = useState(true);
-
-  useEffect(() => {
-    fetch('https://uvicorn-appmain-production-79c6.up.railway.app/daily-briefing')
-      .then(r => r.json())
-      .then(d => {
-        if (d.stories && d.stories.length) {
-          setBriefingData(d)
-        }
-        setLoadingBriefing(false)
-      })
-      .catch(() => setLoadingBriefing(false))
-  }, [])
-
   useEffect(() => {
     // 1. Fetch immediate top fold
     fetch('https://uvicorn-appmain-production-79c6.up.railway.app/clusters/landing?limit=15')
@@ -118,8 +82,6 @@ export default function Home() {
   const topNews = loadingTop ? Array(5).fill(null) : clusters.slice(2, 7);
   const standardFeed = loadingTop ? Array(5).fill(null) : clusters.slice(7, 12);
 
-  const briefingStory = briefingData?.stories?.[0] || null;
-  const briefingOthers = briefingData?.stories?.slice(1, 4) || [];
   
   // Monitoring Spirit Widget
   const alertClusters = loadingTop ? [] : clusters.filter(c => c.monitoring_flags && c.monitoring_flags.length > 0).slice(0, 2);
@@ -170,124 +132,9 @@ export default function Home() {
       {/* PHASE 1: THE TOP FOLD */}
       <div className="mobile-stack mobile-stack-divider" style={{ display: 'flex', marginBottom: '60px', alignItems: 'flex-start', marginTop: '26px' }}>
         
-        {/* LEFT COLUMN: Daily Briefing & Top News */}
-        <div style={{ width: '28%', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid var(--border)' }}>
-          <h2 style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '24px', marginBottom: '16px', color: 'var(--text-primary)' }}>Daily Briefing</h2>
-          {loadingBriefing ? (
-            <div style={{ border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', marginBottom: '32px', height: '350px' }}>
-              <div style={{ width: '100%', height: '160px', background: 'var(--bg-hover)' }}></div>
-              <div style={{ padding: '16px' }}>
-                <div style={{ width: '40%', height: '12px', background: 'var(--bg-hover)', borderRadius: '4px', marginBottom: '16px' }}></div>
-                <div style={{ width: '90%', height: '18px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px' }}></div>
-                <div style={{ width: '70%', height: '18px', background: 'var(--border)', borderRadius: '4px', marginBottom: '16px' }}></div>
-                <div style={{ width: '100%', height: '14px', background: 'var(--bg-hover)', borderRadius: '4px', marginBottom: '6px' }}></div>
-                <div style={{ width: '90%', height: '14px', background: 'var(--bg-hover)', borderRadius: '4px' }}></div>
-              </div>
-            </div>
-          ) : briefingStory ? (
-            <div style={{ marginBottom: '32px' }}>
-              <Link 
-                to={`/daily-briefing/${briefingStory.cluster_slug}`}
-                style={{ 
-                  textDecoration: 'none',
-                  display: 'block'
-                }}
-              >
-                <div style={{ 
-                  border: '1px solid var(--border)', 
-                  borderRadius: '6px', 
-                  overflow: 'hidden',
-                  marginBottom: '12px'
-                }}>
-                  <BriefingHeroImage src={briefingStory.image_url} />
-                  <div style={{ padding: '16px' }}>
-                    <div style={{ 
-                      fontSize: '11px', 
-                      color: 'var(--text-muted)', 
-                      marginBottom: '8px',
-                      fontWeight: 600
-                    }}>
-                      {(() => {
-                        const count = getDistinctScoredCount(briefingStory.coverage_stats);
-                        return count !== null ? `${count} sources · ` : '';
-                      })()}
-                      {formatTimeAgo(briefingStory.first_seen_at)}
-                    </div>
-                    <h3 style={{ 
-                      margin: '0 0 10px 0', 
-                      fontSize: '16px', 
-                      fontWeight: 700, 
-                      lineHeight: 1.3, 
-                      color: 'var(--text-primary)' 
-                    }}>
-                      {briefingStory.representative_title}
-                    </h3>
-                    {briefingStory.ground_summary?.whats_happening && (
-                      <p style={{ 
-                        fontSize: '13px', 
-                        color: 'var(--text-muted)', 
-                        lineHeight: 1.5, 
-                        margin: 0,
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}>
-                        {briefingStory.ground_summary.whats_happening}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </Link>
-              
-              {briefingOthers.length > 0 && (
-                <div style={{ 
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px'
-                }}>
-                  {briefingOthers.map(story => (
-                    <Link
-                      key={story.cluster_slug}
-                      to={`/daily-briefing/${story.cluster_slug}`}
-                      style={{ 
-                        textDecoration: 'none',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '8px',
-                        fontSize: '13px',
-                        color: 'var(--text-primary)',
-                        fontWeight: 600,
-                        lineHeight: 1.4,
-                        padding: '4px 0'
-                      }}
-                    >
-                      <span style={{ 
-                        color: 'var(--text-muted)',
-                        flexShrink: 0,
-                        marginTop: '1px'
-                      }}>
-                        →
-                      </span>
-                      <span style={{
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}>
-                        {story.representative_title}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : null}
-
-        </div>
-
+        {/* The Daily Briefing column was withdrawn on counsel's instruction (3 Oct 2026). */}
         {/* CENTER COLUMN: Hero & Standard Feed */}
-        <div style={{ width: '72%', flexShrink: 0, paddingLeft: '32px' }}>
+        <div style={{ width: '100%', flexShrink: 0 }}>
           {heroCluster ? <HeroStoryCard cluster={heroCluster} /> : <SkeletonHeroStoryCard />}
           <div style={{ marginTop: '24px' }}>
             {standardFeed.map((c, i) => c ? <StandardStoryItem key={c.id} cluster={c} /> : <SkeletonStandardStoryItem key={i} />)}
