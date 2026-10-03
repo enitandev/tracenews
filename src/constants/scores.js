@@ -18,6 +18,9 @@
  *      S2 judgement is done (counsel's recommendation).
  *   4. Counsel has cleared the outlet profile page and the S2 wording.
  *   5. "Last scored" on the profile reads the real date from the data.
+ *   6. The score columns are readable again by the public key (they were
+ *      revoked in Supabase on 3 Oct 2026), and api/outlet-og.js selects
+ *      independence_score again.
  * Then set this to true, and update the outlet profile entry in
  * src/claims/register.json with the clearance reference.
  */
