@@ -144,10 +144,8 @@ export default function Header() {
             
             <nav className="hide-on-mobile" style={{ display: 'flex', gap: '20px', fontWeight: 600, fontSize: '15px' }}>
               <Link to={ROUTES.HOME} style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname === ROUTES.HOME ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Home</Link>
-              <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>For You</a>
-              <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Local</a>
               <Link to="/daily-briefing" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname.startsWith('/daily-briefing') ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Daily Briefing</Link>
-              <a href="#" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>Monitoring Spirit</a>
+              <Link to="/methodology" style={{ color: 'var(--text-primary)', textDecoration: 'none', borderBottom: location.pathname.startsWith('/methodology') ? '2px solid var(--text-primary)' : 'none', paddingBottom: '4px' }}>Methodology</Link>
             </nav>
           </div>
 

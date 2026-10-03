@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { getDistinctScoredCount } from '../utils/helpers';
 
+// Every entry must point at a page that exists.
 const LINKS = [
-  'Login', 'About TraceNews', 'Subscribe', 'Website Settings', 'Contact us', 
-  'International Politics', 'Finance', 'Science & Tech', 'Offbeat', 'Local', 
-  'Referral Code', 'International', 'Sports', 'Arts & Entertainment', 
-  'Discover more topics', 'Product'
+  ['Home', '/'], ['Daily Briefing', '/daily-briefing'], ['Methodology', '/methodology'],
+  ['Politics', '/topics/politics'], ['Economy', '/topics/economy'], ['Security', '/topics/security'],
+  ['Entertainment', '/topics/entertainment'], ['Sports', '/topics/sports'],
+  ['Technology', '/topics/technology'], ['Health', '/topics/health'],
+  ['About TraceNews', '/about'], ['Contact us', '/about#contact'],
+  ['Request a correction', '/corrections'], ['Sign in', '/login'],
 ];
 
 export default function Sidebar({ 
@@ -133,10 +136,10 @@ export default function Sidebar({
         </div>
 
         <nav style={{ padding: '12px 0', display: 'flex', flexDirection: 'column' }}>
-          {LINKS.map((link, idx) => (
+          {LINKS.map(([label, to]) => (
             <Link 
-              key={idx} 
-              to="#" 
+              key={to} 
+              to={to} 
               onClick={onClose}
               style={{
                 padding: '16px 20px',
@@ -153,7 +156,7 @@ export default function Sidebar({
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#333'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              {link}
+              {label}
               <span style={{ fontSize: '18px', color: '#888' }}>›</span>
             </Link>
           ))}
