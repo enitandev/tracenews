@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TII_SCORES_VISIBLE } from '../constants/scores';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Newspaper } from 'lucide-react';
@@ -81,7 +82,9 @@ export default function OutletProfile() {
   const outlet = data.outlet;
   const recent_stories = data.recent_stories || [];
   
-  const score = outlet.independence_score !== null && outlet.independence_score !== undefined ? outlet.independence_score : 0;
+  // An unscored outlet has no score; it is never shown as 0.
+  const score = outlet.independence_score ?? null;
+  const showScore = TII_SCORES_VISIBLE && score !== null;
 
   let rawTier = getOutletTier(outlet);
 
@@ -103,7 +106,9 @@ export default function OutletProfile() {
   const alignText = ALIGNMENT_MAP[outlet.government_alignment] || outlet.government_alignment || 'Unknown';
   const ownershipSentence = outlet.ownership_name ? `Owned by ${outlet.ownership_name}` : 'Ownership information not specified';
   const shortExplanation = `TraceNews scores ${outlet.name} as ${tierLabel} with a TII of ${score} — ${getInterpretation()}`;
-  const summaryText = `${shortExplanation} ${ownershipSentence}. Government alignment: ${alignText}.`;
+  const summaryText = showScore
+    ? `${shortExplanation} ${ownershipSentence}. Government alignment: ${alignText}.`
+    : `${ownershipSentence}. Government alignment: ${alignText}.`;
 
   const mediumText = Array.isArray(outlet.medium) ? outlet.medium.join(', ') : (outlet.medium || 'Digital');
   const cityText = outlet.headquarters_city || 'Nigeria';
@@ -122,8 +127,10 @@ export default function OutletProfile() {
   return (
     <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '32px 24px', fontFamily: 'var(--font-body)' }}>
       <Helmet>
-        <title>{outlet.name} — Editorial Independence Score | TraceNews</title>
-        <meta name="description" content={`TraceNews scores ${outlet.name} ${score}/100 for editorial independence — ${tierLabel} tier. Owned by ${outlet.ownership_name || 'Unknown'}. See recent coverage and methodology.`} />
+        <title>{showScore ? `${outlet.name} — Editorial Independence Score | TraceNews` : `${outlet.name} — Outlet profile | TraceNews`}</title>
+        <meta name="description" content={showScore
+          ? `TraceNews scores ${outlet.name} ${score}/100 for editorial independence — ${tierLabel} tier. Owned by ${outlet.ownership_name || 'Unknown'}. See recent coverage and methodology.`
+          : `${outlet.name} on TraceNews — ${tierLabel} tier. Owned by ${outlet.ownership_name || 'Unknown'}. See recent coverage and methodology.`} />
         <meta property="og:title" content={`${outlet.name} | TraceNews`} />
         <meta property="og:url" content={`https://tracenews.ng/outlets/${outlet.slug}`} />
         <link rel="canonical" href={`https://tracenews.ng/outlets/${outlet.slug}`} />
@@ -163,6 +170,7 @@ export default function OutletProfile() {
         </div>
       </div>
 
+      {showScore && (<>
       {/* SCORE ROW */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', marginBottom: '32px', alignItems: 'center' }}>
         
@@ -245,6 +253,7 @@ export default function OutletProfile() {
           </div>
         </div>
       </div>
+      </>)}
 
       {/* THREE FACT CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '40px' }}>
@@ -423,6 +432,7 @@ export default function OutletProfile() {
           </div>
         </div>
 
+        {showScore && (<>
         {/* Right: Sidebar */}
         <div style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
           
@@ -474,6 +484,7 @@ export default function OutletProfile() {
           </div>
 
         </div>
+        </>)}
       </div>
     </div>
   );

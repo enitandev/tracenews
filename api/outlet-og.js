@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { getOutletTier } from '../src/constants/tiers.js'
+import { TII_SCORES_VISIBLE } from '../src/constants/scores.js'
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL,
@@ -73,15 +74,18 @@ export default async function handler(req, res) {
   
   const outlet = outlets[0]
   const score = outlet.independence_score
+  const showScore = TII_SCORES_VISIBLE && score !== null && score !== undefined
   const rawTier = getOutletTier(outlet)
   const tier = TIER_MAP[rawTier] || rawTier
   const alignment = ALIGNMENT_MAP[outlet.government_alignment] || outlet.government_alignment
   
   const canonical = `https://tracenews.ng/outlets/${slug}`
   
-  const metaTitle = `${outlet.name} — Editorial Independence Score | TraceNews`
+  const metaTitle = showScore
+    ? `${outlet.name} — Editorial Independence Score | TraceNews`
+    : `${outlet.name} — Outlet profile | TraceNews`
   
-  const metaDesc = `TraceNews scores ${outlet.name} ${score}/100 for editorial independence — ${tier} tier. Owned by ${outlet.ownership_name}. Government alignment: ${alignment}. See coverage analysis and methodology on TraceNews.`
+  const metaDesc = `${showScore ? `TraceNews scores ${outlet.name} ${score}/100 for editorial independence — ` : `${outlet.name} on TraceNews — `}${tier} tier. Owned by ${outlet.ownership_name}. Government alignment: ${alignment}. See coverage analysis and methodology on TraceNews.`
   
   // Organization + Dataset JSON-LD
   const jsonLd = {
@@ -104,14 +108,14 @@ export default async function handler(req, res) {
       '@id': canonical
     },
     'additionalProperty': [
-      {
+      ...(showScore ? [{
         '@type': 'PropertyValue',
         'name': 
           'TraceNews Independence Index',
         'value': score,
         'minValue': 0,
         'maxValue': 100
-      },
+      }] : []),
       {
         '@type': 'PropertyValue',
         'name': 'Editorial Tier',
@@ -149,7 +153,7 @@ ${JSON.stringify(jsonLd, null, 2)}
 <body>
   <h1>${safe(outlet.name)}</h1>
   <p>${safe(metaDesc)}</p>
-  <p>Independence score: ${score}/100 — ${safe(tier)} tier</p>
+  ${showScore ? `<p>Independence score: ${score}/100 — ${safe(tier)} tier</p>` : `<p>${safe(tier)} tier</p>`}
   <p>Owned by: ${safe(outlet.ownership_name)}</p>
   <p>Government alignment: ${safe(alignment)}</p>
   <a href="${canonical}">View full analysis on TraceNews</a>
