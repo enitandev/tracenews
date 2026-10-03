@@ -29,7 +29,7 @@ export default function About() {
           We do not produce news. We do not have reporters or editorial positions. We are an analytical instrument: we observe and measure what Nigerian media publishes, the same way an audiometer measures sound.
         </p>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '16px' }}>
-          Every score on this platform is derived from observable editorial behaviour across a 30-day rolling window, applied consistently across all 82 outlets in our registry. Our methodology is public and fully documented.
+          Every score on this platform is derived from observable editorial behaviour in a sample of an outlet's stories from the past 30 days, using the same method for every outlet. Our methodology is public and fully documented.
         </p>
         
         <Link to="/methodology" style={{ fontSize: '14px', color: '#a49889', textDecoration: 'none', fontWeight: 500, display: 'inline-block', marginTop: '8px' }}>
@@ -41,7 +41,7 @@ export default function About() {
       <div>
         <h2 style={{ fontFamily: 'Spectral, Georgia, serif', fontSize: '20px', fontWeight: 600, marginTop: '40px', marginBottom: '16px', color: 'var(--text-primary)' }}>What we measure</h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '16px' }}>
-          The TraceNews Independence Index (TII) scores outlets on six behavioural signals — who gets quoted, how much original reporting an outlet does, what topics it avoids, and whether its coverage follows or challenges official positions. Scores range from 0 to 100 and are grouped into three editorial tiers: Government-aligned, Mainstream, and Watchdog.
+          The TraceNews Independence Index (TII) scores outlets from 0 to 100 on six behavioural signals — who gets quoted, how much reads as original reporting, how often an outlet is absent from widely reported stories, and the language used about officials. Separately, each outlet is placed in one of three tiers — Government-aligned, Mainstream or Watchdog — according to how it is owned, as set out in our methodology.
         </p>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '580px', marginBottom: '0' }}>
           We also track how stories are covered across tiers — which outlets report which events, and where significant silence exists.
