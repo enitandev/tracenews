@@ -314,10 +314,6 @@ export default function PoliticianProfile() {
               <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Category</div>
               <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600 }}>{CATEGORY_DISPLAY[politician.category] || politician.category || '—'}</div>
             </div>
-            <div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Verified</div>
-              <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace" }}>27 Jun 2026</div>
-            </div>
           </div>
         </div>
       </div>
