@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
 const SIGNAL_COMPONENT_HTML = `
@@ -65,7 +65,7 @@ const SIGNAL_COMPONENT_HTML = `
 }
 </style>
 <div class="tn-meth in-view" style="max-width: none;">
-  <div class="tn-weights" role="img" aria-label="Signal weighting: source hierarchy 30 percent, original reporting 25 percent, omission pattern 20 percent, lexical deference 10 percent, story selection 10 percent, editorial indicators 5 percent.">
+  <div class="tn-weights" role="img" aria-label="Signal weighting: source hierarchy 30 percent, original reporting 25 percent, coverage of widely reported stories 20 percent, lexical deference 10 percent, story selection 10 percent, editorial indicators 5 percent.">
     <div class="tn-seg" style="width:30%;background:#0F6E56;animation-delay:0s;"><span class="k" style="color:#9FE1CB;">S1</span><span class="v" style="color:#fff;">30%</span></div>
     <div class="tn-seg" style="width:25%;background:#1D9E75;animation-delay:.1s;"><span class="k" style="color:#04342C;">S2</span><span class="v" style="color:#04342C;">25%</span></div>
     <div class="tn-seg" style="width:20%;background:#5DCAA5;animation-delay:.2s;padding-left:12px;"><span class="k" style="color:#04342C;">S3</span><span class="v" style="color:#04342C;font-size:15px;">20%</span></div>
@@ -77,7 +77,7 @@ const SIGNAL_COMPONENT_HTML = `
   <div class="tn-legend">
     <div class="tn-legrow"><span class="s">S1</span><div><p class="n">Source hierarchy</p><p class="d">who gets quoted</p></div></div>
     <div class="tn-legrow"><span class="s">S2</span><div><p class="n">Original reporting</p><p class="d">wire vs own work</p></div></div>
-    <div class="tn-legrow"><span class="s">S3</span><div><p class="n">Omission pattern</p><p class="d">what's avoided</p></div></div>
+    <div class="tn-legrow"><span class="s">S3</span><div><p class="n">Widely reported stories</p><p class="d">how often absent</p></div></div>
     <div class="tn-legrow"><span class="s">S4</span><div><p class="n">Lexical deference</p><p class="d">honorifics, PR tone</p></div></div>
     <div class="tn-legrow"><span class="s">S5</span><div><p class="n">Story selection</p><p class="d">accountability ratio</p></div></div>
     <div class="tn-legrow"><span class="s">S6</span><div><p class="n">Editorial indicators</p><p class="d">corrections, disputes</p></div></div>
@@ -85,186 +85,7 @@ const SIGNAL_COMPONENT_HTML = `
 </div>
 `;
 
-const DISTRIBUTION_COMPONENT_HTML = `
-<div class="tn-meth in-view" style="max-width: none;" id="distribution-container">
-  <p class="tn-readout" id="tn-readout">hover any mark to read an outlet &nbsp;·&nbsp; 81 outlets &nbsp;·&nbsp; 30-day window</p>
-
-  <div class="tn-bands" aria-hidden="true">
-    <span style="width:34%;background:#6d7f92;opacity:.85;"></span>
-    <span style="width:25%;background:#a49889;opacity:.85;"></span>
-    <span style="width:41%;background:#8f9a6f;opacity:.85;"></span>
-  </div>
-
-  <div class="tn-plot" id="tn-plot" role="img" aria-label="Distribution of all 82 outlets across the 0 to 100 independence spectrum, clustered densely in the lower-middle range."></div>
-
-  <div class="tn-axis" aria-hidden="true">
-    <span style="left:0;">0</span>
-    <span style="left:34%;transform:translateX(-50%);">34</span>
-    <span style="left:59%;transform:translateX(-50%);">59</span>
-    <span style="right:0;">100</span>
-  </div>
-
-  <div class="tn-tiers">
-    <div class="tn-tier" style="border-top:2px solid #6d7f92;"><p class="tt">Govt <span class="tr">0–34</span></p><p class="td">Editorial choices consistently defer to government or aligned interests.</p><p class="tc" style="color:#6d7f92;">7 outlets</p></div>
-    <div class="tn-tier" style="border-top:2px solid #a49889;"><p class="tt">Mainstream <span class="tr">35–59</span></p><p class="td">Broadly balanced but constrained by access and commercial pressure.</p><p class="tc" style="color:#a49889;">50 outlets</p></div>
-    <div class="tn-tier" style="border-top:2px solid #8f9a6f;"><p class="tt">Watchdog <span class="tr">60–100</span></p><p class="td">Consistent original accountability reporting, independent of official narratives.</p><p class="tc" style="color:#8f9a6f;">24 outlets</p></div>
-  </div>
-</div>
-`;
-
-const runDistributionPlot = () => {
-  var TN_OUTLETS=[
-    ["NAN",30],
-    ["NTA",30],
-    ["Radio Nigeria",30],
-    ["Voice of Nigeria",30],
-    ["Blueprint Newspaper",34],
-    ["Channels Television",34],
-    ["The Nation",34],
-    ["PRNigeria",35],
-    ["TVC News",37],
-    ["Investors King",39],
-    ["Kogi Reports",40],
-    ["Lagos Television (LTV)",40],
-    ["Nairametrics",40],
-    ["The Observer",40],
-    ["Techeconomy",42],
-    ["The Will",42],
-    ["Daily Nigerian",43],
-    ["AIT",44],
-    ["Daily Independent",44],
-    ["New Telegraph",44],
-    ["News Central TV",44],
-    ["Reuters Africa",46],
-    ["The Tide",46],
-    ["The Voice",47],
-    ["PM News",49],
-    ["Africa Check Nigeria",50],
-    ["Akwa Ibom Times",50],
-    ["Bloomberg Africa",50],
-    ["BSN Sports",50],
-    ["Complete Sports",50],
-    ["Desert Herald",50],
-    ["Dubawa",50],
-    ["FactCheckHub",50],
-    ["Guardian Nigeria",50],
-    ["HumAngle",50],
-    ["NaijaTechGuide",50],
-    ["RFI Hausa",51],
-    ["Techpoint Africa",51],
-    ["The Punch (Metro)",52],
-    ["ICIR",53],
-    ["TechCabal",53],
-    ["The Point",53],
-    ["Sporting Life Nigeria",54],
-    ["Aminiya",55],
-    ["BBC Pidgin",55],
-    ["Goal Nigeria",55],
-    ["Punch Nigeria",55],
-    ["Quartz Africa",55],
-    ["ThisDay",55],
-    ["BBC Hausa",56],
-    ["Technext",56],
-    ["Business Insider Africa",57],
-    ["Daily Post Nigeria",57],
-    ["Leadership Newspaper",57],
-    ["Vanguard Delta",57],
-    ["Naija247news",58],
-    ["Premium Times",58],
-    ["BusinessDay",60],
-    ["Dataphyte",60],
-    ["The Cable",60],
-    ["Daily Trust",61],
-    ["Nigerian Tribune Online",61],
-    ["Pointblank News",61],
-    ["BBC Yoruba",62],
-    ["The Conversation Africa",62],
-    ["The Niche",63],
-    ["Peoples Gazette",64],
-    ["Pulse Nigeria",64],
-    ["The Sun Nigeria",64],
-    ["The Whistler",64],
-    ["YNaija",64],
-    ["Al Jazeera Africa",65],
-    ["The Africa Report",65],
-    ["VOA Hausa",65],
-    ["African Arguments",66],
-    ["Arise News Online",66],
-    ["Osun Defender",67],
-    ["Ripples Nigeria",68],
-    ["Legit.ng",70],
-    ["FIJ Nigeria",75],
-    ["Sahara Reporters",75]
-  ];
-
-  var TN_NOTABLE={
-    "NTA":1,
-    "Punch Nigeria":1,
-    "The Cable":1,
-    "FIJ Nigeria":1,
-    "Sahara Reporters":1
-  };
-  var DEFAULT_READOUT="hover any mark to read an outlet  \u00B7  81 outlets  \u00B7  30-day window";
-
-  var plot=document.getElementById('tn-plot');
-  var readout=document.getElementById('tn-readout');
-  if(!plot) return;
-
-  function tierOf(s){return s<=34?'Govt':s<=59?'Mainstream':'Watchdog';}
-
-  TN_OUTLETS.forEach(function(o,i){
-    var name=o[0],score=o[1],isNote=TN_NOTABLE[name];
-    var d=document.createElement('div');
-    d.className='tn-otick';
-    d.style.left=score+'%';
-    d.style.height=(isNote?44:26)+'px';
-    d.style.animationDelay=(0.3+i*0.012)+'s';
-    if(isNote){d.style.background='var(--text-muted,#a0a0a0)';d.style.width='2px';}
-    d.tabIndex=0;
-    d.setAttribute('role','img');
-    d.setAttribute('aria-label',name+', score '+score+', '+tierOf(score)+' tier');
-    function show(){readout.textContent='\u203A '+name+'  \u00B7  TII '+score+'  \u00B7  '+tierOf(score);readout.style.color='var(--text-primary,#ededed)';}
-    function hide(){readout.textContent=DEFAULT_READOUT;readout.style.color='var(--text-tertiary,#6b6b6b)';}
-    d.addEventListener('mouseenter',show);
-    d.addEventListener('mouseleave',hide);
-    d.addEventListener('focus',show);
-    d.addEventListener('blur',hide);
-    plot.appendChild(d);
-
-    if(isNote){
-      var lab=document.createElement('div');
-      lab.className='tn-olabel';
-      lab.textContent=name;
-      lab.style.left=score+'%';
-      var labelHeights = {
-        "NTA": '46px',
-        "Punch Nigeria": '62px',
-        "The Cable": '46px',
-        "FIJ Nigeria": '62px',
-        "Sahara Reporters": '46px'
-      };
-      lab.style.bottom = labelHeights[name] || '46px';
-      lab.style.animationDelay=(0.6+i*0.01)+'s';
-      plot.appendChild(lab);
-    }
-  });
-
-  var root=plot.closest('.tn-meth');
-  if('IntersectionObserver' in window && root){
-    var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(e){ if(e.isIntersecting){root.classList.add('in-view');io.disconnect();} });
-    },{threshold:0.2});
-    io.observe(root);
-  }else if(root){
-    root.classList.add('in-view');
-  }
-};
-
 export default function Methodology() {
-  useEffect(() => {
-    runDistributionPlot();
-  }, []);
-
   const styles = {
     eyebrow: {
       fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
@@ -338,7 +159,7 @@ export default function Methodology() {
           How We Score Nigerian Media Independence
         </h1>
         <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 24px 0' }}>
-          82 outlets · 6 signals · 9,165 stories · 30-day rolling window
+          6 signals · 30-day sample window
         </p>
 
         <div style={{
@@ -379,7 +200,7 @@ export default function Methodology() {
           The TII is a 0–100 behavioural score applied to Nigerian news outlets. This page explains every signal, every threshold, and every editorial decision behind the numbers — because a media intelligence instrument you cannot examine is one you should not trust.
         </p>
         <p style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', color: 'var(--text-muted)', margin: '0' }}>
-          Last updated: October 2026
+          Last updated: 3 October 2026
         </p>
       </div>
 
@@ -392,10 +213,10 @@ export default function Methodology() {
             The TraceNews Independence Index (TII) measures one specific thing: how freely a Nigerian news outlet makes editorial decisions independent of political and commercial power. It does not measure accuracy, quality of writing, or factual reliability.
           </p>
           <p style={styles.prose}>
-            Every outlet is scored on a 30-day rolling sample of up to 150 published stories drawn from RSS ingestion. Scores update periodically or when significant changes in an outlet's behaviour are detected.
+            Each outlet is scored on a random sample of up to 150 of its stories from the past 30 days; outlets with fewer than 30 eligible stories are not scored. Scores are computed when the scoring job is run, and each computation is recorded with its date and sample size. Scores are not currently shown on outlet pages while the method is reviewed.
           </p>
           <p style={styles.prose}>
-            A higher score means greater editorial independence from power. A lower score means editorial choices that consistently defer to government, party, or commercial interests — whether by direct control, ownership alignment, or access-journalism incentives.
+            Each signal measures something observable in an outlet's sampled stories: who is quoted, how much reads as original reporting, how often the outlet is absent from widely reported stories, and the language used about officials. A score describes that sampled output. It is not a finding about the intent of any owner, editor or journalist.
           </p>
         </div>
       </div>
@@ -439,8 +260,14 @@ export default function Methodology() {
             </div>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Original Reporting</h3>
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
-              What proportion of stories are original reporting versus republished wire copy or press releases?
+              S2 estimates how much of an outlet's recent output reads as original reporting rather than reproduced wire copy or press releases. For each outlet we take a random sample of up to 150 of its stories from the past 30 days; outlets with fewer than 30 eligible stories are not scored. An AI model reads each story's headline and feed summary on its own and judges whether it reads as original reporting. The score is the share judged original. It is an automated estimate of an outlet's overall output and can be wrong. It is not a comparison of any story's text against another source, and it says nothing about any individual story.
             </p>
+            <div style={{ borderLeft: '2px solid #1D9E75', padding: '8px 12px', marginTop: '16px', background: 'rgba(29,158,117,0.06)', borderRadius: '0 4px 4px 0' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#1D9E75', display: 'block', marginBottom: '4px' }}>example</span>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
+                An outlet whose sampled stories mostly read as reproduced wire copy or press releases scores low; one whose sampled stories mostly read as original reporting scores high.
+              </p>
+            </div>
           </div>
 
           {/* S3 */}
@@ -449,14 +276,14 @@ export default function Methodology() {
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', fontWeight: 500, color: '#1D9E75' }}>S3</span>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)', marginLeft: '8px' }}>20%</span>
             </div>
-            <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Omission Pattern</h3>
+            <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '12px 0 8px 0' }}>Coverage of Widely Reported Stories</h3>
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: 0 }}>
-              Does the outlet consistently avoid covering major accountability stories that the wider Nigerian media ecosystem reports? We identify clusters of stories covered by ≥60% of outlets and check whether this outlet is absent from them — a pattern of strategic silence on accountability topics.
+              How often is an outlet absent from stories that most outlets covered? We take stories from the past 30 days that at least 60% of tracked outlets covered and that an AI model classifies as accountability stories, and count how many of them appear among the outlet's sampled stories.
             </p>
             <div style={{ borderLeft: '2px solid #5DCAA5', padding: '8px 12px', marginTop: '16px', background: 'rgba(93,202,165,0.06)', borderRadius: '0 4px 4px 0' }}>
               <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.12em', color: '#5DCAA5', display: 'block', marginBottom: '4px' }}>example</span>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, fontFamily: "'Montserrat', sans-serif" }}>
-                If 35 outlets cover a court ruling against a government agency but a specific outlet never publishes it across multiple such cases, this depresses S3.
+                If most outlets covered a court ruling and the story does not appear among an outlet's sampled stories, that counts as one absence in S3.
               </p>
             </div>
           </div>
@@ -523,7 +350,19 @@ export default function Methodology() {
           <p style={styles.eyebrow}>03 / the three tiers</p>
           <h2 style={styles.h2Visual}>The Three Tiers</h2>
         </div>
-        <div style={{ marginTop: '0' }} dangerouslySetInnerHTML={{ __html: DISTRIBUTION_COMPONENT_HTML }} />
+        <div style={styles.narrow}>
+          <p style={styles.prose}>
+            Every outlet is placed in one of three tiers. The tier describes how an outlet is owned. It is not a finding about how the outlet covered any particular story.
+          </p>
+          <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '24px 0 8px 0' }}>Government-aligned</h3>
+          <p style={styles.prose}>
+            An outlet is placed in this tier on one of three grounds: it is owned by the federal government, on the public record; it is owned by a state government, on the public record; or it has a documented ownership tie to a political office-holder. The documents for each outlet are held on file. An outlet for which no document is held is not placed in this tier.
+          </p>
+          <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '24px 0 8px 0' }}>Mainstream and Watchdog</h3>
+          <p style={styles.prose}>
+            All other outlets are placed in the Mainstream or Watchdog tier. How that placement is made is under review, and this section will set it out when the review is complete.
+          </p>
+        </div>
       </div>
 
       {/* 05 — Special Cases */}
@@ -543,7 +382,7 @@ export default function Methodology() {
               S3 signal defaulted to neutral
             </h3>
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: '0 0 16px 0' }}>
-              The S3 omission signal compares outlets against English-language accountability clusters. Language service outlets covering Nigerian news in Hausa or Yoruba structurally cannot match these clusters — not because they suppress stories, but because the same events are reported in different language contexts. S3 is set to 70 (neutral) for these outlets rather than treating absence as suppression.
+              The S3 signal compares outlets against English-language accountability stories. Language service outlets covering Nigerian news in Hausa or Yoruba cannot be matched against these stories, because the same events are reported in a different language. S3 is set to 70 (neutral) for these outlets.
             </p>
             <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', color: 'var(--text-primary)', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               <span style={{ background: 'var(--bg-elevated)', padding: '4px 8px', borderRadius: '4px', border: '0.5px solid var(--border)' }}>BBC Hausa</span>
@@ -579,13 +418,13 @@ export default function Methodology() {
           {/* Card 3 */}
           <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '20px', background: 'var(--bg-base)' }}>
             <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', display: 'block', marginBottom: '12px' }}>
-              FEDERAL GOVERNMENT
+              GOVERNMENT-OWNED
             </span>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
-              Score capped at 30
+              Score capped at 30 (federal) or 40 (state)
             </h3>
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: '0 0 16px 0' }}>
-              Outlets owned and editorially directed by the federal government are structurally incapable of editorial independence on matters of government conduct, regardless of individual story quality. Their scores are capped at 30. This reflects editorial structure, not a judgment on individual journalists.
+              Outlets owned by the federal government, on the public record, have their score capped at 30. Outlets owned by a state government have their score capped at 40. The cap reflects ownership. It is not a judgement on any journalist or story.
             </p>
             <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', color: 'var(--text-primary)', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               <span style={{ background: 'var(--bg-elevated)', padding: '4px 8px', borderRadius: '4px', border: '0.5px solid var(--border)' }}>NTA</span>
@@ -598,19 +437,15 @@ export default function Methodology() {
           {/* Card 4 */}
           <div style={{ border: '0.5px solid var(--border)', borderRadius: '8px', padding: '20px', background: 'var(--bg-base)' }}>
             <span style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', display: 'block', marginBottom: '12px' }}>
-              KNOWN ALIGNED
+              DOCUMENTED OWNERSHIP TIES
             </span>
             <h3 style={{ fontFamily: "'Spectral', Georgia, serif", fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
-              Score capped at 34 (Govt tier)
+              Score capped at 34
             </h3>
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)', margin: '0 0 16px 0' }}>
-              Outlets where ownership ties to political figures or parties constitute a documented structural fact — not inferred from behavioural patterns alone — are capped at 34. This reflects structural editorial alignment, regardless of day-to-day content scores. Caps are reviewed as ownership situations change.
+              Outlets with a documented ownership tie to a political office-holder have their score capped at 34. The documents are held on file; this page does not name owners. The cap reflects ownership. It is not a judgement on any journalist or story.
             </p>
-            <div style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '12px', color: 'var(--text-primary)', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              <span style={{ background: 'var(--bg-elevated)', padding: '4px 8px', borderRadius: '4px', border: '0.5px solid var(--border)' }}>The Nation</span>
-              <span style={{ background: 'var(--bg-elevated)', padding: '4px 8px', borderRadius: '4px', border: '0.5px solid var(--border)' }}>Blueprint Newspaper</span>
-              <span style={{ background: 'var(--bg-elevated)', padding: '4px 8px', borderRadius: '4px', border: '0.5px solid var(--border)' }}>Channels Television</span>
-            </div>
+
           </div>
         </div>
       </div>
@@ -625,18 +460,6 @@ export default function Methodology() {
             <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '15px', color: 'var(--text-primary)', fontWeight: 500, margin: '0 0 24px 0' }}>
               The TII describes observable editorial behaviour across a 30-day sample. We state what we measured. We do not state what we cannot prove.
             </p>
-
-            <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid rgba(192,57,43,0.15)' }}>
-              <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
-              <div>
-                <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '14px', fontFamily: "'Montserrat', sans-serif" }}>
-                  We do not assert that any outlet accepted payment for coverage.
-                </p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: 1.6, margin: 0, fontFamily: "'Montserrat', sans-serif" }}>
-                  The promotional_alignment_flag describes an observable behavioural pattern — anomalously positive sentiment combined with low source diversity — not a transaction. Renaming was a deliberate choice: we will not name an inference of bribery on a named outlet in our public data.
-                </p>
-              </div>
-            </div>
 
             <div style={{ display: 'flex', gap: '12px', padding: '14px 0', borderBottom: '0.5px solid rgba(192,57,43,0.15)' }}>
               <span style={{ color: '#8f9a6f', fontWeight: 700, fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✕</span>
