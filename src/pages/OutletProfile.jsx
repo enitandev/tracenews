@@ -91,21 +91,12 @@ export default function OutletProfile() {
   const tierLabel = TIER_LABELS[rawTier] || (rawTier.charAt(0).toUpperCase() + rawTier.slice(1));
   const tierColor = TIER_COLORS[rawTier] || 'var(--text-secondary)';
 
-  const getInterpretation = () => {
-    if (score >= 60) {
-      return "placing it among Nigeria's most editorially independent outlets, with a consistent pattern of original accountability reporting.";
-    } else if (score >= 50) {
-      return "placing it at the upper end of Nigeria's commercial press — close to Watchdog but not yet showing the consistent accountability pattern that would push it above 60.";
-    } else if (score >= 35) {
-      return "placing it in the middle of Nigeria's commercial press, with editorial choices that balance independent reporting and mainstream constraints.";
-    } else {
-      return "placing it among outlets whose editorial choices consistently defer to government or aligned interests.";
-    }
-  };
+
 
   const alignText = ALIGNMENT_MAP[outlet.government_alignment] || outlet.government_alignment || 'Unknown';
   const ownershipSentence = outlet.ownership_name ? `Owned by ${outlet.ownership_name}` : 'Ownership information not specified';
-  const shortExplanation = `TraceNews scores ${outlet.name} as ${tierLabel} with a TII of ${score} — ${getInterpretation()}`;
+  // No band interpretation: any wording returns only with counsel's clearance.
+  const shortExplanation = `TraceNews scores ${outlet.name} with a TII of ${score}.`;
   const summaryText = showScore
     ? `${shortExplanation} ${ownershipSentence}. Government alignment: ${alignText}.`
     : `${ownershipSentence}. Government alignment: ${alignText}.`;
