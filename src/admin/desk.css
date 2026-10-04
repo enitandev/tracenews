@@ -111,3 +111,40 @@
 .br-date .n{font-family:var(--f-mono);font-size:9.5px;color:var(--t-faint);font-weight:400}
 
 }
+
+/* ═══════════ Desk kit (src/admin/desk/Kit.jsx) ═══════════ */
+.desk-scope .mh-id{align-items:center}
+.desk-scope .mh-id .logo{display:block;margin:-16px -6px -16px -10px}
+.desk-scope .it-link,.desk-scope .it-btn{width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--hair);font:inherit;color:inherit;cursor:pointer;text-decoration:none}
+.desk-scope .it-link:hover .tt,.desk-scope .it-btn:hover .tt{color:var(--v-clear)}
+.desk-scope .row-wrap.open > .it{border-bottom-color:transparent}
+.desk-scope .row-body{padding:var(--s2) 0 var(--s5) var(--s6);border-bottom:1px solid var(--hair)}
+.desk-scope .mk-ok{color:var(--v-clear);border-color:var(--v-clear)}
+.desk-scope .desk-loading{display:flex;flex-direction:column;gap:var(--s3);padding:var(--s3) 0}
+.desk-scope .desk-skel{height:14px;border-radius:2px;background:var(--raised);animation:desk-pulse 1.4s ease-in-out infinite}
+@keyframes desk-pulse{0%,100%{opacity:.45}50%{opacity:.9}}
+.desk-scope .desk-empty{font-size:12.5px;color:var(--t-muted);padding:var(--s3) 0;margin:0}
+.desk-scope .desk-fail{padding:var(--s3) 0;display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2)}
+.desk-scope .desk-fail .t-meta{margin:0;color:var(--v-mixed)}
+.desk-scope .desk-notice{position:fixed;right:24px;bottom:24px;z-index:60;background:var(--ink);color:var(--page);font-size:12.5px;padding:10px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.desk-scope .desk-notice.err{background:var(--v-mixed);color:#111}
+.desk-scope .desk-tabs{display:flex;gap:var(--s5);border-bottom:1px solid var(--border);margin-bottom:var(--s4)}
+.desk-scope .desk-tabs button{background:none;border:0;padding:0 0 var(--s2);font-family:var(--f-mono);font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--t-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.desk-scope .desk-tabs button.on{color:var(--ink);border-bottom-color:var(--v-clear)}
+.desk-scope .desk-tabs .n{margin-left:6px;color:var(--t-faint)}
+.desk-scope .field{display:flex;flex-direction:column;gap:6px;margin-bottom:var(--s3)}
+.desk-scope .field label{font-family:var(--f-mono);font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t-faint)}
+.desk-scope .field textarea,.desk-scope .field select{width:100%;box-sizing:border-box;background:var(--raised);color:var(--t-primary);border:1px solid var(--border);border-radius:3px;padding:8px 10px;font:inherit;font-size:13px}
+.desk-scope .field textarea{min-height:76px;resize:vertical}
+.desk-scope .kv{display:grid;grid-template-columns:120px 1fr;gap:6px var(--s4);font-size:12.5px;margin:0 0 var(--s4)}
+.desk-scope .kv dt{color:var(--t-faint);font-family:var(--f-mono);font-size:9.5px;letter-spacing:1px;text-transform:uppercase;padding-top:2px}
+.desk-scope .kv dd{margin:0;color:var(--t-primary);word-break:break-word}
+.desk-scope .kv a{color:var(--v-clear)}
+.desk-scope .act{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+.desk-scope .explain{font-size:12px;line-height:1.6;color:var(--t-muted);border-left:2px solid var(--v-mixed);padding:2px 0 2px var(--s3);margin:0 0 var(--s5)}
+.desk-scope .explain b{color:var(--t-primary)}
+.desk-scope .hb .v.ok{color:var(--v-clear)}
+.desk-scope .hb .v.warn{color:var(--v-mixed)}
+.desk-scope .ri .n.on{color:var(--v-mixed)}
+.desk-scope .rail > div:not(:first-child) .rg,.desk-scope .rail > .rg{margin-top:var(--s5)}
+.desk-scope .rail > div:first-child .rg{margin-top:0}

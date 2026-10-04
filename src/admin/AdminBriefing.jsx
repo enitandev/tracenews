@@ -1,3 +1,4 @@
+import { useDesk } from './desk/context';
 import React, { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ds/Button';
@@ -291,6 +292,7 @@ function EditorPanel({ item, checklist, reload }) {
 
 export default function AdminBriefing() {
   const [dates, setDates] = useState(null);
+  const { refresh: refreshDesk } = useDesk();
   const [day, setDay] = useState(null);
   const [state, setState] = useState({ loading: true });
   const [open, setOpen] = useState(null);
@@ -381,7 +383,7 @@ export default function AdminBriefing() {
                       {open === item.id && (
                         <div className="br-detail">
                           <ReaderPreview item={item} ui={data.ui} />
-                          <EditorPanel item={item} checklist={data.checklist} reload={() => Promise.all([load(), loadDates()])} />
+                          <EditorPanel item={item} checklist={data.checklist} reload={() => Promise.all([load(), loadDates(), refreshDesk()])} />
                         </div>
                       )}
                     </React.Fragment>
