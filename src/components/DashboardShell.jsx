@@ -83,6 +83,9 @@ export default function DashboardShell({ children }) {
           }}>
             <i className="ti ti-logout"></i>Sign Out
           </div>
+          <div className="railsep"></div>
+          <Link to="/privacy" className="navitem" style={{ textDecoration: 'none', fontSize: '12px' }}>Privacy Policy</Link>
+          <Link to="/terms" className="navitem" style={{ textDecoration: 'none', fontSize: '12px' }}>Terms of Use</Link>
         </aside>
         <main className="content">
           {children}

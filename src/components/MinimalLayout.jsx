@@ -23,6 +23,11 @@ export default function MinimalLayout({ children }) {
             {children}
           </div>
 
+          <div style={{ marginTop: '40px', paddingBottom: '32px', display: 'flex', gap: '16px', fontSize: '11.5px' }}>
+            <Link to="/privacy" style={{ color: 'var(--t-muted)', textDecoration: 'none' }}>Privacy Policy</Link>
+            <Link to="/terms" style={{ color: 'var(--t-muted)', textDecoration: 'none' }}>Terms of Use</Link>
+          </div>
+
         </div>
       </main>
     </div>

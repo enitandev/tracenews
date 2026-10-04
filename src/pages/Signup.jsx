@@ -7,7 +7,6 @@ import { ROUTES } from '../constants/routes';
 export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [ageAssertion, setAgeAssertion] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -21,7 +20,6 @@ export default function Signup() {
     else if (!/\S+@\S+\.\S+/.test(email)) errs.email = 'Enter a valid email address.';
     if (!password) errs.password = 'Password is required.';
     else if (password.length < 6) errs.password = 'Password must be at least 6 characters.';
-    if (!ageAssertion) errs.age = 'You must confirm you are 18 or older.';
     return errs;
   };
 
@@ -42,7 +40,9 @@ export default function Signup() {
         body: JSON.stringify({
           email,
           password,
-          age_assertion: ageAssertion
+          // Creating the account is the confirmation (counsel, 4 Oct 2026):
+          // the statement above the button says so.
+          age_assertion: true
         })
       });
 
@@ -101,21 +101,11 @@ export default function Signup() {
           />
         </Field>
 
-        <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '16px' }}>
-          <input
-            type="checkbox"
-            id="age_assertion"
-            className="checkbox-custom"
-            checked={ageAssertion}
-            onChange={(e) => { setAgeAssertion(e.target.checked); setFieldErrors(f => ({ ...f, age: undefined })); }}
-          />
-          <div>
-            <label htmlFor="age_assertion" style={{ fontSize: '12px', color: 'var(--t-body)', lineHeight: '16px', cursor: 'pointer' }}>
-              I confirm I am 18 years of age or older.
-            </label>
-            {fieldErrors.age && <div style={{ fontSize: '10.5px', color: 'var(--danger)', marginTop: '4px' }}>{fieldErrors.age}</div>}
-          </div>
-        </div>
+        {/* Counsel's wording, 4 Oct 2026, exactly. No other checkbox is bundled with it. */}
+        <p style={{ fontSize: '12px', color: 'var(--t-body)', lineHeight: 1.5, marginTop: '16px', marginBottom: '8px' }}>
+          By creating an account you agree to the <Link to="/terms" style={{ color: 'var(--v-clear)' }}>Terms of Use</Link> and
+          confirm you are 18 or over. Read the <Link to="/privacy" style={{ color: 'var(--v-clear)' }}>Privacy Policy</Link>.
+        </p>
 
         <Button 
           type="submit" 

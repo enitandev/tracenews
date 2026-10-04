@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { BRIEFING_PUBLIC } from '../constants/features';
 
 // Every link here must point at a page that exists. Pages we do not have yet
-// (privacy policy, terms, newsletter, apps) are left out rather than linked to "#".
+// (newsletter, apps) are left out rather than linked to "#".
 const COLUMNS = [
-  { title: 'Company', links: [['About', '/about'], ['Contact us', '/about#contact']] },
+  { title: 'Company', links: [['About', '/about'], ['Contact us', '/about#contact'], ['Privacy Policy', '/privacy'], ['Terms of Use', '/terms']] },
   { title: 'How it works', links: [['Methodology', '/methodology'], ...(BRIEFING_PUBLIC ? [['Daily Briefing', '/daily-briefing']] : []), ['Request a correction', '/corrections']] },
   { title: 'Topics', links: [['Politics', '/topics/politics'], ['Economy', '/topics/economy'], ['Security', '/topics/security']] },
 ];
@@ -44,6 +44,8 @@ export default function Footer() {
         <div style={{ display: 'flex', gap: '24px' }}>
           <Link to="/methodology" style={{ color: '#888', textDecoration: 'none' }}>Methodology</Link>
           <Link to="/corrections" style={{ color: '#888', textDecoration: 'none' }}>Corrections</Link>
+          <Link to="/privacy" style={{ color: '#888', textDecoration: 'none' }}>Privacy Policy</Link>
+          <Link to="/terms" style={{ color: '#888', textDecoration: 'none' }}>Terms of Use</Link>
         </div>
       </div>
     </footer>
