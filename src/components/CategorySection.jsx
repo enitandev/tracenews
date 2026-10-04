@@ -3,6 +3,9 @@ import HeroStoryCard from './HeroStoryCard';
 import StandardStoryItem from './StandardStoryItem';
 import CompactStoryItem from './CompactStoryItem';
 import CoverageBreadthCard from './CoverageBreadthCard';
+import { fetchJSON } from '../utils/fetchJSON';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
 export default function CategorySection({ catName, treatment, stories }) {
   const [railClusters, setRailClusters] = useState([]);
@@ -13,8 +16,7 @@ export default function CategorySection({ catName, treatment, stories }) {
   useEffect(() => {
     if (treatment === 'COMPACT') return;
 
-    fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/most-carried?category=${catName}&limit=6`)
-      .then(r => r.json())
+    fetchJSON(`${API_BASE}/clusters/most-carried?category=${encodeURIComponent(catName)}&limit=6`)
       .then(data => {
         if (!data.clusters) return;
         
@@ -29,11 +31,7 @@ export default function CategorySection({ catName, treatment, stories }) {
   useEffect(() => {
     if (treatment !== 'COMPACT') return;
 
-    fetch(`https://uvicorn-appmain-production-79c6.up.railway.app/clusters/by-category?category=${catName}&limit=8`)
-      .then(r => {
-        if (!r.ok) throw new Error("Failed to fetch");
-        return r.json();
-      })
+    fetchJSON(`${API_BASE}/clusters/by-category?category=${encodeURIComponent(catName)}&limit=8`)
       .then(data => {
         if (data.clusters) setCompactStories(data.clusters);
         setCompactLoading(false);
