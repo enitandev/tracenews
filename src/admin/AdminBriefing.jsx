@@ -21,9 +21,9 @@ const LANE = {
   left_out: { label: 'Left out', pill: 'neutral' },
 };
 const SECTIONS = [
-  { key: 'held', title: 'Needs an editor', match: i => (i.lane === 'review' || i.lane === 'senior_review') && !i.approved_by,
+  { key: 'held', title: 'Needs an editor', match: i => (i.lane === 'review' || i.lane === 'senior_review') && (!i.approved_by || i.needs_second_approver),
     empty: 'Nothing is waiting for an editor.' },
-  { key: 'approved', title: 'Approved', match: i => (i.lane === 'review' || i.lane === 'senior_review') && i.approved_by,
+  { key: 'approved', title: 'Approved', match: i => (i.lane === 'review' || i.lane === 'senior_review') && i.approved_by && !i.needs_second_approver,
     empty: 'No approvals yet.' },
   { key: 'auto', title: 'Publishes automatically', match: i => i.lane === 'auto', empty: 'None.' },
   { key: 'out', title: 'Left out', match: i => i.lane === 'left_out', empty: 'None.' },
@@ -213,7 +213,7 @@ function EditorPanel({ item, checklist, reload }) {
         <p className="t-meta">Source headline: {item.source_headline}</p>
         {item.edited_by && <p className="t-meta">Rewritten by {item.edited_by}</p>}
         {item.approved_by && <p className="br-ok">Approved by {item.approved_by}{item.second_approved_by ? ` and ${item.second_approved_by}` : ''}</p>}
-        {awaitingSecond && <p className="br-err">Senior review: a second approver, other than {item.approved_by}, must approve.</p>}
+        {awaitingSecond && <p className="br-err">Senior review: one more approval needed, from {item.waiting_for}.</p>}
         {(item.approval_checklist?.party_checks || []).map((c, i) => (
           <p key={i} className="t-meta">Checked: {c.descriptor} — {c.source}, {c.checked_at}</p>
         ))}
@@ -354,7 +354,9 @@ export default function AdminBriefing() {
                   {rows.map(item => (
                     <React.Fragment key={item.id}>
                       <div className={`it br-row ${open === item.id ? 'open' : ''}`} onClick={() => setOpen(open === item.id ? null : item.id)}>
-                        <Pill variant={item.approved_by ? 'clear' : LANE[item.lane].pill}>{item.approved_by ? 'Approved' : LANE[item.lane].label}</Pill>
+                        <Pill variant={item.approved_by && !item.needs_second_approver ? 'clear' : LANE[item.lane].pill}>
+                          {item.needs_second_approver ? '1 of 2 approvals' : item.approved_by ? 'Approved' : LANE[item.lane].label}
+                        </Pill>
                         <div className="bd">
                           <div className="tt">{item.title}</div>
                           <div className="mt">
