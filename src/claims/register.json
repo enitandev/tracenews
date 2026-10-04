@@ -54,7 +54,7 @@
     "src/pages/DailyBriefingStory.jsx": {
       "surface": "/daily-briefing and /daily-briefing/:slug — rebuilt Briefing: cleared story summary labelled 'AI-generated summary of the sources', outlet counts by tier with as-of time, correction and methodology links (strings in tracenews-api app/briefingStrings.py)",
       "kind": "public",
-      "clearance": "NOT CLEARED — off behind BRIEFING_PUBLIC (404) until counsel clears section B (constants file and sample editions)."
+      "clearance": "LIVE 4 Oct 2026 by the owner's decision. Counsel cleared it on 4 Oct subject to launch fixes 1-6 (built and tested, tracenews-api PR #32), the Privacy Policy and Terms (published 4 Oct), and the tier evidence file and methodology edits; the owner launched before the tier evidence file was complete."
     },
     "src/pages/Category.jsx": {
       "surface": "/topics/:topic — tier bar for the topic",
@@ -149,7 +149,7 @@
     "api/briefing-og.js": {
       "surface": "Crawler/link preview for /daily-briefing/:slug — same text as the page",
       "kind": "public",
-      "clearance": "NOT CLEARED — 404 while BRIEFING_PUBLIC is off."
+      "clearance": "LIVE 4 Oct 2026 with the Briefing; same text as the page."
     },
     "src/admin/AdminBriefing.jsx": {
       "surface": "/admin/briefing — staff review and approval of Briefing items",

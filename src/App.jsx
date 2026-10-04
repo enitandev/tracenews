@@ -25,6 +25,8 @@ import AdminBriefing from './admin/AdminBriefing';
 import AdminOverview from './admin/AdminOverview';
 
 import Signup from './pages/Signup';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 import Login from './pages/Login';
 import Reset from './pages/Reset';
 import Verify from './pages/Verify';
@@ -68,6 +70,8 @@ export default function App() {
                 <Route path="/methodology" element={<Methodology />} />
                 <Route path="/corrections" element={<Corrections />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
                 <Route path="/settings" element={<Navigate to={`${ROUTES.DASHBOARD}/settings`} replace />} />
               </Routes>
             </Layout>
