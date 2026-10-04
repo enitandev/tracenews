@@ -309,16 +309,20 @@ export default function AdminBriefing() {
     if (!day) return;
     try {
       const [edition, log] = await Promise.all([api(`?day=${day}`), api('/log')]);
-      setState({ loading: false, data: edition, log: log.entries.filter(e => e.date === day) });
+      setState({ loading: false, day, data: edition, log: log.entries.filter(e => e.date === day) });
     } catch (e) {
-      setState({ loading: false, error: e.message });
+      setState({ loading: false, day, error: e.message });
     }
   }, [day]);
 
   useEffect(() => { loadDates(); }, [loadDates]);
   useEffect(() => { load(); }, [load]);
 
-  const data = state.data;
+  // Only the selected date's edition is shown: on a date click the previous
+  // date's items clear at once and a loading state takes their place.
+  const current = state.day === day;
+  const data = current ? state.data : null;
+  const log = current ? state.log : null;
   const items = data?.items || [];
   const count = key => items.filter(SECTIONS.find(s => s.key === key).match).length;
   const isSample = items.some(i => i.is_sample);
@@ -329,12 +333,17 @@ export default function AdminBriefing() {
         <p className="dateline">Newsroom · Daily Briefing{isSample ? ' · Sample edition for counsel' : ''}</p>
         <h1 className="lede" style={{ maxWidth: '26ch' }}>{day ? longDate(day) : 'Daily Briefing'}</h1>
         <div className="byline">
-          Not public until counsel clears the Briefing. Read every held item against its sources and check any party or
-          candidacy descriptor live today. Every action is recorded with your name.
+          Items marked Automatic publish as they are. Read every held item against its sources and check any party or
+          candidacy descriptor live today before approving. Every action is recorded with your name.
         </div>
 
-        {state.error && <p className="br-err">Could not load: {state.error}</p>}
-        {state.loading && !state.error && <p className="t-meta">Loading…</p>}
+        {current && state.error && <p className="br-err">Could not load: {state.error}</p>}
+        {!data && !(current && state.error) && (
+          <div aria-busy="true" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s3)', marginTop: 'var(--s4)' }}>
+            <p className="t-meta">Loading {day ? longDate(day) : 'the edition'}…</p>
+            {[0, 1, 2, 3].map(i => <div key={i} style={{ height: '56px', borderRadius: 'var(--r-sm)', background: 'var(--raised)', opacity: 0.6 }} />)}
+          </div>
+        )}
 
         {data && (
           <>
@@ -395,8 +404,8 @@ export default function AdminBriefing() {
         ))}
 
         <p className="st-h" style={{ marginTop: 'var(--s6)' }}>Change log</p>
-        {state.log && state.log.length === 0 && <p className="t-meta">No editor actions on this edition.</p>}
-        {state.log && state.log.map(e => (
+        {log && log.length === 0 && <p className="t-meta">No editor actions on this edition.</p>}
+        {log && log.map(e => (
           <div className="led" key={e.id}>
             <b>{e.editor}</b> {e.action.replace('_', ' ')}
             {e.note && <> — <q>{e.note}</q></>}
