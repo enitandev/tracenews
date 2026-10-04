@@ -10,6 +10,8 @@ const ui = {
   correction_link: 'Report an error in this summary',
   methodology_link: 'How TraceNews classifies outlets',
   coverage_heading: 'Outlets that reported this story',
+  all_sources: 'View all sources',
+  more_heading: "More from today's Briefing",
   coverage_as_of: 'Counted at {time} WAT',
   tier_labels: { govt_aligned: 'Govt', mainstream: 'Mainstream', watchdog: 'Watchdog' },
   sections: { what_happened: 'What happened', quotes: 'Who said what', next: 'What happens next', background: 'Background' },
@@ -31,7 +33,7 @@ describe('BriefingItem (counsel B)', () => {
     renderItem();
     expect(screen.getByText(ui.attribution_label)).toBeTruthy();
     expect(screen.getByText(item.bullets[0])).toBeTruthy();
-    expect(screen.getByText(`${ui.coverage_heading}: 10`)).toBeTruthy();
+    expect(screen.getAllByText(`${ui.coverage_heading}: 10`).length).toBeGreaterThan(0);
     expect(screen.getByText('Counted at 3 Oct, 06:00 WAT')).toBeTruthy();
     expect(screen.getByText(ui.correction_link).getAttribute('href'))
       .toBe('/corrections?page=%2Fdaily-briefing%2Fsenate-passes-bill');
@@ -46,8 +48,9 @@ describe('BriefingItem (counsel B)', () => {
 
   it('shows 0 for a tier with no outlets', () => {
     const { container } = renderItem({ ...item, coverage_counts: { mainstream: 5 } });
-    expect(container.textContent).toContain('Govt 0');
-    expect(container.textContent).toContain('Watchdog 0');
+    const panel = container.querySelector('[data-testid="coverage-panel"]').textContent;
+    expect(panel).toMatch(/Govt\s*0/);
+    expect(panel).toMatch(/Watchdog\s*0/);
   });
 });
 
@@ -71,7 +74,7 @@ describe('reviewer-only data (counsel review of 3 Oct samples, item 7)', () => {
 
   it('the coverage panel is counts only: no % and no "bias"', () => {
     const { container } = renderItem();
-    const panel = container.textContent.slice(container.textContent.indexOf(ui.coverage_heading));
+    const panel = container.querySelector('[data-testid="coverage-panel"]').textContent;
     expect(panel).not.toMatch(/%|bias/i);
     expect(panel).toMatch(/Govt\s*2/);
   });
@@ -102,5 +105,25 @@ describe('fuller sections (counsel ruling, 3 Oct 2026, item 6)', () => {
     expect(quoteText).toMatch(/ said: /);
     const text = container.textContent.toLowerCase();
     for (const tok of ['bias', 'common ground', 'why it matters', 'sides']) expect(text).not.toContain(tok);
+  });
+});
+
+describe('story page layout (owner, 4 Oct 2026)', () => {
+  const more = [
+    { slug: 'b', title: 'Second story', image_url: null, coverage_counts: { mainstream: 4 } },
+    { slug: 'c', title: 'Third story', image_url: null, coverage_counts: { watchdog: 2 } },
+  ];
+  it('gives the story its full breakdown, a coverage panel, and cards to the rest of the Briefing', () => {
+    const { container } = render(<MemoryRouter><BriefingItem item={item} ui={ui} more={more} /></MemoryRouter>);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(item.title);
+    expect(container.querySelector('[data-testid="coverage-panel"]')).toBeTruthy();
+    expect(screen.getByText('View all sources →').getAttribute('href')).toBe('/story/senate-passes-bill');
+    expect(screen.getByText("More from today's Briefing")).toBeTruthy();
+    expect(screen.getByText('Second story').closest('a').getAttribute('href')).toBe('/daily-briefing/b');
+    expect(screen.getByText('Third story')).toBeTruthy();
+  });
+  it('has no "More" section when the story is the only one', () => {
+    const { container } = render(<MemoryRouter><BriefingItem item={item} ui={ui} /></MemoryRouter>);
+    expect(container.querySelector('[data-testid="briefing-more"]')).toBeNull();
   });
 });
