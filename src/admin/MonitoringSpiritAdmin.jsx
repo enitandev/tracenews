@@ -1,258 +1,147 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { Button } from '../components/ds/Button';
-import { Card } from '../components/ds/Card';
-import { ROUTES } from '../constants/routes';
+import { useState } from 'react';
+import { useDesk } from './desk/context';
+import { deskFetch, stamp, useDeskData, word } from './desk/api';
+import { Notice, Page, Row, Section, Stateful, Tabs } from './desk/Kit';
 import { evidenceText } from './evidenceText';
+import './desk.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
+/**
+ * Monitoring Spirit, staff view. Lists the stories from the last 72 hours on
+ * which the engine reached a DARK or MIXED verdict. Readers see neither
+ * (DARK_ENABLED and MIXED_ENABLED are off in tracenews-api
+ * app/monitoring_spirit.py). Withdrawing a verdict records that a named editor
+ * judged it wrong, so it can never be published for that story.
+ */
+const MEANING = {
+  dark: 'One tier of outlets is covering a significant story heavily while another tier has gone almost silent, and the pattern has held over time.',
+  mixed: 'Most outlets on the story appear to be running the same report. Withheld from readers: it is estimated from each outlet’s 30-day originality, not from this story’s text (counsel, 2 Oct 2026).',
+};
 
-export default function MonitoringSpiritAdmin() {
-  const navigate = useNavigate();
-  const [verdicts, setVerdicts] = useState([]);
-  const [overrides, setOverrides] = useState([]);
-  const [loading, setLoading] = useState(false);
+function VerdictDetail({ v, onSaved }) {
+  const [reason, setReason] = useState('');
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
-
-  const [expandedVerdict, setExpandedVerdict] = useState(null);
-  const [dismissReason, setDismissReason] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
-  const fetchData = async () => {
-    setLoading(true);
+  const withdraw = async () => {
+    if (!reason.trim()) { setError('Say why the verdict is wrong; it goes on the record.'); return; }
+    setBusy(true);
     setError(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-
-      const [vRes, oRes] = await Promise.all([
-        fetch(`${API_BASE}/api/admin/monitoring-spirit/verdicts`, {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        }),
-        fetch(`${API_BASE}/api/admin/monitoring-spirit/overrides`, {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        })
-      ]);
-      
-      if (!vRes.ok || !oRes.ok) {
-        if (vRes.status === 401 || vRes.status === 403 || oRes.status === 401 || oRes.status === 403) {
-          navigate(ROUTES.LOGIN);
-          throw new Error('Unauthorized or staff access required');
-        }
-        throw new Error('Failed to fetch data');
-      }
-      
-      const vJson = await vRes.json();
-      const oJson = await oRes.json();
-      setVerdicts(vJson);
-      setOverrides(oJson);
+      await deskFetch('/api/admin/monitoring-spirit/overrides', { method: 'POST', body: { cluster_id: v.cluster_id, original_verdict: v.verdict, reason: reason.trim() } });
+      await onSaved(`Withdrawn: ${v.headline}`);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
   };
+  return (
+    <>
+      <dl className="kv">
+        {(Array.isArray(v.evidence) ? v.evidence : [v.evidence]).filter(Boolean).map((e, i) => (
+          <FragmentRow key={i} label={typeof e === 'string' ? 'Evidence' : e.label || e.type} value={evidenceText([e])} />
+        ))}
+        <dt>Story</dt><dd><a href={`/story/${v.slug}`} target="_blank" rel="noreferrer">/story/{v.slug}</a></dd>
+      </dl>
+      {v.has_active_override ? <p className="t-meta">Already withdrawn by an editor.</p> : (
+        <>
+          <div className="field">
+            <label htmlFor={`why-${v.cluster_id}`}>Why the verdict is wrong (required)</label>
+            <textarea id={`why-${v.cluster_id}`} value={reason} onChange={e => setReason(e.target.value)}
+                      placeholder="e.g. the outlets reported it independently; the silence is explained by …" />
+          </div>
+          {error && <p className="t-meta" style={{ color: 'var(--v-mixed)' }}>{error}</p>}
+          <div className="act">
+            <button type="button" className="btn btn-sm btn-secondary" disabled={busy} onClick={withdraw}>{busy ? 'Saving…' : 'Withdraw verdict'}</button>
+          </div>
+        </>
+      )}
+    </>
+  );
+}
 
-  useEffect(() => {
-    fetchData();
-  }, [navigate]);
+function FragmentRow({ label, value }) {
+  return <><dt>{label}</dt><dd>{value}</dd></>;
+}
 
-  const handleDismiss = async (clusterId, originalVerdict) => {
-    if (!dismissReason.trim()) {
-      alert("Reason is required.");
-      return;
-    }
-    
-    setSubmitting(true);
+export default function MonitoringSpiritAdmin() {
+  const verdicts = useDeskData('/api/admin/monitoring-spirit/verdicts');
+  const overrides = useDeskData('/api/admin/monitoring-spirit/overrides');
+  const { refresh } = useDesk();
+  const [tab, setTab] = useState('dark');
+  const [open, setOpen] = useState(null);
+  const [notice, setNotice] = useState(null);
+  const [busy, setBusy] = useState(null);
+
+  const all = verdicts.data || [];
+  const dark = all.filter(v => v.verdict === 'dark');
+  const mixed = all.filter(v => v.verdict === 'mixed');
+  const withdrawn = overrides.data || [];
+  const shown = tab === 'dark' ? dark : mixed;
+
+  const saved = async text => {
+    await Promise.all([verdicts.reload(), overrides.reload()]);
+    refresh();
+    setOpen(null);
+    setNotice({ text });
+  };
+  const reinstate = async o => {
+    setBusy(o.id);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-      const res = await fetch(`${API_BASE}/api/admin/monitoring-spirit/overrides`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({
-          cluster_id: clusterId,
-          original_verdict: originalVerdict,
-          reason: dismissReason
-        })
-      });
-      
-      if (!res.ok) throw new Error('Dismissal failed');
-      
-      alert('Verdict dismissed successfully');
-      setExpandedVerdict(null);
-      setDismissReason('');
-      fetchData();
+      await deskFetch(`/api/admin/monitoring-spirit/overrides/${o.id}/reinstate`, { method: 'POST', body: {} });
+      await saved(`Reinstated: ${o.headline || 'verdict'}`);
     } catch (err) {
-      alert(err.message);
+      setNotice({ text: err.message, error: true });
     } finally {
-      setSubmitting(false);
+      setBusy(null);
     }
-  };
-
-  const handleReinstate = async (overrideId) => {
-    setSubmitting(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-      const res = await fetch(`${API_BASE}/api/admin/monitoring-spirit/overrides/${overrideId}/reinstate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({})
-      });
-      
-      if (!res.ok) throw new Error('Reinstate failed');
-      
-      alert('Verdict reinstated successfully');
-      fetchData();
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const getBadgeColor = (verdict) => {
-    if (verdict === 'mixed') return { bg: 'var(--v-mixed)', color: 'var(--on-accent)' };
-    if (verdict === 'dark') return { bg: 'var(--v-dark)', color: 'var(--on-accent)' };
-    return { bg: 'var(--t-sub)', color: 'var(--on-accent)' };
   };
 
   return (
-    <div className="desk-col" style={{ borderRight: 'none' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--s6)' }}>
-        <div>
-          <h2 className="t-display" style={{ margin: '0 0 var(--s1) 0' }}>Monitoring Spirit Oversight</h2>
-        </div>
-        <Button onClick={fetchData} size="sm">Refresh</Button>
-      </div>
-
-      {error && <div style={{ padding: 'var(--s3)', background: 'var(--danger)', color: 'var(--on-accent)', borderRadius: 'var(--r-sm)', marginBottom: 'var(--s5)' }}>{error}</div>}
-      {loading && <p className="t-muted">Loading data...</p>}
-
-      {!error && !loading && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s6)' }}>
-        
-        {/* Active Verdicts Column */}
-        <div>
-          <h3 className="t-primary" style={{ marginBottom: 'var(--s4)', borderBottom: '1px solid var(--border)', paddingBottom: 'var(--s2)' }}>Live Verdicts</h3>
-          {verdicts.length === 0 && !loading ? <p className="t-muted">No active non-CLEAR verdicts found in the last 72 hours.</p> : null}
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
-            {verdicts.map(v => (
-              <Card key={v.cluster_id} style={{ opacity: v.has_active_override ? 0.5 : 1, padding: 'var(--s4)' }}>
-                <div style={{ marginBottom: 'var(--s2)' }}>
-                  <span style={{ 
-                    display: 'inline-block', 
-                    padding: 'var(--s1) var(--s2)', 
-                    borderRadius: 'var(--r-sm)', 
-                    fontSize: '12px', 
-                    fontWeight: 'bold', 
-                    textTransform: 'uppercase',
-                    background: getBadgeColor(v.verdict).bg,
-                    color: getBadgeColor(v.verdict).color,
-                    marginBottom: 'var(--s2)'
-                  }}>
-                    {v.verdict}
-                  </span>
-                  {v.has_active_override && (
-                    <span style={{ marginLeft: 'var(--s2)', fontSize: '12px', color: 'var(--t-sub)' }}>(Overridden)</span>
-                  )}
+    <Page
+      dateline="Intelligence · Monitoring Spirit · last 72 hours"
+      lede={!verdicts.data ? 'Monitoring Spirit' : `${word(dark.length, true)} dark and ${word(mixed.length)} mixed ${dark.length + mixed.length === 1 ? 'verdict' : 'verdicts'}. Readers see none of them.`}
+      byline="The engine reads how each story is being covered and flags unusual patterns. Nothing on this page is published; it is here so editors can check the engine before any verdict goes public."
+      actions={<button type="button" className="btn btn-secondary btn-sm" disabled={verdicts.loading}
+                       onClick={() => { verdicts.reload(); overrides.reload(); }}>{verdicts.loading ? 'Refreshing…' : 'Refresh'}</button>}
+    >
+      <p className="explain"><b>Dark</b> — {MEANING.dark}<br /><b>Mixed</b> — {MEANING.mixed}</p>
+      <Tabs value={tab} onChange={t => { setTab(t); setOpen(null); }} tabs={[
+        { value: 'dark', label: 'Dark', count: dark.length },
+        { value: 'mixed', label: 'Mixed', count: mixed.length },
+        { value: 'withdrawn', label: 'Withdrawn', count: withdrawn.length },
+      ]} />
+      {tab === 'withdrawn' ? (
+        <Section title="Withdrawn by an editor">
+          <Stateful state={overrides} isEmpty={withdrawn.length === 0} empty="No verdict has been withdrawn.">
+            {withdrawn.map(o => (
+              <Row key={o.id} open={open === o.id} onToggle={() => setOpen(open === o.id ? null : o.id)}
+                   tone="neutral" mark={o.original_verdict} title={o.headline || o.cluster_id}
+                   meta={`${(o.actor || 'Unknown').split(' (')[0]} · ${stamp(o.created_at)}`}>
+                <p className="led" style={{ borderBottom: 'none' }}><q>{o.reason}</q></p>
+                <div className="act">
+                  <button type="button" className="btn btn-sm btn-secondary" disabled={busy === o.id} onClick={() => reinstate(o)}>
+                    {busy === o.id ? 'Saving…' : 'Reinstate verdict'}
+                  </button>
                 </div>
-                <h4 className="t-primary" style={{ margin: '0 0 var(--s2) 0' }}>{v.headline}</h4>
-                <p className="t-sub" style={{ fontSize: '14px', margin: '0 0 var(--s3) 0' }}>{evidenceText(v.evidence)}</p>
-                
-                {!v.has_active_override && expandedVerdict !== v.cluster_id && (
-                  <Button 
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => setExpandedVerdict(v.cluster_id)}
-                  >
-                    Dismiss...
-                  </Button>
-                )}
-                
-                {expandedVerdict === v.cluster_id && (
-                  <div style={{ marginTop: 'var(--s4)', paddingTop: 'var(--s4)', borderTop: '1px solid var(--border)' }}>
-                    <label className="t-sub" style={{ display: 'block', marginBottom: 'var(--s2)', fontSize: '12px' }}>Reason for Dismissal</label>
-                    <textarea 
-                      value={dismissReason}
-                      onChange={e => setDismissReason(e.target.value)}
-                      placeholder="Why is this verdict inaccurate?"
-                      style={{ width: '100%', minHeight: '80px', padding: 'var(--s2)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', background: 'var(--raised)', color: 'var(--t-primary)', marginBottom: 'var(--s3)' }}
-                    />
-                    <div style={{ display: 'flex', gap: 'var(--s3)' }}>
-                      <Button 
-                        loading={submitting} 
-                        onClick={() => handleDismiss(v.cluster_id, v.verdict)}
-                      >
-                        Confirm Dismissal
-                      </Button>
-                      <Button 
-                        variant="secondary"
-                        onClick={() => { setExpandedVerdict(null); setDismissReason(''); }}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </Card>
+              </Row>
             ))}
-          </div>
-        </div>
-
-        {/* Overrides / Audit Log Column */}
-        <div>
-          <h3 className="t-primary" style={{ marginBottom: 'var(--s4)', borderBottom: '1px solid var(--border)', paddingBottom: 'var(--s2)' }}>Recent Overrides (72h)</h3>
-          {overrides.length === 0 && !loading ? <p className="t-muted">No manual overrides active.</p> : null}
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
-            {overrides.map(o => (
-              <Card key={o.id} style={{ padding: 'var(--s4)', borderLeft: '4px solid var(--danger)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--s2)' }}>
-                  <div>
-                    <span style={{ fontWeight: 600, color: 'var(--t-primary)' }}>Dismissed: {o.original_verdict}</span>
-                    <div className="t-muted" style={{ fontSize: '12px', marginTop: 'var(--s1)' }}>
-                      By {o.staff_email} at {new Date(o.created_at).toLocaleString()}
-                    </div>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => handleReinstate(o.id)}
-                    disabled={submitting}
-                  >
-                    Reinstate
-                  </Button>
-                </div>
-                <div style={{ background: 'var(--raised)', padding: 'var(--s3)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', marginTop: 'var(--s3)' }}>
-                  <span className="t-sub" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Reason</span>
-                  <p className="t-body" style={{ margin: 'var(--s1) 0 0 0', fontSize: '14px' }}>{o.reason}</p>
-                </div>
-              </Card>
+          </Stateful>
+        </Section>
+      ) : (
+        <Section title={tab === 'dark' ? 'Dark verdicts' : 'Mixed verdicts'}>
+          <Stateful state={verdicts} isEmpty={shown.length === 0}
+                    empty={tab === 'dark' ? 'No story has a dark verdict in the last 72 hours.' : 'No story has a mixed verdict in the last 72 hours.'}>
+            {shown.map(v => (
+              <Row key={v.cluster_id} open={open === v.cluster_id} onToggle={() => setOpen(open === v.cluster_id ? null : v.cluster_id)}
+                   tone={v.verdict === 'dark' ? 'dark' : 'new'} mark={v.has_active_override ? 'Withdrawn' : v.verdict}
+                   title={v.headline} meta={evidenceText(v.evidence, 'No evidence recorded')}>
+                <VerdictDetail v={v} onSaved={saved} />
+              </Row>
             ))}
-          </div>
-        </div>
-
-        </div>
+          </Stateful>
+        </Section>
       )}
-    </div>
+      <Notice notice={notice} onDone={() => setNotice(null)} />
+    </Page>
   );
 }

@@ -1,211 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { Table, Thead, Tbody, Tr, Th, Td } from '../components/ds/Table';
-import { Button } from '../components/ds/Button';
-import { ROUTES } from '../constants/routes';
-import { Tag } from '../components/ds/Marks';
+import { useState } from 'react';
+import { useDesk } from './desk/context';
+import { SUBJECT, ago, deskFetch, plural, stamp, useDeskData, word } from './desk/api';
+import { Notice, Page, Row, Section, Stateful, Tabs } from './desk/Kit';
+import './desk.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
+/**
+ * Corrections queue. Open requests first, ordered by deadline; open a row to
+ * read the request and act on it. Every action is written to the audit log
+ * with the editor's name (backend: app/routers/corrections.py).
+ */
+const OPEN = ['new', 'in_review', 'escalated_legal'];
+const STATUS = { new: 'New', in_review: 'In review', escalated_legal: 'Legal', actioned: 'Actioned', declined: 'Declined' };
+const ACTIONS = [
+  { status: 'in_review', label: 'Start review', when: s => s === 'new' },
+  { status: 'actioned', label: 'Mark actioned', primary: true, when: s => s !== 'actioned' },
+  { status: 'declined', label: 'Decline', when: s => s !== 'declined' },
+  { status: 'escalated_legal', label: 'Escalate to legal', when: s => s !== 'escalated_legal' },
+  { status: 'in_review', label: 'Reopen', when: s => s === 'actioned' || s === 'declined' },
+];
 
-export default function AdminCorrections() {
-  const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+const overdue = r => OPEN.includes(r.status) && r.sla_due_at && new Date(r.sla_due_at) < new Date();
+
+function CorrectionDetail({ row, onSaved }) {
+  const [note, setNote] = useState(row.resolution_note || '');
+  const [busy, setBusy] = useState(null);
   const [error, setError] = useState(null);
-  
-  const [expandedRow, setExpandedRow] = useState(null);
-  const [resolutionNote, setResolutionNote] = useState('');
-  const [statusDraft, setStatusDraft] = useState('');
-  const [updating, setUpdating] = useState(false);
 
-  const fetchCorrections = async () => {
-    setLoading(true);
+  const act = async status => {
+    setBusy(status);
     setError(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-      const res = await fetch(`${API_BASE}/api/admin/corrections`, {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      });
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          navigate(ROUTES.LOGIN);
-          throw new Error('Unauthorized or staff access required');
-        }
-        throw new Error('Failed to fetch');
-      }
-      const json = await res.json();
-      setData(json);
+      await deskFetch(`/api/admin/corrections/${row.id}`, { method: 'PATCH', body: { status, resolution_note: note.trim() || undefined } });
+      await onSaved(`${STATUS[status]}: ${row.category || 'correction'}`);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCorrections();
-  }, [navigate]);
-
-  const handleUpdate = async (id) => {
-    setUpdating(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-      const res = await fetch(`${API_BASE}/api/admin/corrections/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({
-          status: statusDraft || undefined,
-          resolution_note: resolutionNote || undefined
-        })
-      });
-      
-      if (!res.ok) throw new Error('Update failed');
-      
-      alert('Updated successfully');
-      setExpandedRow(null);
-      fetchCorrections();
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setUpdating(false);
+      setBusy(null);
     }
   };
 
   return (
-    <div className="desk-col" style={{ borderRight: 'none' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--s6)' }}>
-        <div>
-          <h2 className="t-display" style={{ margin: '0 0 var(--s1) 0' }}>Corrections Queue</h2>
-        </div>
-        <Button onClick={fetchCorrections} size="sm">Refresh</Button>
-      </div>
-      
-      {loading && <p className="t-muted">Loading...</p>}
-      {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
-      
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Created</Th>
-            <Th>Category</Th>
-            <Th>Subject</Th>
-            <Th>Status</Th>
-            <Th>SLA Due</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data.map(row => {
-            const due = new Date(row.sla_due_at);
-            const now = new Date();
-            const isOverdue = due < now;
-            
-            return (
-              <React.Fragment key={row.id}>
-                <Tr 
-                  onClick={() => {
-                    if (expandedRow === row.id) {
-                      setExpandedRow(null);
-                    } else {
-                      setExpandedRow(row.id);
-                      setStatusDraft(row.status);
-                      setResolutionNote(row.resolution_note || '');
-                    }
-                  }}
-                  style={{ 
-                    cursor: 'pointer',
-                    background: expandedRow === row.id ? 'var(--raised)' : 'transparent'
-                  }}
-                >
-                  <Td>{new Date(row.created_at).toLocaleDateString()}</Td>
-                  <Td>{row.category}</Td>
-                  <Td>
-                    {row.subject_type}: {row.subject_id || 'N/A'}
-                  </Td>
-                  <Td>
-                    <Tag variant={row.status === 'new' ? 'outline' : 'neutral'}>{row.status}</Tag>
-                  </Td>
-                  <Td style={{ color: isOverdue && row.status !== 'actioned' && row.status !== 'declined' ? 'var(--danger)' : 'inherit' }}>
-                    {due.toLocaleDateString()} {isOverdue && row.status !== 'actioned' && row.status !== 'declined' ? '(Overdue)' : ''}
-                  </Td>
-                </Tr>
-                {expandedRow === row.id && (
-                  <Tr style={{ background: 'var(--raised)' }}>
-                    <Td colSpan={5} style={{ padding: 'var(--s5)' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s6)' }}>
-                        <div>
-                          <h4 className="t-primary" style={{ margin: '0 0 var(--s2) 0' }}>Request Details</h4>
-                          <p className="t-body"><strong>Page:</strong> <a href={row.page_url} target="_blank" rel="noreferrer" style={{ color: 'var(--v-clear)' }}>{row.page_url}</a></p>
-                          <p className="t-body"><strong>Description:</strong> {row.description}</p>
-                          {row.claimed_correct_info && <p className="t-body"><strong>Claimed Correct Info:</strong> {row.claimed_correct_info}</p>}
-                          {row.source_url && <p className="t-body"><strong>Source URL:</strong> <a href={row.source_url} target="_blank" rel="noreferrer" style={{ color: 'var(--v-clear)' }}>{row.source_url}</a></p>}
-                          
-                          <h4 className="t-primary" style={{ margin: 'var(--s4) 0 var(--s2) 0' }}>Requester</h4>
-                          <p className="t-body">{row.requester_name || 'Anonymous'} ({row.requester_email})</p>
-                          <p className="t-body">Relationship: {row.requester_relationship || 'None stated'}</p>
-                        </div>
-                        
-                        <div style={{ padding: 'var(--s4)', background: 'var(--card)', borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}>
-                          <h4 className="t-primary" style={{ margin: '0 0 var(--s4) 0' }}>Resolution Actions</h4>
-                          
-                          <div style={{ marginBottom: 'var(--s3)' }}>
-                            <label className="t-sub" style={{ display: 'block', marginBottom: 'var(--s1)', fontSize: '12px' }}>Status</label>
-                            <select 
-                              value={statusDraft} 
-                              onChange={e => setStatusDraft(e.target.value)}
-                              style={{ width: '100%', padding: 'var(--s2)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', background: 'var(--raised)', color: 'var(--t-primary)' }}
-                            >
-                              <option value="new">New</option>
-                              <option value="in_review">In Review</option>
-                              <option value="actioned">Actioned</option>
-                              <option value="declined">Declined</option>
-                              <option value="escalated_legal">Escalated (Legal)</option>
-                            </select>
-                          </div>
-                          
-                          <div style={{ marginBottom: 'var(--s4)' }}>
-                            <label className="t-sub" style={{ display: 'block', marginBottom: 'var(--s1)', fontSize: '12px' }}>Resolution Note</label>
-                            <textarea 
-                              value={resolutionNote} 
-                              onChange={e => setResolutionNote(e.target.value)}
-                              style={{ width: '100%', minHeight: '80px', padding: 'var(--s2)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', background: 'var(--raised)', color: 'var(--t-primary)' }}
-                              placeholder="Internal notes on how this was resolved..."
-                            />
-                          </div>
-                          
-                          <Button 
-                            onClick={() => handleUpdate(row.id)} 
-                            loading={updating}
-                            style={{ width: '100%' }}
-                          >
-                            Save Updates
-                          </Button>
-                        </div>
-                      </div>
-                    </Td>
-                  </Tr>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </Tbody>
-      </Table>
-      {data.length === 0 && !loading && (
-        <div style={{ padding: 'var(--s6)', textAlign: 'center', color: 'var(--t-muted)' }}>
-          Queue is empty.
-        </div>
+    <>
+      <dl className="kv">
+        <dt>Page</dt><dd>{row.page_url ? <a href={row.page_url} target="_blank" rel="noreferrer">{row.page_url}</a> : '—'}</dd>
+        <dt>What is wrong</dt><dd>{row.description || '—'}</dd>
+        {row.claimed_correct_info && <><dt>Says it should be</dt><dd>{row.claimed_correct_info}</dd></>}
+        {row.source_url && <><dt>Their source</dt><dd><a href={row.source_url} target="_blank" rel="noreferrer">{row.source_url}</a></dd></>}
+        <dt>From</dt><dd>{row.requester_name || 'Name not given'}{row.requester_email ? ` · ${row.requester_email}` : ''}{row.requester_relationship ? ` · ${row.requester_relationship}` : ''}</dd>
+        <dt>Received</dt><dd>{stamp(row.created_at)}</dd>
+        <dt>Deadline</dt><dd style={{ color: overdue(row) ? 'var(--v-mixed)' : undefined }}>{stamp(row.sla_due_at)}{overdue(row) ? ' · past deadline' : ''}</dd>
+        {row.resolved_by && <><dt>Resolved</dt><dd>{row.resolved_by.split(' (')[0]} · {stamp(row.resolved_at)}</dd></>}
+      </dl>
+      {row.subject_type === 'cluster_summary' && row.status !== 'actioned' && (
+        <p className="explain"><b>Marking this actioned withdraws the story’s AI summary</b> until a new one is generated.</p>
       )}
-    </div>
+      <div className="field">
+        <label htmlFor={`note-${row.id}`}>Note (kept on the record)</label>
+        <textarea id={`note-${row.id}`} value={note} onChange={e => setNote(e.target.value)}
+                  placeholder="What you checked and what you did" />
+      </div>
+      {error && <p className="t-meta" style={{ color: 'var(--v-mixed)' }}>{error}</p>}
+      <div className="act">
+        {ACTIONS.filter(a => a.when(row.status)).map(a => (
+          <button key={a.label} type="button" disabled={!!busy}
+                  className={`btn btn-sm ${a.primary ? 'btn-primary' : 'btn-secondary'}`} onClick={() => act(a.status)}>
+            {busy === a.status ? 'Saving…' : a.label}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+export default function AdminCorrections() {
+  const state = useDeskData('/api/admin/corrections');
+  const { refresh } = useDesk();
+  const [tab, setTab] = useState('open');
+  const [open, setOpen] = useState(null);
+  const [notice, setNotice] = useState(null);
+
+  const rows = state.data || [];
+  const openRows = rows.filter(r => OPEN.includes(r.status))
+    .sort((a, b) => (a.sla_due_at || '').localeCompare(b.sla_due_at || ''));
+  const closedRows = rows.filter(r => !OPEN.includes(r.status));
+  const shown = tab === 'open' ? openRows : closedRows;
+  const late = openRows.filter(overdue).length;
+
+  const saved = async text => {
+    await state.reload();
+    refresh();
+    setOpen(null);
+    setNotice({ text });
+  };
+
+  return (
+    <Page
+      dateline="Desk · Corrections"
+      lede={!state.data ? 'Corrections' : openRows.length === 0 ? 'No correction is waiting.'
+        : late ? `${plural(openRows.length, 'correction is', 'corrections are')} open, ${word(late)} past ${late === 1 ? 'its' : 'their'} deadline.`
+          : `${plural(openRows.length, 'correction is', 'corrections are')} open, all within deadline.`}
+      byline="Summary corrections are due in 12 hours, others in five working days. Open a request to read it and act."
+      actions={<button type="button" className="btn btn-secondary btn-sm" onClick={state.reload} disabled={state.loading}>{state.loading ? 'Refreshing…' : 'Refresh'}</button>}
+    >
+      <Tabs value={tab} onChange={t => { setTab(t); setOpen(null); }}
+            tabs={[{ value: 'open', label: 'Open', count: openRows.length }, { value: 'closed', label: 'Closed', count: closedRows.length }]} />
+      <Section title={tab === 'open' ? 'Open, by deadline' : 'Closed, newest first'}>
+        <Stateful state={state} isEmpty={shown.length === 0}
+                  empty={tab === 'open' ? 'No open requests. New ones appear here as readers send them.' : 'Nothing has been closed yet.'}>
+          {shown.map(r => (
+            <Row key={r.id} open={open === r.id} onToggle={() => setOpen(open === r.id ? null : r.id)}
+                 tone={overdue(r) ? 'new' : r.status === 'actioned' ? 'ok' : 'neutral'}
+                 mark={overdue(r) ? 'Overdue' : STATUS[r.status] || r.status}
+                 title={`${r.category || 'Correction'} — ${SUBJECT[r.subject_type] || r.subject_type || 'Page'}${r.subject_id ? `: ${r.subject_id}` : ''}`}
+                 meta={`${r.requester_name || 'Name not given'} · due ${stamp(r.sla_due_at)}`}
+                 age={ago(r.created_at)}>
+              <CorrectionDetail row={r} onSaved={saved} />
+            </Row>
+          ))}
+        </Stateful>
+      </Section>
+      <Notice notice={notice} onDone={() => setNotice(null)} />
+    </Page>
   );
 }

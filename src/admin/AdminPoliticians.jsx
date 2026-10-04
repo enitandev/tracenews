@@ -1,279 +1,131 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { Table, Thead, Tbody, Tr, Th, Td } from '../components/ds/Table';
-import { Card } from '../components/ds/Card';
-import { Button } from '../components/ds/Button';
-import { ROUTES } from '../constants/routes';
-import { Tag } from '../components/ds/Marks';
+import { useState } from 'react';
+import { useDesk } from './desk/context';
+import { deskFetch, stamp, useDeskData } from './desk/api';
+import { Empty, Loading, Notice, Page, Row, Section, Stateful, Tabs } from './desk/Kit';
+import './desk.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
-
-const REFERENCE_LIST = [
-  { name: 'Bola Ahmed Tinubu', reason: 'Sitting President. Always include.' },
-  { name: 'Peter Obi', reason: 'Major opposition figure. Always include.' },
-  { name: 'Nyesom Wike', reason: 'Minister of FCT, highly active. Always include.' }
+/**
+ * Politician pages: held pages (and excluded ones) are 404 to readers and
+ * crawlers; a decision publishes, excludes or keeps a page held, always with
+ * a reason, and is written to the audit log (app/routers/politicians_admin.py).
+ */
+const TABS = [
+  { value: 'pending_review', label: 'Held' },
+  { value: 'published', label: 'Published' },
+  { value: 'excluded', label: 'Excluded' },
 ];
+const DECISIONS = [
+  { status: 'published', label: 'Publish', primary: true },
+  { status: 'excluded', label: 'Exclude' },
+  { status: 'pending_review', label: 'Keep held' },
+];
+const LABEL = { pending_review: 'Held', published: 'Published', excluded: 'Excluded' };
+// Standing guidance carried over from the previous screen.
+const ALWAYS_INCLUDE = {
+  'Bola Ahmed Tinubu': 'Sitting President. Always include.',
+  'Peter Obi': 'Major opposition figure. Always include.',
+  'Nyesom Wike': 'Minister of the FCT, highly active. Always include.',
+};
 
-export default function AdminPoliticians() {
-  const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentTab, setCurrentTab] = useState('pending_review');
-  
-  const [expandedRow, setExpandedRow] = useState(null);
-  const [statusDraft, setStatusDraft] = useState('');
+function History({ id }) {
+  const state = useDeskData(`/api/admin/politicians/${id}/history`);
+  if (!state.data && !state.error) return <Loading rows={2} />;
+  if (state.error) return <p className="t-meta" style={{ color: 'var(--v-mixed)' }}>{state.error}</p>;
+  if (!state.data.length) return <Empty>No decisions recorded yet.</Empty>;
+  return state.data.map(h => (
+    <div className="led" key={h.id}>
+      <b>{(h.actor || 'Unknown').split(' (')[0]}</b> set it to <b>{LABEL[h.after_state?.publication_status] || h.after_state?.publication_status}</b>
+      {h.before_state?.reason && <> — <q>{h.before_state.reason}</q></>}
+      <span className="ts">{stamp(h.created_at)} · was {LABEL[h.before_state?.publication_status] || h.before_state?.publication_status}</span>
+    </div>
+  ));
+}
+
+function Decision({ row, onSaved }) {
   const [reason, setReason] = useState('');
-  const [updating, setUpdating] = useState(false);
-  
-  const [historyData, setHistoryData] = useState({});
-  const [loadingHistory, setLoadingHistory] = useState(false);
-
-  const fetchPoliticians = async (status) => {
-    setLoading(true);
+  const [busy, setBusy] = useState(null);
+  const [error, setError] = useState(null);
+  const decide = async status => {
+    if (!reason.trim()) { setError('Give a reason for the decision; it goes on the record.'); return; }
+    setBusy(status);
     setError(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-      const res = await fetch(`${API_BASE}/api/admin/politicians?status=${status}`, {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      });
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          navigate(ROUTES.LOGIN);
-          throw new Error('Unauthorized or staff access required');
-        }
-        throw new Error('Failed to fetch');
-      }
-      const json = await res.json();
-      setData(json);
+      await deskFetch(`/api/admin/politicians/${row.id}`, { method: 'PATCH', body: { publication_status: status, reason: reason.trim() } });
+      await onSaved(`${row.name}: ${LABEL[status]}`);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setBusy(null);
     }
   };
+  return (
+    <>
+      {ALWAYS_INCLUDE[row.name] && <p className="explain"><b>Guidance:</b> {ALWAYS_INCLUDE[row.name]}</p>}
+      <dl className="kv">
+        <dt>Status</dt><dd>{LABEL[row.publication_status]}</dd>
+        <dt>Category</dt><dd>{row.category || '—'}</dd>
+        <dt>Page</dt><dd>{row.slug ? <a href={`/politicians/${row.slug}`} target="_blank" rel="noreferrer">/politicians/{row.slug}</a> : '—'}</dd>
+        <dt>Last change</dt><dd>{stamp(row.updated_at) || '—'}</dd>
+      </dl>
+      <div className="field">
+        <label htmlFor={`reason-${row.id}`}>Reason (required, kept on the record)</label>
+        <textarea id={`reason-${row.id}`} value={reason} onChange={e => setReason(e.target.value)}
+                  placeholder="The basis for this decision" />
+      </div>
+      {error && <p className="t-meta" style={{ color: 'var(--v-mixed)' }}>{error}</p>}
+      <div className="act" style={{ marginBottom: 'var(--s5)' }}>
+        {DECISIONS.filter(d => d.status !== row.publication_status).map(d => (
+          <button key={d.status} type="button" disabled={!!busy}
+                  className={`btn btn-sm ${d.primary ? 'btn-primary' : 'btn-secondary'}`} onClick={() => decide(d.status)}>
+            {busy === d.status ? 'Saving…' : d.label}
+          </button>
+        ))}
+      </div>
+      <p className="st-h">History</p>
+      <History id={row.id} />
+    </>
+  );
+}
 
-  const fetchHistory = async (id) => {
-    setLoadingHistory(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      const res = await fetch(`${API_BASE}/api/admin/politicians/${id}/history`, {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setHistoryData(prev => ({ ...prev, [id]: json }));
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingHistory(false);
-    }
-  };
+export default function AdminPoliticians() {
+  const [tab, setTab] = useState('pending_review');
+  const state = useDeskData(`/api/admin/politicians?status=${tab}`);
+  const { summary, refresh } = useDesk();
+  const [open, setOpen] = useState(null);
+  const [notice, setNotice] = useState(null);
+  const rows = state.data || [];
+  const held = summary?.counts?.politicians_held;
 
-  useEffect(() => {
-    fetchPoliticians(currentTab);
-    setExpandedRow(null);
-    setHistoryData({});
-  }, [currentTab, navigate]);
-
-  const handleUpdate = async (id) => {
-    if (!reason.trim()) {
-      alert("A reason is required for any decision.");
-      return;
-    }
-    setUpdating(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-      const res = await fetch(`${API_BASE}/api/admin/politicians/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({
-          status: statusDraft,
-          reason: reason
-        })
-      });
-      
-      if (!res.ok) throw new Error('Update failed');
-      
-      alert('Decision recorded');
-      setExpandedRow(null);
-      fetchPoliticians(currentTab);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setUpdating(false);
-    }
+  const saved = async text => {
+    await state.reload();
+    refresh();
+    setOpen(null);
+    setNotice({ text });
   };
 
   return (
-    <div className="desk-col" style={{ borderRight: 'none' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--s6)' }}>
-        <div>
-          <h2 className="t-display" style={{ margin: '0 0 var(--s1) 0' }}>Politicians Review</h2>
-        </div>
-        <Button onClick={() => fetchPoliticians(currentTab)} size="sm">Refresh</Button>
-      </div>
-      
-      <div style={{ display: 'flex', gap: 'var(--s3)', marginBottom: 'var(--s6)' }}>
-        {['pending_review', 'published', 'excluded'].map(tab => (
-          <Button 
-            key={tab}
-            variant={currentTab === tab ? 'primary' : 'secondary'}
-            onClick={() => setCurrentTab(tab)}
-          >
-            {tab.replace('_', ' ').toUpperCase()}
-          </Button>
-        ))}
-      </div>
-
-      {loading && <p className="t-muted">Loading...</p>}
-      {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
-      
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Category</Th>
-            <Th>Current Status</Th>
-            <Th>Last Updated</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data.map(row => {
-            const isReference = REFERENCE_LIST.find(r => r.name === row.name);
-            
-            return (
-              <React.Fragment key={row.id}>
-                <Tr 
-                  onClick={() => {
-                    if (expandedRow === row.id) {
-                      setExpandedRow(null);
-                    } else {
-                      setExpandedRow(row.id);
-                      setStatusDraft(row.publication_status);
-                      setReason('');
-                      if (!historyData[row.id]) fetchHistory(row.id);
-                    }
-                  }}
-                  style={{ 
-                    cursor: 'pointer',
-                    background: expandedRow === row.id ? 'var(--raised)' : 'transparent'
-                  }}
-                >
-                  <Td>
-                    <span style={{ fontWeight: 600 }}>{row.name}</span>
-                    {isReference && <span className="t-muted" style={{ marginLeft: 'var(--s2)', fontSize: '12px' }}>★ Reference</span>}
-                  </Td>
-                  <Td>{row.category}</Td>
-                  <Td>
-                    <Tag variant={row.publication_status === 'pending_review' ? 'outline' : 'neutral'}>
-                      {row.publication_status}
-                    </Tag>
-                  </Td>
-                  <Td>{row.updated_at ? new Date(row.updated_at).toLocaleDateString() : 'N/A'}</Td>
-                </Tr>
-                
-                {expandedRow === row.id && (
-                  <Tr style={{ background: 'var(--raised)' }}>
-                    <Td colSpan={4} style={{ padding: 'var(--s5)' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s6)' }}>
-                        
-                        <div>
-                          <Card style={{ padding: 'var(--s4)' }}>
-                            <h4 className="t-primary" style={{ margin: '0 0 var(--s4) 0' }}>Review Action</h4>
-                            {isReference && (
-                              <div style={{ padding: 'var(--s3)', background: 'var(--sunk)', borderLeft: '4px solid var(--v-mixed)', marginBottom: 'var(--s4)' }}>
-                                <h5 className="t-primary" style={{ margin: '0 0 var(--s1) 0' }}>Reference Guidance</h5>
-                                <p className="t-body" style={{ margin: 0, fontSize: '13px' }}>{isReference.reason}</p>
-                              </div>
-                            )}
-                            
-                            <div style={{ marginBottom: 'var(--s3)' }}>
-                              <label className="t-sub" style={{ display: 'block', marginBottom: 'var(--s1)', fontSize: '12px' }}>Decision</label>
-                              <select 
-                                value={statusDraft} 
-                                onChange={e => setStatusDraft(e.target.value)}
-                                style={{ width: '100%', padding: 'var(--s2)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', background: 'var(--raised)', color: 'var(--t-primary)' }}
-                              >
-                                <option value="pending_review">Pending Review</option>
-                                <option value="published">Publish (Active Politician)</option>
-                                <option value="excluded">Exclude (Not an active politician)</option>
-                              </select>
-                            </div>
-                            
-                            <div style={{ marginBottom: 'var(--s4)' }}>
-                              <label className="t-sub" style={{ display: 'block', marginBottom: 'var(--s1)', fontSize: '12px' }}>Reason / Notes</label>
-                              <textarea 
-                                value={reason} 
-                                onChange={e => setReason(e.target.value)}
-                                placeholder="Explain decision (required)"
-                                style={{ width: '100%', minHeight: '80px', padding: 'var(--s2)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', background: 'var(--raised)', color: 'var(--t-primary)' }}
-                              />
-                            </div>
-                            
-                            <Button 
-                              onClick={() => handleUpdate(row.id)} 
-                              loading={updating}
-                              style={{ width: '100%' }}
-                            >
-                              Submit Decision
-                            </Button>
-                          </Card>
-                        </div>
-                        
-                        <div>
-                          <h4 className="t-primary" style={{ margin: '0 0 var(--s2) 0' }}>Review History</h4>
-                          {loadingHistory && <p className="t-muted">Loading history...</p>}
-                          
-                          {!loadingHistory && historyData[row.id] && historyData[row.id].length === 0 && (
-                            <p className="t-muted" style={{ fontSize: '14px' }}>No previous review history for this entity.</p>
-                          )}
-                          
-                          {!loadingHistory && historyData[row.id] && historyData[row.id].length > 0 && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s3)' }}>
-                              {historyData[row.id].map(h => (
-                                <div key={h.id} style={{ padding: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 'var(--r-sm)', background: 'var(--card)' }}>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--s1)' }}>
-                                    <Tag variant="neutral">{h.new_status}</Tag>
-                                    <span className="t-muted" style={{ fontSize: '12px' }}>{new Date(h.created_at).toLocaleString()}</span>
-                                  </div>
-                                  <p className="t-body" style={{ margin: '0 0 var(--s1) 0', fontSize: '14px' }}>{h.reason}</p>
-                                  <div className="t-muted" style={{ fontSize: '12px' }}>By: {h.staff_name || h.staff_id}</div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        
-                      </div>
-                    </Td>
-                  </Tr>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </Tbody>
-      </Table>
-      
-      {data.length === 0 && !loading && (
-        <div style={{ padding: 'var(--s6)', textAlign: 'center', color: 'var(--t-muted)' }}>
-          No entities found for this status.
-        </div>
-      )}
-    </div>
+    <Page
+      dateline="Intelligence · Politicians"
+      lede={held == null ? 'Politicians' : held === 0 ? 'No politician page is held.' : `${held} politician ${held === 1 ? 'page is' : 'pages are'} held for review.`}
+      byline="Held and excluded pages return 404 to readers and search engines. Every decision needs a reason and is recorded with your name."
+      actions={<button type="button" className="btn btn-secondary btn-sm" onClick={state.reload} disabled={state.loading}>{state.loading ? 'Refreshing…' : 'Refresh'}</button>}
+    >
+      <Tabs value={tab} onChange={t => { setTab(t); setOpen(null); }}
+            tabs={TABS.map(t => ({ ...t, count: t.value === 'pending_review' ? held : undefined }))} />
+      <Section title={`${TABS.find(t => t.value === tab).label}, A–Z`}>
+        <Stateful state={state} isEmpty={rows.length === 0} empty={`No ${TABS.find(t => t.value === tab).label.toLowerCase()} pages.`}>
+          {rows.map(r => (
+            <Row key={r.id} open={open === r.id} onToggle={() => setOpen(open === r.id ? null : r.id)}
+                 tone={r.publication_status === 'pending_review' ? 'new' : r.publication_status === 'published' ? 'ok' : 'neutral'}
+                 mark={LABEL[r.publication_status]} title={r.name}
+                 meta={[r.category, ALWAYS_INCLUDE[r.name] ? 'Always include' : null].filter(Boolean).join(' · ') || '—'}
+                 age={r.updated_at ? stamp(r.updated_at) : ''}>
+              <Decision row={r} onSaved={saved} />
+            </Row>
+          ))}
+        </Stateful>
+      </Section>
+      <Notice notice={notice} onDone={() => setNotice(null)} />
+    </Page>
   );
 }

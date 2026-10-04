@@ -121,6 +121,11 @@
       "kind": "staff",
       "clearance": "Staff only"
     },
+    "src/admin/AdminShell.jsx": {
+      "surface": "Desk shell: rail counts (open corrections, held politicians, Briefing items waiting, staff-only verdict count)",
+      "kind": "staff",
+      "clearance": "Staff only"
+    },
     "src/admin/permissions.js": {
       "surface": "Permission map",
       "kind": "infrastructure",
