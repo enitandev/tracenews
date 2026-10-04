@@ -3,10 +3,11 @@ import { X, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { getDistinctScoredCount } from '../utils/helpers';
+import { BRIEFING_PUBLIC } from '../constants/features';
 
 // Every entry must point at a page that exists.
 const LINKS = [
-  ['Home', '/'], ['Methodology', '/methodology'],
+  ['Home', '/'], ...(BRIEFING_PUBLIC ? [['Daily Briefing', '/daily-briefing']] : []), ['Methodology', '/methodology'],
   ['Politics', '/topics/politics'], ['Economy', '/topics/economy'], ['Security', '/topics/security'],
   ['Entertainment', '/topics/entertainment'], ['Sports', '/topics/sports'],
   ['Technology', '/topics/technology'], ['Health', '/topics/health'],
