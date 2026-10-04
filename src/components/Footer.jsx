@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { BRIEFING_PUBLIC } from '../constants/features';
 
 // Every link here must point at a page that exists. Pages we do not have yet
 // (privacy policy, terms, newsletter, apps) are left out rather than linked to "#".
 const COLUMNS = [
   { title: 'Company', links: [['About', '/about'], ['Contact us', '/about#contact']] },
-  { title: 'How it works', links: [['Methodology', '/methodology'], ['Request a correction', '/corrections']] },
+  { title: 'How it works', links: [['Methodology', '/methodology'], ...(BRIEFING_PUBLIC ? [['Daily Briefing', '/daily-briefing']] : []), ['Request a correction', '/corrections']] },
   { title: 'Topics', links: [['Politics', '/topics/politics'], ['Economy', '/topics/economy'], ['Security', '/topics/security']] },
 ];
 const linkStyle = { color: '#aaa', textDecoration: 'none', fontSize: '14px' };
