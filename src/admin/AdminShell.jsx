@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { isStaffRole, hasPermission } from './permissions';
+import { isStaffRole } from './permissions';
 import { ROUTES } from '../constants/routes';
 import './desk.css';
 
@@ -10,32 +10,47 @@ export default function AdminShell({ children }) {
   const location = useLocation();
   const [staffName, setStaffName] = useState('Loading...');
   const [profile, setProfile] = useState(null);
-  
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(`${ROUTES.LOGIN}?redirect=` + encodeURIComponent(location.pathname));
-        return;
-      }
-      const { data: userProfile } = await supabase
+  // checking | ok | error. The Desk is never silently blank: while the staff
+  // check runs it says so, and if it fails it shows why, with a retry.
+  const [check, setCheck] = useState({ status: 'checking' });
+  const pathRef = useRef(location.pathname);
+  useEffect(() => { pathRef.current = location.pathname; }, [location.pathname]);
+
+  const checkAuth = useCallback(async () => {
+    const toLogin = () => navigate(`${ROUTES.LOGIN}?redirect=` + encodeURIComponent(pathRef.current));
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      if (!session) { toLogin(); return; }
+      const { data: userProfile, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
         .single();
-      const isStaff = isStaffRole(userProfile?.role, userProfile?.is_staff);
-      
-      if (userProfile && isStaff) {
+      if (error) throw error;
+      if (userProfile && isStaffRole(userProfile.role, userProfile.is_staff)) {
         setProfile(userProfile);
         setStaffName(userProfile.display_name || userProfile.email || 'Staff');
+        setCheck({ status: 'ok' });
       } else {
-        navigate(`${ROUTES.LOGIN}?redirect=` + encodeURIComponent(location.pathname));
+        toLogin();
       }
-    };
-    checkAuth();
-    // Once per visit to the Desk, not on every tab click.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    } catch (err) {
+      console.error('Desk staff check failed:', err);
+      setCheck({ status: 'error', message: err?.message || String(err) });
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    // Once when the Desk opens, and again whenever the session changes or its
+    // token is refreshed (not on every tab click).
+    Promise.resolve().then(checkAuth);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(event => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') checkAuth();
+      if (event === 'SIGNED_OUT') navigate(ROUTES.LOGIN);
+    });
+    return () => subscription.unsubscribe();
+  }, [checkAuth, navigate]);
 
   const date = new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -90,7 +105,19 @@ export default function AdminShell({ children }) {
           </aside>
           
           {/* Nothing under the desk mounts until a staff profile is confirmed */}
-          {profile ? children : null}
+          {profile ? children : (
+            <div className="desk-col" style={{ borderRight: 'none' }}>
+              {check.status === 'error' ? (
+                <>
+                  <p className="t-label">The Desk could not confirm your staff account</p>
+                  <p className="t-meta" style={{ margin: 'var(--s2) 0 var(--s4)' }}>{check.message}</p>
+                  <button className="btn btn-primary btn-sm" onClick={() => { setCheck({ status: 'checking' }); checkAuth(); }}>Try again</button>
+                </>
+              ) : (
+                <p className="t-meta">Checking your staff account…</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
