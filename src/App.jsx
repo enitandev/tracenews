@@ -23,6 +23,7 @@ import MonitoringSpiritAdmin from './admin/MonitoringSpiritAdmin';
 import AdminPoliticians from './admin/AdminPoliticians';
 import AdminBriefing from './admin/AdminBriefing';
 import AdminOverview from './admin/AdminOverview';
+import AdminNotifications from './admin/AdminNotifications';
 
 import Signup from './pages/Signup';
 import Privacy from './pages/Privacy';
@@ -87,6 +88,7 @@ export default function App() {
                 <Route path="monitoring-spirit" element={<MonitoringSpiritAdmin />} />
                 <Route path="politicians" element={<AdminPoliticians />} />
                 <Route path="briefing" element={<AdminBriefing />} />
+                <Route path="notifications" element={<AdminNotifications />} />
                 <Route path="test-verdict" element={<TestVerdict />} />
               </Routes>
             </AdminShell>

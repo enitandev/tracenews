@@ -28,10 +28,12 @@ export async function deskFetch(path, { method = 'GET', body } = {}) {
 /**
  * Load a staff endpoint. `data` keeps the last good result while a reload
  * runs, so a refresh never blanks the screen; `error` is the latest failure.
+ * A null path loads nothing.
  */
 export function useDeskData(path) {
-  const [state, setState] = useState({ loading: true, data: null, error: null, path });
+  const [state, setState] = useState({ loading: !!path, data: null, error: null, path });
   const load = useCallback(async () => {
+    if (!path) return null;   // nothing to load yet (e.g. a tab not open)
     setState(s => ({ ...s, loading: true }));
     try {
       const data = await deskFetch(path);
