@@ -190,9 +190,11 @@ function EditorPanel({ item, checklist, reload }) {
     setState({ busy: path });
     try {
       await api(path, body);
+      // Stay busy until the refreshed list is in, so the button cannot be
+      // pressed again on an item that is already approved.
+      await reload();
       setMode(null);
       setState({});
-      reload();
     } catch (e) {
       setState({ error: e.message });
     }
@@ -370,7 +372,7 @@ export default function AdminBriefing() {
                       {open === item.id && (
                         <div className="br-detail">
                           <ReaderPreview item={item} ui={data.ui} />
-                          <EditorPanel item={item} checklist={data.checklist} reload={() => { load(); loadDates(); }} />
+                          <EditorPanel item={item} checklist={data.checklist} reload={() => Promise.all([load(), loadDates()])} />
                         </div>
                       )}
                     </React.Fragment>

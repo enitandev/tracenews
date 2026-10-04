@@ -11,6 +11,13 @@ import StandardStoryItem from '../components/StandardStoryItem';
 import CompactStoryItem from '../components/CompactStoryItem';
 import CategorySection from '../components/CategorySection';
 import { BRIEFING_PUBLIC } from '../constants/features';
+import { fetchJSON } from '../utils/fetchJSON';
+
+// First list's order wins; the second adds only stories not already shown.
+function mergeClusters(first, second) {
+  const ids = new Set(first.map(c => c.id));
+  return [...first, ...second.filter(c => !ids.has(c.id))];
+}
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
@@ -112,34 +119,24 @@ export default function Home() {
 
   useEffect(() => {
     if (!BRIEFING_PUBLIC) return;
-    fetch(`${API_BASE}/daily-briefing`)
-      .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    fetchJSON(`${API_BASE}/daily-briefing`)
       .then(d => setBriefing(d.items && d.items.length ? { data: d } : { hidden: true }))
       .catch(err => { console.error('Daily Briefing column failed to load:', err); setBriefing({ hidden: true }); });
   }, []);
   useEffect(() => {
-    // 1. Fetch immediate top fold
-    fetch('https://uvicorn-appmain-production-79c6.up.railway.app/clusters/landing?limit=15')
-      .then(r => r.json())
-      .then(data => {
-        const topClusters = data.clusters || [];
-        setClusters(topClusters);
-        setLoadingTop(false);
-        
-        // 2. Stream in the rest of the content seamlessly
-        fetch('https://uvicorn-appmain-production-79c6.up.railway.app/clusters/feed?offset=15&limit=65')
-          .then(r => r.json())
-          .then(feedData => {
-            const feedClusters = feedData.clusters || [];
-            setClusters(prev => {
-              const ids = new Set(prev.map(c => c.id));
-              const newFeed = feedClusters.filter(c => !ids.has(c.id));
-              return [...prev, ...newFeed];
-            });
-          })
-          .catch(e => console.error("Secondary fetch failed", e));
-      })
-      .catch(() => setLoadingTop(false));
+    // The top of the page and the rest of the feed load side by side; each is
+    // retried once before it gives up (src/utils/fetchJSON.js).
+    let live = true;
+    const top = fetchJSON(`${API_BASE}/clusters/landing?limit=15`);
+    const rest = fetchJSON(`${API_BASE}/clusters/feed?offset=15&limit=65`);
+    top
+      .then(data => { if (live) setClusters(prev => mergeClusters(data.clusters || [], prev)); })
+      .catch(err => console.error('Homepage top stories failed to load:', err))
+      .finally(() => { if (live) setLoadingTop(false); });
+    Promise.all([top.catch(() => null), rest])
+      .then(([, feed]) => { if (live) setClusters(prev => mergeClusters(prev, feed.clusters || [])); })
+      .catch(err => console.error('Homepage feed failed to load:', err));
+    return () => { live = false; };
   }, []);
 
   const heroCluster = loadingTop ? null : clusters[0];

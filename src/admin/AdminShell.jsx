@@ -33,7 +33,9 @@ export default function AdminShell({ children }) {
       }
     };
     checkAuth();
-  }, [navigate, location.pathname]);
+    // Once per visit to the Desk, not on every tab click.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const date = new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
