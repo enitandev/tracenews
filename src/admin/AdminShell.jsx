@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { isStaffRole } from './permissions';
 import { ROUTES } from '../constants/routes';
 import './desk.css';
+import DeskErrorBoundary from './DeskErrorBoundary';
 
 export default function AdminShell({ children }) {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ export default function AdminShell({ children }) {
           </aside>
           
           {/* Nothing under the desk mounts until a staff profile is confirmed */}
-          {profile ? children : (
+          {profile ? <DeskErrorBoundary resetKey={location.pathname}>{children}</DeskErrorBoundary> : (
             <div className="desk-col" style={{ borderRight: 'none' }}>
               {check.status === 'error' ? (
                 <>

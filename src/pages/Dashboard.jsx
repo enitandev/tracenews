@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { StateCoverage } from '../components/ds/StateCoverage';
+import { evidenceText } from '../admin/evidenceText';
 import DashboardShell from '../components/DashboardShell';
 import { ROUTES } from '../constants/routes';
 import './dashboard.css';
@@ -181,7 +182,7 @@ export default function Dashboard() {
                             <span className="mk mk-dk">One tier</span>
                             <div className="bd">
                               <div className="tt">{s.headline}</div>
-                              <div className="mt">{s.evidence || 'Concentrated coverage'}</div>
+                              <div className="mt">{evidenceText(s.evidence, 'Concentrated coverage')}</div>
                             </div>
                             <span className="ag">Live</span>
                           </div>

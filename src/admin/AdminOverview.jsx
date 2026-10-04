@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { StateCoverage } from '../components/ds/StateCoverage';
 import { ROUTES } from '../constants/routes';
 import './desk.css';
+import { evidenceText } from './evidenceText';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
@@ -145,10 +146,10 @@ export default function AdminOverview() {
                 ) : (
                   data.sections.live_verdicts.map(v => (
                     <div className="it" key={v.cluster_id}>
-                      <span className="mk mk-dk">{v.verdict.toUpperCase()}</span>
+                      <span className="mk mk-dk">{String(v.verdict || '').toUpperCase()}</span>
                       <div className="bd">
                         <div className="tt">{v.headline}</div>
-                        <div className="mt">{v.evidence || 'Concentrated coverage'}</div>
+                        <div className="mt">{evidenceText(v.evidence, 'Concentrated coverage')}</div>
                       </div>
                     </div>
                   ))

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Button } from '../components/ds/Button';
 import { Card } from '../components/ds/Card';
 import { ROUTES } from '../constants/routes';
+import { evidenceText } from './evidenceText';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://uvicorn-appmain-production-79c6.up.railway.app';
 
@@ -175,7 +176,7 @@ export default function MonitoringSpiritAdmin() {
                   )}
                 </div>
                 <h4 className="t-primary" style={{ margin: '0 0 var(--s2) 0' }}>{v.headline}</h4>
-                <p className="t-sub" style={{ fontSize: '14px', margin: '0 0 var(--s3) 0' }}>{v.evidence}</p>
+                <p className="t-sub" style={{ fontSize: '14px', margin: '0 0 var(--s3) 0' }}>{evidenceText(v.evidence)}</p>
                 
                 {!v.has_active_override && expandedVerdict !== v.cluster_id && (
                   <Button 
