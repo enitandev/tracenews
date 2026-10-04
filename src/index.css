@@ -192,6 +192,12 @@ body {
   }
 }
 
+@media (max-width: 520px) {
+  .briefing-more-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ═══════════════ HOMEPAGE RHYTHM & SECTION TREATMENTS ═══════════════════════════════════════════════ */
 
 /* ═══ SECTION HEADING — broadsheet. This one change unifies the page. ═══ */
