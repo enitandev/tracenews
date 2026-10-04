@@ -8,7 +8,8 @@ export const ROUTES = {
   ADMIN_CORRECTIONS: '/admin/corrections',
   ADMIN_MONITORING: '/admin/monitoring-spirit',
   ADMIN_POLITICIANS: '/admin/politicians',
-  ADMIN_BRIEFING: '/admin/briefing'
+  ADMIN_BRIEFING: '/admin/briefing',
+  ADMIN_NOTIFICATIONS: '/admin/notifications'
 };
 
 export const ROUTE_KEYS = Object.keys(ROUTES);

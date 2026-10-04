@@ -56,7 +56,7 @@ export function Section({ title, link, count, children }) {
 const TONE = { new: 'mk-new', dark: 'mk-dk', neutral: 'mk-nu', ok: 'mk-ok' };
 
 /** One ruled row: a mark, a title, a line of detail, an age; optionally expands in place. */
-export function Row({ mark, tone = 'neutral', title, meta, age, open, onToggle, to, children }) {
+export function Row({ mark, tone = 'neutral', title, meta, age, open, onToggle, to, children, className = '' }) {
   const head = (
     <>
       {mark && <span className={`mk ${TONE[tone] || TONE.neutral}`}>{mark}</span>}
@@ -68,7 +68,7 @@ export function Row({ mark, tone = 'neutral', title, meta, age, open, onToggle, 
     </>
   );
   return (
-    <div className={`row-wrap ${open ? 'open' : ''}`}>
+    <div className={`row-wrap ${open ? 'open' : ''} ${className}`}>
       {to ? <Link to={to} className="it it-link">{head}</Link>
         : onToggle ? <button type="button" className="it it-btn" onClick={onToggle} aria-expanded={!!open}>{head}</button>
           : <div className="it">{head}</div>}

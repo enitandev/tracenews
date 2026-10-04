@@ -8,6 +8,8 @@ import DeskErrorBoundary from './DeskErrorBoundary';
 import Logo from '../components/Logo';
 import { DeskContext } from './desk/context';
 import { deskFetch } from './desk/api';
+import useNotifications from './desk/useNotifications';
+import { Bell } from './desk/Notify';
 
 export default function AdminShell({ children }) {
   const navigate = useNavigate();
@@ -23,6 +25,15 @@ export default function AdminShell({ children }) {
   const refresh = useCallback(() => deskFetch('/api/admin/desk')
     .then(setSummary)
     .catch(err => console.error('Desk summary failed to load:', err)), []);
+  // A screen's refresh() after an action also refreshes the bell, so the
+  // notification for the work just done goes without waiting for the poll.
+  const notes = useNotifications(!!profile);
+  const notesReload = notes.reload;
+  const refreshAll = useCallback(() => {
+    // The API refreshes work notifications a moment after an action.
+    setTimeout(notesReload, 3000);
+    return refresh();
+  }, [refresh, notesReload]);
   const pathRef = useRef(location.pathname);
   useEffect(() => { pathRef.current = location.pathname; }, [location.pathname]);
 
@@ -69,6 +80,7 @@ export default function AdminShell({ children }) {
   const groups = [
     { title: 'Desk', links: [
       { to: ROUTES.ADMIN, label: 'Overview', exact: true },
+      { to: ROUTES.ADMIN_NOTIFICATIONS, label: 'Notifications', n: notes.counts?.unread, att: notes.counts?.urgent > 0 },
       { to: ROUTES.ADMIN_CORRECTIONS, label: 'Corrections', n: c.corrections_open, att: c.corrections_overdue > 0 },
     ] },
     { title: 'Newsroom', links: [
@@ -79,10 +91,18 @@ export default function AdminShell({ children }) {
       { to: ROUTES.ADMIN_MONITORING, label: 'Monitoring Spirit', n: c.verdicts },
     ] },
   ];
+  const unread = notes.counts?.unread || 0;
+  useEffect(() => {
+    const before = document.title;
+    const base = 'The Desk · TraceNews';
+    document.title = unread ? `(${unread}) ${base}` : base;
+    return () => { document.title = before; };
+  }, [unread]);
+
   const isOn = l => (l.exact ? location.pathname === l.to : location.pathname.startsWith(l.to));
 
   return (
-    <DeskContext.Provider value={{ summary, refresh, profile }}>
+    <DeskContext.Provider value={{ summary, refresh: refreshAll, profile, notes }}>
     <div className="pg desk-scope">
       <div className="desk">
         <div className="mh">
@@ -94,6 +114,7 @@ export default function AdminShell({ children }) {
             <div className="mh-meta">
               <span>{date}</span>
               <span className="who">{staffName}{profile?.role ? ` · ${profile.role.replace('_', ' ')}` : ''}</span>
+              {profile && <Bell notes={notes} />}
             </div>
           </div>
           <div className="mh-rule"></div><div className="mh-rule2"></div>
